@@ -5,7 +5,7 @@ load_dotenv()
 
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'legalease_ai_advanced_secret_key_2024'
-    GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY') or ""
+   
     DATABASE_URL = os.environ.get('DATABASE_URL') or 'sqlite:///legalease_advanced.db'
     UPLOAD_FOLDER = 'uploads'
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max file size
