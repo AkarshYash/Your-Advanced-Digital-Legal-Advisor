@@ -1,0 +1,416 @@
+{% extends "base.html" %}
+
+{% block title %}About Us - LegalEase AI Advanced{% endblock %}
+
+{% block extra_css %}
+<style>
+    .feature-card {
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    }
+    
+    .feature-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        background: var(--gradient-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .stats-counter {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--accent-color);
+    }
+    
+    .tech-badge {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        margin: 0.25rem;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+    }
+    
+    .tech-badge:hover {
+        background: var(--gradient-accent);
+        transform: scale(1.05);
+    }
+    
+    .team-member {
+        text-align: center;
+        padding: 2rem;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+    }
+    
+    .team-member:hover {
+        transform: translateY(-5px);
+        background: rgba(255, 255, 255, 0.15);
+    }
+    
+    .team-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        margin: 0 auto 1rem;
+        background: var(--gradient-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Hero Section -->
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <div class="glass p-5 rounded-4">
+                <h1 class="display-4 text-white mb-4 floating">
+                    <i class="fas fa-balance-scale text-primary me-3"></i>
+                    About LegalEase AI Advanced
+                </h1>
+                <p class="lead text-light mb-4">
+                    Revolutionizing legal assistance in India through cutting-edge AI technology, 
+                    making justice accessible to every citizen across all regional languages.
+                </p>
+                <div class="row text-center mt-4">
+                    <div class="col-md-3 col-6 mb-3">
+                        <div class="stats-counter" data-target="50000">0</div>
+                        <p class="text-light">Users Served</p>
+                    </div>
+                    <div class="col-md-3 col-6 mb-3">
+                        <div class="stats-counter" data-target="14">0</div>
+                        <p class="text-light">Languages Supported</p>
+                    </div>
+                    <div class="col-md-3 col-6 mb-3">
+                        <div class="stats-counter" data-target="1000">0</div>
+                        <p class="text-light">Legal Templates</p>
+                    </div>
+                    <div class="col-md-3 col-6 mb-3">
+                        <div class="stats-counter" data-target="24">0</div>
+                        <p class="text-light">Hours Support</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mission & Vision -->
+    <div class="row mb-5">
+        <div class="col-lg-6 mb-4">
+            <div class="card glass h-100">
+                <div class="card-body p-4">
+                    <h3 class="text-white mb-3">
+                        <i class="fas fa-bullseye text-primary me-2"></i>
+                        Our Mission
+                    </h3>
+                    <p class="text-light">
+                        To democratize legal assistance in India by providing intelligent, accessible, 
+                        and multilingual AI-powered legal solutions that bridge the gap between 
+                        citizens and justice. We aim to make legal knowledge and services available 
+                        to every Indian, regardless of their location, language, or economic status.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 mb-4">
+            <div class="card glass h-100">
+                <div class="card-body p-4">
+                    <h3 class="text-white mb-3">
+                        <i class="fas fa-eye text-success me-2"></i>
+                        Our Vision
+                    </h3>
+                    <p class="text-light">
+                        To become India's leading AI-powered legal platform, fostering a society 
+                        where every citizen has equal access to legal knowledge, representation, 
+                        and justice. We envision a future where technology eliminates barriers 
+                        to legal assistance and empowers individuals with legal literacy.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Complete Tool Overview -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="text-white text-center mb-5">
+                <i class="fas fa-star text-warning me-2"></i>
+                Complete Tool Overview
+            </h2>
+        </div>
+        
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card glass feature-card">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h5 class="text-white mb-3">AI Legal Assistant</h5>
+                    <p class="text-light">
+                        Advanced AI chatbot providing instant legal advice, case analysis, 
+                        and document interpretation in 14 Indian languages with voice support.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card glass feature-card">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon">
+                        <i class="fas fa-file-contract"></i>
+                    </div>
+                    <h5 class="text-white mb-3">Document Analysis</h5>
+                    <p class="text-light">
+                        Intelligent document scanning, analysis, and interpretation with 
+                        risk assessment and legal compliance checking.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card glass feature-card">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <h5 class="text-white mb-3">Lawyer Network</h5>
+                    <p class="text-light">
+                        Connect with verified advocates across India, book consultations, 
+                        and manage appointments with integrated video calling.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card glass feature-card">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h5 class="text-white mb-3">Student Tools</h5>
+                    <p class="text-light">
+                        Comprehensive law student resources including case study analyzer, 
+                        subject tutor, quiz generator, and study planner.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card glass feature-card">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon">
+                        <i class="fas fa-language"></i>
+                    </div>
+                    <h5 class="text-white mb-3">Multi-Language Support</h5>
+                    <p class="text-light">
+                        Full support for 14 Indian regional languages with text and voice 
+                        interaction capabilities for inclusive accessibility.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card glass feature-card">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <h5 class="text-white mb-3">Theme Customization</h5>
+                    <p class="text-light">
+                        Multiple theme options including Normal, Dark, and Light themes 
+                        for personalized user experience and accessibility.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Technology Stack -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card glass">
+                <div class="card-header">
+                    <h3 class="text-white mb-0">
+                        <i class="fas fa-cogs text-info me-2"></i>
+                        Technology Stack
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5 class="text-white mb-3">Backend Technologies</h5>
+                            <div class="mb-3">
+                                <span class="tech-badge">Python Flask</span>
+                                <span class="tech-badge">SQLite Database</span>
+                                <span class="tech-badge">RESTful APIs</span>
+                                <span class="tech-badge">WebSocket</span>
+                                <span class="tech-badge">JWT Authentication</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h5 class="text-white mb-3">Frontend Technologies</h5>
+                            <div class="mb-3">
+                                <span class="tech-badge">HTML5 & CSS3</span>
+                                <span class="tech-badge">Bootstrap 5</span>
+                                <span class="tech-badge">JavaScript ES6+</span>
+                                <span class="tech-badge">Font Awesome</span>
+                                <span class="tech-badge">Responsive Design</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h5 class="text-white mb-3">AI & ML Technologies</h5>
+                            <div class="mb-3">
+                                <span class="tech-badge">Natural Language Processing</span>
+                                <span class="tech-badge">Machine Learning</span>
+                                <span class="tech-badge">Speech Recognition</span>
+                                <span class="tech-badge">Text-to-Speech</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h5 class="text-white mb-3">Additional Features</h5>
+                            <div class="mb-3">
+                                <span class="tech-badge">Multi-language Support</span>
+                                <span class="tech-badge">Theme Switching</span>
+                                <span class="tech-badge">Real-time Chat</span>
+                                <span class="tech-badge">Document Processing</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Developer Information -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card glass">
+                <div class="card-header">
+                    <h3 class="text-white mb-0">
+                        <i class="fas fa-user text-primary me-2"></i>
+                        Developer Information
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="team-member">
+                        <div class="team-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <h5 class="text-white mb-2">Akarsh Chaturvedi</h5>
+                        <p class="text-primary mb-3">Lead Developer & Founder</p>
+                        <p class="text-light mb-3">
+                            Passionate about leveraging technology to make legal services 
+                            accessible to every Indian citizen. Based in Jaipur, Rajasthan.
+                        </p>
+                        <div class="contact-info">
+                            <p class="text-light mb-1">
+                                <i class="fas fa-envelope me-2"></i>
+                                chatuvrdiakarsh51@gmail.com
+                            </p>
+                            <p class="text-light mb-1">
+                                <i class="fas fa-phone me-2"></i>
+                                +91 7742148084
+                            </p>
+                            <p class="text-light mb-0">
+                                <i class="fas fa-map-marker-alt me-2"></i>
+                                Jaipur, Rajasthan, India
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="row">
+        <div class="col-12 text-center">
+            <div class="card glass">
+                <div class="card-body p-5">
+                    <h3 class="text-white mb-4">Ready to Experience Legal AI?</h3>
+                    <p class="text-light mb-4">
+                        Join thousands of users who trust LegalEase AI for their legal needs. 
+                        Start your journey towards accessible legal assistance today.
+                    </p>
+                    <div class="d-flex justify-content-center gap-3 flex-wrap">
+                        <a href="{{ url_for('chat.chat_interface') }}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-robot me-2"></i>Try AI Chat
+                        </a>
+                        <a href="{{ url_for('auth.register') }}" class="btn btn-accent btn-lg">
+                            <i class="fas fa-user-plus me-2"></i>Create Account
+                        </a>
+                        <a href="{{ url_for('main.features') }}" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-star me-2"></i>Explore Features
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Animated counters
+    function animateCounters() {
+        const counters = document.querySelectorAll('.stats-counter');
+        
+        counters.forEach(counter => {
+            const target = parseInt(counter.getAttribute('data-target'));
+            const increment = target / 100;
+            let current = 0;
+            
+            const updateCounter = () => {
+                if (current < target) {
+                    current += increment;
+                    counter.textContent = Math.floor(current).toLocaleString();
+                    requestAnimationFrame(updateCounter);
+                } else {
+                    counter.textContent = target.toLocaleString();
+                }
+            };
+            
+            updateCounter();
+        });
+    }
+    
+    // Initialize animations when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+        // Start counter animation after a short delay
+        setTimeout(animateCounters, 500);
+        
+        // Add hover effects to feature cards
+        const cards = document.querySelectorAll('.feature-card');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-10px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+    });
+</script>
+{% endblock %}

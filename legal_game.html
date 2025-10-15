@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Legal Quiz Game - LegalEase AI Advanced{% endblock %}
+
+{% block extra_css %}
+<style>
+    .game-container {
+        min-height: calc(100vh - 120px);
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .game-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+       

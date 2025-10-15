@@ -1,0 +1,323 @@
+{% extends "base.html" %}
+
+{% block title %}Sample Q&A - LegalEase AI Advanced{% endblock %}
+
+{% block extra_css %}
+<style>
+    .qna-card {
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .qna-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+    }
+    
+    .category-badge {
+        font-size: 0.8rem;
+        padding: 0.3rem 0.8rem;
+        border-radius: 15px;
+        text-transform: uppercase;
+        font-weight: 600;
+    }
+    
+    .question-text {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: white;
+        margin-bottom: 1rem;
+    }
+    
+    .answer-text {
+        color: rgba(255, 255, 255, 0.9);
+        line-height: 1.6;
+        display: none;
+    }
+    
+    .answer-text.show {
+        display: block;
+        animation: fadeIn 0.3s ease;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .tag {
+        display: inline-block;
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 0.2rem 0.6rem;
+        border-radius: 10px;
+        font-size: 0.8rem;
+        margin: 0.2rem;
+    }
+    
+    .search-box {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 25px;
+        color: white;
+        padding: 12px 20px;
+    }
+    
+    .search-box:focus {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 0.2rem rgba(245, 158, 11, 0.25);
+        color: white;
+    }
+    
+    .search-box::placeholder {
+        color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .filter-btn {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        border-radius: 20px;
+        padding: 0.5rem 1rem;
+        margin: 0.25rem;
+        transition: all 0.3s ease;
+    }
+    
+    .filter-btn:hover, .filter-btn.active {
+        background: var(--gradient-accent);
+        color: white;
+        border-color: transparent;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Header -->
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <div class="glass p-5 rounded-4">
+                <h1 class="display-4 text-white mb-4 floating">
+                    <i class="fas fa-question-circle text-info me-3"></i>
+                    Sample Legal Q&A
+                </h1>
+                <p class="lead text-light mb-0">
+                    Explore common legal questions and their comprehensive answers. 
+                    Learn from real-world scenarios and expert legal guidance.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="row mb-4">
+        <div class="col-lg-8 mb-3">
+            <div class="input-group">
+                <input type="text" class="form-control search-box" id="searchInput" 
+                       placeholder="Search questions, answers, or legal topics...">
+                <button class="btn btn-accent" onclick="searchQNA()">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+        <div class="col-lg-4 mb-3">
+            <select class="form-control search-box" id="categoryFilter" onchange="filterByCategory()">
+                <option value="">All Categories</option>
+                <option value="constitutional">Constitutional Law</option>
+                <option value="criminal">Criminal Law</option>
+                <option value="civil">Civil Law</option>
+                <option value="family">Family Law</option>
+                <option value="property">Property Law</option>
+                <option value="consumer">Consumer Law</option>
+                <option value="cyber">Cyber Law</option>
+                <option value="labor">Labor Law</option>
+                <option value="tax">Tax Law</option>
+                <option value="corporate">Corporate Law</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Category Filters -->
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <button class="filter-btn active" onclick="filterCategory('all')">All</button>
+            <button class="filter-btn" onclick="filterCategory('constitutional')">Constitutional</button>
+            <button class="filter-btn" onclick="filterCategory('criminal')">Criminal</button>
+            <button class="filter-btn" onclick="filterCategory('family')">Family</button>
+            <button class="filter-btn" onclick="filterCategory('property')">Property</button>
+            <button class="filter-btn" onclick="filterCategory('consumer')">Consumer</button>
+            <button class="filter-btn" onclick="filterCategory('cyber')">Cyber</button>
+            <button class="filter-btn" onclick="filterCategory('labor')">Labor</button>
+        </div>
+    </div>
+
+    <!-- Q&A Grid -->
+    <div id="qnaGrid" class="row g-4">
+        <!-- Q&A cards will be loaded here -->
+    </div>
+
+    <!-- Load More Button -->
+    <div class="text-center mt-5">
+        <button class="btn btn-outline-light btn-lg" onclick="loadMoreQNA()">
+            <i class="fas fa-plus me-2"></i>Load More Questions
+        </button>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let allQNA = [];
+    let displayedQNA = [];
+    let currentFilter = 'all';
+
+    // Load Q&A on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        loadQNA();
+    });
+
+    function loadQNA() {
+        fetch('/api/sample-qna')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                allQNA = data.qna;
+                displayedQNA = allQNA;
+                displayQNA(displayedQNA);
+            }
+        })
+        .catch(error => {
+            console.error('Error loading Q&A:', error);
+        });
+    }
+
+    function displayQNA(qnaList) {
+        const qnaGrid = document.getElementById('qnaGrid');
+        qnaGrid.innerHTML = '';
+
+        qnaList.forEach((qna, index) => {
+            const qnaCard = document.createElement('div');
+            qnaCard.className = 'col-lg-6 mb-4';
+            
+            const categoryColors = {
+                'constitutional': 'primary',
+                'criminal': 'danger',
+                'civil': 'info',
+                'family': 'success',
+                'property': 'warning',
+                'consumer': 'secondary',
+                'cyber': 'dark',
+                'labor': 'light',
+                'tax': 'primary',
+                'corporate': 'info'
+            };
+
+            qnaCard.innerHTML = `
+                <div class="card glass qna-card h-100" onclick="toggleAnswer(${index})">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <span class="category-badge bg-${categoryColors[qna.category] || 'secondary'}">
+                                ${qna.category}
+                            </span>
+                            <i class="fas fa-chevron-down text-light" id="icon-${index}"></i>
+                        </div>
+                        
+                        <div class="question-text">
+                            <i class="fas fa-question-circle text-info me-2"></i>
+                            ${qna.question}
+                        </div>
+                        
+                        <div class="answer-text" id="answer-${index}">
+                            <div class="border-start border-success ps-3 mb-3">
+                                <i class="fas fa-lightbulb text-warning me-2"></i>
+                                <strong>Answer:</strong>
+                                <p class="mt-2 mb-0">${qna.answer}</p>
+                            </div>
+                            
+                            <div class="tags mt-3">
+                                <i class="fas fa-tags text-light me-2"></i>
+                                ${qna.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            qnaGrid.appendChild(qnaCard);
+        });
+    }
+
+    function toggleAnswer(index) {
+        const answer = document.getElementById(`answer-${index}`);
+        const icon = document.getElementById(`icon-${index}`);
+        
+        if (answer.classList.contains('show')) {
+            answer.classList.remove('show');
+            icon.classList.remove('fa-chevron-up');
+            icon.classList.add('fa-chevron-down');
+        } else {
+            answer.classList.add('show');
+            icon.classList.remove('fa-chevron-down');
+            icon.classList.add('fa-chevron-up');
+        }
+    }
+
+    function filterCategory(category) {
+        currentFilter = category;
+        
+        // Update active button
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        event.target.classList.add('active');
+        
+        // Filter Q&A
+        if (category === 'all') {
+            displayedQNA = allQNA;
+        } else {
+            displayedQNA = allQNA.filter(qna => qna.category === category);
+        }
+        
+        displayQNA(displayedQNA);
+    }
+
+    function filterByCategory() {
+        const category = document.getElementById('categoryFilter').value;
+        if (category) {
+            displayedQNA = allQNA.filter(qna => qna.category === category);
+        } else {
+            displayedQNA = allQNA;
+        }
+        displayQNA(displayedQNA);
+    }
+
+    function searchQNA() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        
+        if (searchTerm.trim() === '') {
+            displayedQNA = allQNA;
+        } else {
+            displayedQNA = allQNA.filter(qna => 
+                qna.question.toLowerCase().includes(searchTerm) ||
+                qna.answer.toLowerCase().includes(searchTerm) ||
+                qna.tags.some(tag => tag.toLowerCase().includes(searchTerm))
+            );
+        }
+        
+        displayQNA(displayedQNA);
+    }
+
+    function loadMoreQNA() {
+        // Simulate loading more Q&A
+        alert('More questions will be loaded in the full version. This demonstrates the expandable Q&A system.');
+    }
+
+    // Search on Enter key
+    document.getElementById('searchInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            searchQNA();
+        }
+    });
+</script>
+{% endblock %}

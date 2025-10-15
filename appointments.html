@@ -1,0 +1,237 @@
+{% extends "base.html" %}
+
+{% block title %}Appointments - LegalEase AI Advanced{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="glass p-4 rounded-4">
+                <h1 class="text-white mb-2">
+                    <i class="fas fa-calendar text-primary me-2"></i>
+                    My Appointments
+                </h1>
+                <p class="text-light mb-0">
+                    Manage your legal consultations and appointments with verified advocates.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Appointments List -->
+    <div class="row g-4">
+        {% if appointments %}
+            {% for appointment in appointments %}
+            <div class="col-lg-6">
+                <div class="card glass">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="text-white mb-0">
+                                {% if user_type == 'advocate' %}
+                                    {{ appointment.client_name }}
+                                {% else %}
+                                    {{ appointment.advocate_name }}
+                                {% endif %}
+                            </h5>
+                            <span class="badge bg-{{ 'success' if appointment.status == 'confirmed' else 'warning' if appointment.status == 'pending' else 'secondary' }}">
+                                {{ appointment.status.title() }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="appointment-details">
+                            <p class="text-light mb-2">
+                                <i class="fas fa-calendar me-2"></i>
+                                <strong>Date:</strong> {{ appointment.appointment_date }}
+                            </p>
+                            
+                            <p class="text-light mb-2">
+                                <i class="fas fa-gavel me-2"></i>
+                                <strong>Case Type:</strong> {{ appointment.case_type or 'General Consultation' }}
+                            </p>
+                            
+                            {% if appointment.consultation_fee %}
+                            <p class="text-light mb-2">
+                                <i class="fas fa-rupee-sign me-2"></i>
+                                <strong>Fee:</strong> ₹{{ appointment.consultation_fee }}
+                            </p>
+                            {% endif %}
+                            
+                            <p class="text-light mb-2">
+                                <i class="fas fa-{{ 'video' if appointment.meeting_mode == 'online' else 'map-marker-alt' }} me-2"></i>
+                                <strong>Mode:</strong> {{ appointment.meeting_mode.title() }}
+                            </p>
+                            
+                            {% if appointment.case_description %}
+                            <div class="case-description mt-3">
+                                <strong class="text-light">Description:</strong>
+                                <p class="text-light small">{{ appointment.case_description[:100] }}{% if appointment.case_description|length > 100 %}...{% endif %}</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="appointment-actions mt-3">
+                            <div class="d-flex gap-2">
+                                {% if appointment.status == 'pending' %}
+                                    {% if user_type == 'advocate' %}
+                                    <button class="btn btn-success btn-sm" onclick="confirmAppointment({{ appointment.id }})">
+                                        <i class="fas fa-check me-1"></i>Confirm
+                                    </button>
+                                    <button class="btn btn-danger btn-sm" onclick="cancelAppointment({{ appointment.id }})">
+                                        <i class="fas fa-times me-1"></i>Decline
+                                    </button>
+                                    {% else %}
+                                    <button class="btn btn-warning btn-sm" onclick="editAppointment({{ appointment.id }})">
+                                        <i class="fas fa-edit me-1"></i>Edit
+                                    </button>
+                                    <button class="btn btn-outline-danger btn-sm" onclick="cancelAppointment({{ appointment.id }})">
+                                        <i class="fas fa-times me-1"></i>Cancel
+                                    </button>
+                                    {% endif %}
+                                {% elif appointment.status == 'confirmed' %}
+                                    {% if appointment.meeting_mode == 'online' and appointment.meeting_link %}
+                                    <button class="btn btn-primary btn-sm" onclick="joinMeeting('{{ appointment.meeting_link }}')">
+                                        <i class="fas fa-video me-1"></i>Join Meeting
+                                    </button>
+                                    {% endif %}
+                                    <button class="btn btn-info btn-sm" onclick="viewDetails({{ appointment.id }})">
+                                        <i class="fas fa-eye me-1"></i>Details
+                                    </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="card glass">
+                    <div class="card-body text-center py-5">
+                        <i class="fas fa-calendar-plus fa-3x text-muted mb-3"></i>
+                        <h5 class="text-white">No Appointments Yet</h5>
+                        <p class="text-light">
+                            {% if user_type == 'advocate' %}
+                                Clients will be able to book appointments with you once your profile is complete.
+                            {% else %}
+                                Start by finding and booking consultations with our verified lawyers.
+                            {% endif %}
+                        </p>
+                        {% if user_type != 'advocate' %}
+                        <a href="{{ url_for('main.find_lawyers') }}" class="btn btn-primary">
+                            <i class="fas fa-search me-2"></i>Find Lawyers
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Quick Stats -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card glass">
+                <div class="card-header">
+                    <h5 class="text-white mb-0">
+                        <i class="fas fa-chart-bar text-info me-2"></i>
+                        Appointment Statistics
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3 text-center">
+                        <div class="col-md-3">
+                            <div class="stat-card p-3">
+                                <i class="fas fa-calendar-check fa-2x text-success mb-2"></i>
+                                <h4 class="text-white">{{ appointments|selectattr('status', 'equalto', 'confirmed')|list|length }}</h4>
+                                <p class="text-light mb-0">Confirmed</p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <div class="stat-card p-3">
+                                <i class="fas fa-clock fa-2x text-warning mb-2"></i>
+                                <h4 class="text-white">{{ appointments|selectattr('status', 'equalto', 'pending')|list|length }}</h4>
+                                <p class="text-light mb-0">Pending</p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <div class="stat-card p-3">
+                                <i class="fas fa-check-circle fa-2x text-info mb-2"></i>
+                                <h4 class="text-white">{{ appointments|selectattr('status', 'equalto', 'completed')|list|length }}</h4>
+                                <p class="text-light mb-0">Completed</p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <div class="stat-card p-3">
+                                <i class="fas fa-calendar fa-2x text-primary mb-2"></i>
+                                <h4 class="text-white">{{ appointments|length }}</h4>
+                                <p class="text-light mb-0">Total</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .stat-card {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateY(-5px);
+    }
+    
+    .appointment-details {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        padding: 1rem;
+    }
+    
+    .case-description {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        padding: 0.75rem;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function confirmAppointment(appointmentId) {
+        if (confirm('Confirm this appointment?')) {
+            alert(`Appointment ${appointmentId} confirmed! (Feature in development)`);
+        }
+    }
+    
+    function cancelAppointment(appointmentId) {
+        if (confirm('Are you sure you want to cancel this appointment?')) {
+            alert(`Appointment ${appointmentId} cancelled! (Feature in development)`);
+        }
+    }
+    
+    function editAppointment(appointmentId) {
+        alert(`Edit appointment ${appointmentId} (Feature in development)`);
+    }
+    
+    function viewDetails(appointmentId) {
+        alert(`View details for appointment ${appointmentId} (Feature in development)`);
+    }
+    
+    function joinMeeting(meetingLink) {
+        if (meetingLink) {
+            window.open(meetingLink, '_blank');
+        } else {
+            alert('Meeting link not available yet');
+        }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,2440 @@
+{% extends "base.html" %}
+
+{% block title %}Legal Resources - LegalEase AI Advanced{% endblock %}
+
+{% block extra_css %}
+<style>
+    .resource-card {
+        transition: all 0.3s ease;
+        height: 100%;
+        cursor: pointer;
+    }
+    
+    .resource-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    }
+    
+    .resource-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .category-filter {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        border-radius: 20px;
+        padding: 0.5rem 1rem;
+        margin: 0.25rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .category-filter:hover, .category-filter.active {
+        background: var(--gradient-accent);
+        color: white;
+        border-color: transparent;
+        transform: scale(1.05);
+    }
+    
+    .search-input {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 25px;
+        color: white;
+        padding: 12px 20px;
+    }
+    
+    .search-input:focus {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 0.2rem rgba(245, 158, 11, 0.25);
+        color: white;
+    }
+    
+    .search-input::placeholder {
+        color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .document-viewer {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 15px;
+        padding: 2rem;
+        margin-top: 2rem;
+        max-height: 600px;
+        overflow-y: auto;
+    }
+    
+    .document-content {
+        color: white;
+        line-height: 1.8;
+    }
+    
+    .document-content h1, .document-content h2, .document-content h3 {
+        color: #60a5fa;
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+    }
+    
+    .document-content h1 {
+        border-bottom: 2px solid #60a5fa;
+        padding-bottom: 0.5rem;
+    }
+    
+    .article-number {
+        background: rgba(96, 165, 250, 0.2);
+        color: #60a5fa;
+        padding: 0.3rem 0.8rem;
+        border-radius: 15px;
+        font-weight: bold;
+        display: inline-block;
+        margin-bottom: 0.5rem;
+    }
+    
+    .law-section {
+        background: rgba(255, 255, 255, 0.05);
+        border-left: 4px solid #10b981;
+        padding: 1rem;
+        margin: 1rem 0;
+        border-radius: 0 10px 10px 0;
+    }
+    
+    .download-btn {
+        background: var(--gradient-success);
+        border: none;
+        border-radius: 15px;
+        padding: 0.8rem 1.5rem;
+        color: white;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .download-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+        color: white;
+    }
+    
+    /* Enhanced Legal Resources Styles */
+    .legal-justice-image img,
+    .constitution-book-cover img,
+    .legal-image-container img {
+        transition: all 0.3s ease;
+        border-radius: 10px;
+    }
+    
+    .legal-justice-image img:hover,
+    .constitution-book-cover img:hover,
+    .legal-image-container img:hover {
+        transform: scale(1.05);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+    
+    .constitution-book-cover {
+        position: relative;
+    }
+    
+    .constitution-book-cover::before {
+        content: '';
+        position: absolute;
+        top: -5px;
+        left: -5px;
+        right: -5px;
+        bottom: -5px;
+        background: linear-gradient(45deg, #FFD700, #FFA500, #FF6B35);
+        border-radius: 15px;
+        z-index: -1;
+        opacity: 0.3;
+        animation: glow 2s ease-in-out infinite alternate;
+    }
+    
+    @keyframes glow {
+        from { opacity: 0.3; }
+        to { opacity: 0.6; }
+    }
+    
+    .legal-links a {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: block;
+        padding: 0.25rem 0;
+    }
+    
+    .legal-links a:hover {
+        color: #FFD700;
+        transform: translateX(5px);
+        text-decoration: underline;
+    }
+    
+    .badge {
+        font-size: 0.75rem;
+        padding: 0.5rem 0.75rem;
+        border-radius: 15px;
+    }
+    
+    .alert {
+        border-radius: 10px;
+        border: none;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* Legal Banner with Real Images */
+    .legal-banner {
+        position: relative;
+        min-height: 300px;
+        overflow: hidden;
+    }
+    
+    .legal-bg-images {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        opacity: 0.1;
+        z-index: 1;
+    }
+    
+    .legal-bg-image {
+        position: absolute;
+        background-size: cover;
+        background-position: center;
+        border-radius: 10px;
+    }
+    
+    .legal-bg-1 {
+        top: 20px;
+        right: 20px;
+        width: 120px;
+        height: 80px;
+        background: linear-gradient(45deg, #FF9500, #FFFFFF, #138A4C);
+        opacity: 0.3;
+    }
+    
+    .legal-bg-2 {
+        bottom: 20px;
+        left: 20px;
+        width: 100px;
+        height: 100px;
+        background: radial-gradient(circle, #FFD700, #8B4513);
+        opacity: 0.2;
+    }
+    
+    .legal-bg-3 {
+        top: 50%;
+        right: 10%;
+        width: 80px;
+        height: 120px;
+        background: linear-gradient(135deg, #1A2238, #FFD700);
+        opacity: 0.25;
+    }
+    
+    .legal-justice-showcase {
+        position: relative;
+        z-index: 2;
+    }
+    
+    /* Indian Legal Emblem Design */
+    .indian-legal-emblem {
+        position: relative;
+        width: 220px;
+        height: 280px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .emblem-outer-ring {
+        width: 180px;
+        height: 180px;
+        border: 4px solid #FFD700;
+        border-radius: 50%;
+        background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 149, 0, 0.1));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+        animation: emblemGlow 3s ease-in-out infinite;
+        position: relative;
+    }
+    
+    .emblem-inner-circle {
+        width: 140px;
+        height: 140px;
+        background: linear-gradient(135deg, #FFFFFF, #F8F9FA);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        box-shadow: inset 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Scales of Justice */
+    .scales-container {
+        position: relative;
+        width: 80px;
+        height: 80px;
+    }
+    
+    .scales-post {
+        position: absolute;
+        left: 50%;
+        top: 10px;
+        transform: translateX(-50%);
+        width: 3px;
+        height: 50px;
+        background: #8B4513;
+        border-radius: 2px;
+    }
+    
+    .scales-beam {
+        position: absolute;
+        left: 50%;
+        top: 20px;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 3px;
+        background: #FFD700;
+        border-radius: 2px;
+    }
+    
+    .scales-left-pan {
+        position: absolute;
+        left: 10px;
+        top: 23px;
+        width: 20px;
+        height: 12px;
+        background: linear-gradient(135deg, #FFD700, #FFA500);
+        border-radius: 50% 50% 0 0;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+    
+    .scales-right-pan {
+        position: absolute;
+        right: 10px;
+        top: 23px;
+        width: 20px;
+        height: 12px;
+        background: linear-gradient(135deg, #FFD700, #FFA500);
+        border-radius: 50% 50% 0 0;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* Ashoka Chakra */
+    .flag-elements {
+        position: absolute;
+        bottom: 15px;
+        right: 15px;
+    }
+    
+    .ashoka-chakra {
+        width: 24px;
+        height: 24px;
+        border: 2px solid #002D62;
+        border-radius: 50%;
+        position: relative;
+        background: #FFFFFF;
+    }
+    
+    .chakra-spokes {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 16px;
+        height: 16px;
+    }
+    
+    .chakra-spokes::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 2px;
+        height: 14px;
+        background: #002D62;
+    }
+    
+    .chakra-spokes::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(90deg);
+        width: 2px;
+        height: 14px;
+        background: #002D62;
+    }
+    
+    /* Emblem Motto */
+    .emblem-motto {
+        margin-top: 20px;
+        text-align: center;
+    }
+    
+    .sanskrit-text {
+        font-size: 18px;
+        font-weight: bold;
+        color: #FFD700;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        margin-bottom: 5px;
+        font-family: 'Devanagari', serif;
+    }
+    
+    .english-text {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.8);
+        font-style: italic;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    /* Clean Legal Justice Showcase */
+    .legal-justice-showcase {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 280px;
+        padding: 2rem 1rem;
+    }
+    
+    /* Animations */
+    @keyframes emblemGlow {
+        0%, 100% { 
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+            border-color: #FFD700;
+        }
+        50% { 
+            box-shadow: 0 15px 40px rgba(255, 215, 0, 0.5);
+            border-color: #FFA500;
+        }
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-5px); }
+    }
+    
+    /* Constitution Book with Enhanced Styling */
+    .constitution-book-cover {
+        position: relative;
+        perspective: 1000px;
+    }
+    
+    .constitution-book-cover img {
+        transition: all 0.5s ease;
+        transform-style: preserve-3d;
+    }
+    
+    .constitution-book-cover:hover img {
+        transform: rotateY(15deg) rotateX(5deg);
+    }
+    
+    /* Legal System Gallery Enhancements */
+    .legal-image-container {
+        position: relative;
+        overflow: hidden;
+        border-radius: 15px;
+        background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 149, 0, 0.1));
+    }
+    
+    .legal-image-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+        transform: translateX(-100%);
+        transition: transform 0.6s ease;
+    }
+    
+    .legal-image-container:hover::before {
+        transform: translateX(100%);
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .constitution-book-cover img {
+            max-height: 150px;
+        }
+        
+        .legal-image-container img {
+            max-height: 100px;
+        }
+        
+        .btn-lg {
+            font-size: 0.9rem;
+            padding: 0.6rem 1.2rem;
+        }
+        
+        .indian-legal-emblem {
+            width: 180px;
+            height: 240px;
+            margin: 1rem auto;
+        }
+        
+        .emblem-outer-ring {
+            width: 140px;
+            height: 140px;
+        }
+        
+        .emblem-inner-circle {
+            width: 110px;
+            height: 110px;
+        }
+        
+        .scales-container {
+            width: 60px;
+            height: 60px;
+        }
+        
+        .sanskrit-text {
+            font-size: 14px;
+        }
+        
+        .english-text {
+            font-size: 10px;
+        }
+        
+        .legal-banner {
+            min-height: 250px;
+        }
+    }
+    
+    /* Better positioning for visual elements */
+    .legal-justice-showcase {
+        padding: 1rem;
+    }
+    
+    .justice-image-container {
+        border: 2px solid rgba(255, 215, 0, 0.3);
+        border-radius: 15px;
+        background: rgba(255, 215, 0, 0.05);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+    }
+    
+    /* Enhanced visual effects */
+    .gavel-image {
+        box-shadow: 0 4px 15px rgba(139, 69, 19, 0.3);
+    }
+    
+    .scales-image {
+        box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+    }
+    
+    .flag-image {
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* Enhanced right-side visual showcase */
+    .legal-justice-showcase {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 200px;
+    }
+    
+    /* Better visual hierarchy */
+    .justice-image-container {
+        position: relative;
+        background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 149, 0, 0.1));
+        border: 2px solid rgba(255, 215, 0, 0.4);
+        border-radius: 20px;
+        padding: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .justice-image-container:hover {
+        transform: scale(1.05);
+        box-shadow: 0 15px 40px rgba(255, 215, 0, 0.2);
+        border-color: rgba(255, 215, 0, 0.6);
+    }
+    
+    /* Improved gavel design */
+    .gavel-image {
+        background: linear-gradient(45deg, #8B4513, #D2691E, #CD853F);
+        border: 2px solid rgba(139, 69, 19, 0.5);
+        box-shadow: 0 6px 20px rgba(139, 69, 19, 0.4);
+    }
+    
+    .gavel-image::after {
+        background: linear-gradient(135deg, #654321, #8B4513);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+    
+    /* Improved scales design */
+    .scales-image {
+        background: linear-gradient(135deg, #FFD700, #FFA500, #FF8C00);
+        border: 2px solid rgba(255, 215, 0, 0.6);
+        box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+    }
+    
+    .scales-image::before {
+        background: linear-gradient(135deg, #8B4513, #A0522D);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    }
+    
+    .scales-image::after {
+        background: linear-gradient(135deg, #8B4513, #A0522D);
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+    }
+    
+    /* Improved flag design */
+    .flag-image {
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+    
+    .flag-image::before {
+        background: linear-gradient(135deg, #654321, #8B4513);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    }
+    
+    /* Legal Emblem Design */
+    .legal-emblem {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 10;
+    }
+    
+    .emblem-circle {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #FFD700, #FFA500);
+        border: 3px solid #8B4513;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 8px;
+        box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+        animation: pulse 2s ease-in-out infinite;
+    }
+    
+    .emblem-icon {
+        font-size: 24px;
+        color: #8B4513;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    
+    .emblem-text {
+        font-size: 14px;
+        font-weight: bold;
+        color: #FFD700;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        font-family: 'Devanagari', serif;
+        letter-spacing: 1px;
+    }
+    
+    @keyframes pulse {
+        0%, 100% { 
+            transform: scale(1);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+        }
+        50% { 
+            transform: scale(1.1);
+            box-shadow: 0 12px 35px rgba(255, 215, 0, 0.6);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Header -->
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <div class="glass p-5 rounded-4">
+                <h1 class="display-4 text-white mb-4 floating">
+                    <i class="fas fa-book-open text-info me-3"></i>
+                    Legal Resources Library
+                </h1>
+                <p class="lead text-light mb-0">
+                    Comprehensive collection of Indian legal documents, acts, constitution, 
+                    court procedures, and legal study materials for students and professionals.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="row mb-4">
+        <div class="col-lg-8 mb-3">
+            <div class="input-group">
+                <input type="text" class="form-control search-input" id="searchInput" 
+                       placeholder="Search legal documents, acts, articles, or topics...">
+                <button class="btn btn-accent" onclick="searchResources()">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+        <div class="col-lg-4 mb-3">
+            <select class="form-control search-input" id="categoryFilter" onchange="filterByCategory()">
+                <option value="">All Categories</option>
+                <option value="constitution">Constitution of India</option>
+                <option value="acts">Central Acts</option>
+                <option value="ipc">Indian Penal Code</option>
+                <option value="crpc">Criminal Procedure Code</option>
+                <option value="cpc">Civil Procedure Code</option>
+                <option value="evidence">Evidence Act</option>
+                <option value="courts">Court Procedures</option>
+                <option value="family">Family Laws</option>
+                <option value="property">Property Laws</option>
+                <option value="labor">Labor Laws</option>
+                <option value="tax">Tax Laws</option>
+                <option value="corporate">Corporate Laws</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Category Filters -->
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <button class="category-filter active" onclick="filterCategory('all')">All Resources</button>
+            <button class="category-filter" onclick="filterCategory('constitution')">Constitution</button>
+            <button class="category-filter" onclick="filterCategory('acts')">Central Acts</button>
+            <button class="category-filter" onclick="filterCategory('ipc')">IPC</button>
+            <button class="category-filter" onclick="filterCategory('crpc')">CrPC</button>
+            <button class="category-filter" onclick="filterCategory('cpc')">CPC</button>
+            <button class="category-filter" onclick="filterCategory('courts')">Courts</button>
+            <button class="category-filter" onclick="filterCategory('family')">Family Law</button>
+            <button class="category-filter" onclick="filterCategory('property')">Property</button>
+            <button class="category-filter" onclick="filterCategory('lawyers')">Expert Lawyers</button>
+        </div>
+    </div>
+
+    <!-- Legal Justice Banner with Real Images -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="glass p-4 rounded-4 position-relative overflow-hidden legal-banner">
+                <!-- Background Legal Images -->
+                <div class="legal-bg-images">
+                    <div class="legal-bg-image legal-bg-1"></div>
+                    <div class="legal-bg-image legal-bg-2"></div>
+                    <div class="legal-bg-image legal-bg-3"></div>
+                </div>
+                
+                <div class="row align-items-center position-relative">
+                    <div class="col-md-8">
+                        <h2 class="text-white mb-3">
+                            <i class="fas fa-balance-scale text-warning me-2"></i>
+                            Justice & Legal Framework of India
+                        </h2>
+                        <p class="lead text-light mb-4">
+                            Explore the comprehensive legal system of India with our extensive collection of 
+                            constitutional documents, legal acts, and judicial resources. From the Constitution 
+                            of India to modern legal frameworks, access everything you need for legal research 
+                            and understanding.
+                        </p>
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="badge bg-warning text-dark">Constitution of India</span>
+                            <span class="badge bg-info">Legal Acts & Codes</span>
+                            <span class="badge bg-success">Court Procedures</span>
+                            <span class="badge bg-danger">Criminal Law</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <div class="legal-justice-showcase">
+                            <div class="indian-legal-emblem">
+                                <!-- Main Emblem Circle -->
+                                <div class="emblem-outer-ring">
+                                    <div class="emblem-inner-circle">
+                                        <!-- Scales of Justice -->
+                                        <div class="scales-container">
+                                            <div class="scales-beam"></div>
+                                            <div class="scales-left-pan"></div>
+                                            <div class="scales-right-pan"></div>
+                                            <div class="scales-post"></div>
+                                        </div>
+                                        
+                                        <!-- Indian Flag Elements -->
+                                        <div class="flag-elements">
+                                            <div class="ashoka-chakra">
+                                                <div class="chakra-spokes"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Sanskrit Text -->
+                                <div class="emblem-motto">
+                                    <div class="sanskrit-text">सत्यमेव जयते</div>
+                                    <div class="english-text">Truth Alone Triumphs</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resources Grid -->
+    <div id="resourcesGrid" class="row g-4 mb-5">
+        <!-- Resources will be loaded here -->
+    </div>
+
+    <!-- Constitution Book Reading Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="glass p-5 rounded-4">
+                <div class="row align-items-center">
+                    <div class="col-md-3 text-center mb-4 mb-md-0">
+                        <div class="constitution-book-cover">
+                            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjI2MCIgdmlld0JveD0iMCAwIDIwMCAyNjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjYwIiBmaWxsPSIjMUEyMzM4IiBzdHJva2U9IiNGRkQ3MDAiIHN0cm9rZS13aWR0aD0iNCIvPgo8cmVjdCB4PSIxMCIgeT0iMTAiIHdpZHRoPSIxODAiIGhlaWdodD0iMjQwIiBmaWxsPSIjMkQzNzQ4Ii8+Cjx0ZXh0IHg9IjEwMCIgeT0iNDAiIGZpbGw9IiNGRkQ3MDAiIGZvbnQtZmFtaWx5PSJzZXJpZiIgZm9udC1zaXplPSIxOCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkNPTlNUSVRVVElPTjwvdGV4dD4KPHR4dCB4PSIxMDAiIHk9IjcwIiBmaWxsPSIjRkZEN0EwIiBmb250LWZhbWlseT0ic2VyaWYiIGZvbnQtc2l6ZT0iMTQiIHRleHQtYW5jaG9yPSJtaWRkbGUiPk9GPC90ZXh0Pgo8dGV4dCB4PSIxMDAiIHk9IjEwMCIgZmlsbD0iI0ZGRDcwMCIgZm9udC1mYW1pbHk9InNlcmlmIiBmb250LXNpemU9IjE4IiBmb250LXdlaWdodD0iYm9sZCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+SU5ESUE8L3RleHQ+CjxjaXJjbGUgY3g9IjEwMCIgY3k9IjE0MCIgcj0iMjAiIGZpbGw9IiNGRkQ3MDAiLz4KPHN2ZyB4PSI4NSIgeT0iMTI1IiB3aWR0aD0iMzAiIGhlaWdodD0iMzAiPgo8cGF0aCBkPSJNMTUgNUwxNSAyNUwyNSAxNUwxNSA1WiIgZmlsbD0iIzFBMjMzOCIvPgo8L3N2Zz4KPC9zdmc+" 
+                                 alt="Constitution of India Book Cover" class="img-fluid shadow-lg" 
+                                 style="max-height: 200px; border-radius: 10px;">
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <h2 class="text-white mb-3">
+                            <i class="fas fa-book-reader text-warning me-2"></i>
+                            Read the Constitution of India
+                        </h2>
+                        <p class="text-light mb-4">
+                            Access the complete Constitution of India in PDF format. This comprehensive document 
+                            contains all articles, amendments, and schedules that form the supreme law of our nation. 
+                            Perfect for students, legal professionals, and citizens who want to understand their 
+                            fundamental rights and duties.
+                        </p>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <h5 class="text-info mb-2">What's Inside:</h5>
+                                <ul class="text-light">
+                                    <li>Preamble & Fundamental Rights</li>
+                                    <li>Directive Principles of State Policy</li>
+                                    <li>Fundamental Duties</li>
+                                    <li>Union & State Governments</li>
+                                    <li>Constitutional Amendments</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h5 class="text-info mb-2">Key Features:</h5>
+                                <ul class="text-light">
+                                    <li>Complete 395 Articles</li>
+                                    <li>12 Schedules</li>
+                                    <li>All 105 Amendments (as of 2024)</li>
+                                    <li>Searchable PDF Format</li>
+                                    <li>Official Government Version</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex flex-wrap gap-3">
+                            <a href="https://cdnbbsr.s3waas.gov.in/s380537a945c7aaa788ccfcdf1b99b5d8f/uploads/2023/05/2023050195.pdf" 
+                               target="_blank" class="btn btn-warning btn-lg">
+                                <i class="fas fa-book-open me-2"></i>Read Full Constitution
+                            </a>
+                            <a href="https://legislative.gov.in/sites/default/files/COI_1.pdf" 
+                               target="_blank" class="btn btn-success btn-lg">
+                                <i class="fas fa-file-pdf me-2"></i>Legislative Dept PDF
+                            </a>
+                            <button class="btn btn-outline-light btn-lg" onclick="showConstitutionPreview()">
+                                <i class="fas fa-eye me-2"></i>Preview Articles
+                            </button>
+                            <a href="https://www.constitutionofindia.net/" 
+                               target="_blank" class="btn btn-info btn-lg">
+                                <i class="fas fa-globe me-2"></i>Online Version
+                            </a>
+                            <a href="https://www.mea.gov.in/Images/pdf1/S01.pdf" 
+                               target="_blank" class="btn btn-secondary btn-lg">
+                                <i class="fas fa-download me-2"></i>MEA Version
+                            </a>
+                        </div>
+                        
+                        <div class="mt-3">
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Official document from the Government of India | Last updated: 2024
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Legal System Visual Gallery with Real Images -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="text-white text-center mb-4">
+                <i class="fas fa-landmark text-warning me-2"></i>
+                Indian Legal System
+            </h2>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="glass p-4 rounded-4 h-100 text-center legal-card-with-bg">
+                <div class="legal-image-container mb-3 indian-flag-bg">
+                    <div class="tricolor-flag">
+                        <div class="saffron-stripe"></div>
+                        <div class="white-stripe">
+                            <div class="ashoka-chakra"></div>
+                        </div>
+                        <div class="green-stripe"></div>
+                    </div>
+                </div>
+                <h4 class="text-white mb-2">Constitutional Framework</h4>
+                <p class="text-light">
+                    The Constitution of India is the supreme law that governs our democratic republic, 
+                    ensuring justice, liberty, equality, and fraternity for all citizens.
+                </p>
+                <a href="https://legislative.gov.in/sites/default/files/COI_1.pdf" target="_blank" 
+                   class="btn btn-warning btn-sm">
+                    <i class="fas fa-book me-1"></i>Read Constitution
+                </a>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="glass p-4 rounded-4 h-100 text-center legal-card-with-bg">
+                <div class="legal-image-container mb-3 gavel-bg">
+                    <div class="legal-gavel">
+                        <div class="gavel-head"></div>
+                        <div class="gavel-handle"></div>
+                        <div class="gavel-base"></div>
+                    </div>
+                </div>
+                <h4 class="text-white mb-2">Judicial System</h4>
+                <p class="text-light">
+                    India's three-tier judicial system with the Supreme Court, High Courts, and 
+                    subordinate courts ensures justice delivery and protection of fundamental rights.
+                </p>
+                <a href="https://main.sci.gov.in" target="_blank" 
+                   class="btn btn-info btn-sm">
+                    <i class="fas fa-university me-1"></i>Supreme Court
+                </a>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="glass p-4 rounded-4 h-100 text-center legal-card-with-bg">
+                <div class="legal-image-container mb-3 scales-bg">
+                    <div class="justice-scales">
+                        <div class="scales-beam"></div>
+                        <div class="scales-left-pan"></div>
+                        <div class="scales-right-pan"></div>
+                        <div class="scales-post"></div>
+                    </div>
+                </div>
+                <h4 class="text-white mb-2">Legal Equality</h4>
+                <p class="text-light">
+                    The principle of equality before law ensures that justice is blind to social status, 
+                    religion, caste, or economic background, providing equal treatment to all.
+                </p>
+                <a href="https://nalsa.gov.in" target="_blank" 
+                   class="btn btn-success btn-sm">
+                    <i class="fas fa-balance-scale me-1"></i>Legal Aid
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Legal Links -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="glass p-4 rounded-4">
+                <h3 class="text-white text-center mb-4">
+                    <i class="fas fa-external-link-alt text-info me-2"></i>
+                    Essential Legal Resources & Links
+                </h3>
+                <div class="row">
+                    <div class="col-md-3 mb-3 legal-links">
+                        <h5 class="text-warning">Government Portals</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="https://www.india.gov.in" target="_blank">India.gov.in - National Portal</a></li>
+                            <li><a href="https://lawmin.gov.in" target="_blank">Ministry of Law & Justice</a></li>
+                            <li><a href="https://legislative.gov.in" target="_blank">Legislative Department</a></li>
+                            <li><a href="https://doj.gov.in" target="_blank">Department of Justice</a></li>
+                            <li><a href="https://www.mha.gov.in" target="_blank">Ministry of Home Affairs</a></li>
+                            <li><a href="https://www.indiacode.nic.in" target="_blank">India Code - All Acts</a></li>
+                            <li><a href="https://prsindia.org" target="_blank">PRS Legislative Research</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-3 mb-3 legal-links">
+                        <h5 class="text-warning">Courts & Judiciary</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="https://main.sci.gov.in" target="_blank">Supreme Court of India</a></li>
+                            <li><a href="https://ecourts.gov.in" target="_blank">eCourts Services</a></li>
+                            <li><a href="https://njdg.ecourts.gov.in" target="_blank">National Judicial Data Grid</a></li>
+                            <li><a href="https://districts.ecourts.gov.in" target="_blank">District Courts Portal</a></li>
+                            <li><a href="https://hcservices.ecourts.gov.in" target="_blank">High Courts Services</a></li>
+                            <li><a href="https://www.delhihighcourt.nic.in" target="_blank">Delhi High Court</a></li>
+                            <li><a href="https://bombayhighcourt.nic.in" target="_blank">Bombay High Court</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-3 mb-3 legal-links">
+                        <h5 class="text-warning">Legal Aid & Services</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="https://nalsa.gov.in" target="_blank">NALSA - Free Legal Aid</a></li>
+                            <li><a href="https://tele-law.in" target="_blank">Tele-Law Services</a></li>
+                            <li><a href="https://nyayamitra.gov.in" target="_blank">Nyaya Mitra Portal</a></li>
+                            <li><a href="https://www.legalservicesindia.com" target="_blank">Legal Services India</a></li>
+                            <li><a href="https://www.advocatekhoj.com" target="_blank">Advocate Khoj</a></li>
+                            <li><a href="https://www.lawyersclubindia.com" target="_blank">Lawyers Club India</a></li>
+                            <li><a href="https://www.lawrato.com" target="_blank">LawRato - Find Lawyers</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-3 mb-3 legal-links">
+                        <h5 class="text-warning">Legal Databases & Research</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="https://indiankanoon.org" target="_blank">Indian Kanoon - Free Cases</a></li>
+                            <li><a href="https://www.scconline.com" target="_blank">SCC Online</a></li>
+                            <li><a href="https://www.manupatra.com" target="_blank">Manupatra Legal Database</a></li>
+                            <li><a href="https://www.livelaw.in" target="_blank">Live Law News</a></li>
+                            <li><a href="https://www.barandbench.com" target="_blank">Bar & Bench</a></li>
+                            <li><a href="https://www.latestlaws.com" target="_blank">Latest Laws</a></li>
+                            <li><a href="https://www.casemine.com" target="_blank">CaseMine Legal Research</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Legal Acts & Codes Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="glass p-4 rounded-4">
+                <h3 class="text-white text-center mb-4">
+                    <i class="fas fa-scroll text-warning me-2"></i>
+                    Indian Legal Acts & Codes
+                </h3>
+                <div class="row">
+                    <div class="col-md-4 mb-3 legal-links">
+                        <h5 class="text-info">Criminal Laws</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="https://www.indiacode.nic.in/bitstream/123456789/2263/1/A1860-45.pdf" target="_blank">Indian Penal Code 1860</a></li>
+                            <li><a href="https://www.indiacode.nic.in/bitstream/123456789/2263/1/A1973-02.pdf" target="_blank">Criminal Procedure Code 1973</a></li>
+                            <li><a href="https://www.indiacode.nic.in/bitstream/123456789/2263/1/A1872-01.pdf" target="_blank">Indian Evidence Act 1872</a></li>
+                            <li><a href="https://www.indiacode.nic.in/handle/123456789/2263" target="_blank">Juvenile Justice Act 2015</a></li>
+                            <li><a href="https://www.indiacode.nic.in/handle/123456789/1988" target="_blank">Prevention of Corruption Act</a></li>
+                            <li><a href="https://www.indiacode.nic.in/handle/123456789/1362" target="_blank">Narcotic Drugs Act 1985</a></li>
+                            <li><a href="https://www.indiacode.nic.in/handle/123456789/1891" target="_blank">Arms Act 1959</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4 mb-3 legal-links">
+                        <h5 class="text-info">Civil Laws</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="https://www.indiacode.nic.in/bitstream/123456789/2263/1/A1908-05.pdf" target="_blank">Civil Procedure Code 1908</a></li>
+                            <li><a href="https://www.indiacode.nic.in/bitstream/123456789/2263/1/A1882-04.pdf" target="_blank">Transfer of Property Act 1882</a></li>
+                            <li><a href="https://www.indiacode.nic.in/bitstream/123456789/2263/1/A1872-09.pdf" target="_blank">Indian Contract Act 1872</a></li>
+                            <li><a href="https://www.indiacode.nic.in/handle/123456789/1634" target="_blank">Limitation Act 1963</a></li>
+                            <li><a href="https://www.indiacode.nic.in/handle/123456789/1891" target="_blank">Registration Act 1908</a></li>
+                            <li><a href="https://www.indiacode.nic.in/handle/123456789/1362" target="_blank">Specific Relief Act 1963</a></li>
+                            <li><a href="https://www.indiacode.nic.in/handle/123456789/1988" target="_blank">Consumer Protection Act 2019</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4 mb-3 legal-links">
+                        <h5 class="text-info">Family & Personal Laws</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="https://www.indiacode.nic.in/handle/123456789/1362" target="_blank">Hindu Marriage Act 1955</a></li>
+                            <li><a href="https://www.indiacode.nic.in/handle/123456789/1891" target="_blank">Hindu Succession Act 1956</a></li>
+                            <li><a href="https://www.indiacode.nic.in/handle/123456789/1988" target="_blank">Muslim Personal Law Act</a></li>
+                            <li><a href="https://www.indiacode.nic.in/handle/123456789/1634" target="_blank">Indian Christian Marriage Act</a></li>
+                            <li><a href="https://www.indiacode.nic.in/handle/123456789/2263" target="_blank">Protection of Women Act 2005</a></li>
+                            <li><a href="https://www.indiacode.nic.in/handle/123456789/1362" target="_blank">Dowry Prohibition Act 1961</a></li>
+                            <li><a href="https://www.indiacode.nic.in/handle/123456789/1891" target="_blank">Guardians & Wards Act 1890</a></li>
+                        </ul>
+                    </div>ative.gov.in/sites/default/files/A1908-09.pdf" target="_blank">Registration Act 1908</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4 mb-3 legal-links">
+                        <h5 class="text-info">Special Laws</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="https://www.indiacode.nic.in/handle/123456789/15151" target="_blank">Consumer Protection Act 2019</a></li>
+                            <li><a href="https://legislative.gov.in/sites/default/files/A1955-25.pdf" target="_blank">Hindu Marriage Act 1955</a></li>
+                            <li><a href="https://www.indiacode.nic.in/handle/123456789/1362" target="_blank">Companies Act 2013</a></li>
+                            <li><a href="https://www.indiacode.nic.in/handle/123456789/1775" target="_blank">Income Tax Act 1961</a></li>
+                            <li><a href="https://www.indiacode.nic.in/handle/123456789/1891" target="_blank">Information Technology Act 2000</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Legal Forms & Templates -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="glass p-4 rounded-4">
+                <h3 class="text-white text-center mb-4">
+                    <i class="fas fa-file-contract text-success me-2"></i>
+                    Legal Forms & Templates
+                </h3>
+                <div class="row">
+                    <div class="col-md-3 mb-3 legal-links">
+                        <h5 class="text-success">Court Forms</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="https://main.sci.gov.in/forms" target="_blank">Supreme Court Forms</a></li>
+                            <li><a href="https://ecourts.gov.in/ecourts_home/static/manuals/Forms.pdf" target="_blank">High Court Forms</a></li>
+                            <li><a href="https://districts.ecourts.gov.in/forms" target="_blank">District Court Forms</a></li>
+                            <li><a href="https://nalsa.gov.in/forms" target="_blank">Legal Aid Forms</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-3 mb-3 legal-links">
+                        <h5 class="text-success">Consumer Forms</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="https://consumerhelpline.gov.in/forms.php" target="_blank">Consumer Complaint Form</a></li>
+                            <li><a href="https://edaakhil.nic.in" target="_blank">Online Consumer Filing</a></li>
+                            <li><a href="https://www.ncdrc.nic.in/forms.html" target="_blank">National Commission Forms</a></li>
+                            <li><a href="https://consumerhelpline.gov.in" target="_blank">Consumer Helpline</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-3 mb-3 legal-links">
+                        <h5 class="text-success">Property Documents</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="https://igrsup.gov.in/igrsup/defaultAction" target="_blank">Property Registration UP</a></li>
+                            <li><a href="https://webland.ap.gov.in" target="_blank">AP Land Records</a></li>
+                            <li><a href="https://webland.kar.nic.in" target="_blank">Karnataka Bhoomi</a></li>
+                            <li><a href="https://mahabhulekh.maharashtra.gov.in" target="_blank">Maharashtra Bhulekh</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-3 mb-3 legal-links">
+                        <h5 class="text-success">Legal Templates</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="https://www.lawrato.com/legal-documents" target="_blank">Lawrato Templates</a></li>
+                            <li><a href="https://vakilsearch.com/legal-documents" target="_blank">VakilSearch Documents</a></li>
+                            <li><a href="https://cleartax.in/s/legal-documents" target="_blank">ClearTax Legal Docs</a></li>
+                            <li><a href="https://www.indiafilings.com/legal-documents" target="_blank">IndiaFilings Templates</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Legal Education & Resources -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="glass p-4 rounded-4">
+                <h3 class="text-white text-center mb-4">
+                    <i class="fas fa-graduation-cap text-primary me-2"></i>
+                    Legal Education & Study Resources
+                </h3>
+                <div class="row">
+                    <div class="col-md-4 mb-3 legal-links">
+                        <h5 class="text-primary">Law Schools & Universities</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="https://www.nls.ac.in" target="_blank">National Law School Bangalore</a></li>
+                            <li><a href="https://www.nujs.edu" target="_blank">NUJS Kolkata</a></li>
+                            <li><a href="https://www.nalsar.ac.in" target="_blank">NALSAR Hyderabad</a></li>
+                            <li><a href="https://www.nlu-delhi.ac.in" target="_blank">NLU Delhi</a></li>
+                            <li><a href="https://www.gujaratnlu.ac.in" target="_blank">Gujarat National Law University</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4 mb-3 legal-links">
+                        <h5 class="text-primary">Legal Journals & Publications</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="https://www.scconline.com/blog/" target="_blank">SCC Blog</a></li>
+                            <li><a href="https://www.barandbench.com" target="_blank">Bar & Bench</a></li>
+                            <li><a href="https://www.livelaw.in" target="_blank">Live Law</a></li>
+                            <li><a href="https://www.thehindu.com/news/national/" target="_blank">The Hindu Legal News</a></li>
+                            <li><a href="https://www.business-standard.com/category/current-affairs-news-national-1150101.htm" target="_blank">Business Standard Legal</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4 mb-3 legal-links">
+                        <h5 class="text-primary">Online Legal Courses</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="https://www.coursera.org/browse/social-sciences/law" target="_blank">Coursera Law Courses</a></li>
+                            <li><a href="https://www.edx.org/learn/law" target="_blank">edX Legal Studies</a></li>
+                            <li><a href="https://www.udemy.com/topic/law/" target="_blank">Udemy Law Courses</a></li>
+                            <li><a href="https://swayam.gov.in/explorer?category=Law" target="_blank">SWAYAM Legal Courses</a></li>
+                            <li><a href="https://www.lawctopus.com" target="_blank">Lawctopus Resources</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Additional Legal Resources -->
+                <div class="row mt-4">
+                    <div class="col-md-3 mb-3 legal-links">
+                        <h5 class="text-success">Corporate & Business Laws</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="https://www.indiacode.nic.in/handle/123456789/2263" target="_blank">Companies Act 2013</a></li>
+                            <li><a href="https://www.indiacode.nic.in/handle/123456789/1362" target="_blank">Partnership Act 1932</a></li>
+                            <li><a href="https://www.indiacode.nic.in/handle/123456789/1891" target="_blank">Limited Liability Partnership Act</a></li>
+                            <li><a href="https://www.indiacode.nic.in/handle/123456789/1988" target="_blank">SEBI Act 1992</a></li>
+                            <li><a href="https://www.indiacode.nic.in/handle/123456789/1634" target="_blank">Competition Act 2002</a></li>
+                            <li><a href="https://www.indiacode.nic.in/handle/123456789/2263" target="_blank">Insolvency & Bankruptcy Code</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-3 mb-3 legal-links">
+                        <h5 class="text-success">Labor & Employment Laws</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="https://www.indiacode.nic.in/handle/123456789/1362" target="_blank">Industrial Disputes Act 1947</a></li>
+                            <li><a href="https://www.indiacode.nic.in/handle/123456789/1891" target="_blank">Factories Act 1948</a></li>
+                            <li><a href="https://www.indiacode.nic.in/handle/123456789/1988" target="_blank">Minimum Wages Act 1948</a></li>
+                            <li><a href="https://www.indiacode.nic.in/handle/123456789/1634" target="_blank">Payment of Wages Act 1936</a></li>
+                            <li><a href="https://www.indiacode.nic.in/handle/123456789/2263" target="_blank">Employees' Provident Fund Act</a></li>
+                            <li><a href="https://www.indiacode.nic.in/handle/123456789/1362" target="_blank">Contract Labour Act 1970</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-3 mb-3 legal-links">
+                        <h5 class="text-success">Tax & Revenue Laws</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="https://www.indiacode.nic.in/handle/123456789/1891" target="_blank">Income Tax Act 1961</a></li>
+                            <li><a href="https://www.indiacode.nic.in/handle/123456789/1988" target="_blank">Goods & Services Tax Act</a></li>
+                            <li><a href="https://www.indiacode.nic.in/handle/123456789/1634" target="_blank">Customs Act 1962</a></li>
+                            <li><a href="https://www.indiacode.nic.in/handle/123456789/2263" target="_blank">Central Excise Act 1944</a></li>
+                            <li><a href="https://www.indiacode.nic.in/handle/123456789/1362" target="_blank">Wealth Tax Act 1957</a></li>
+                            <li><a href="https://www.indiacode.nic.in/handle/123456789/1891" target="_blank">Service Tax Rules</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-3 mb-3 legal-links">
+                        <h5 class="text-success">Property & Land Laws</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="https://www.indiacode.nic.in/handle/123456789/1988" target="_blank">Real Estate Regulation Act</a></li>
+                            <li><a href="https://www.indiacode.nic.in/handle/123456789/1634" target="_blank">Land Acquisition Act 2013</a></li>
+                            <li><a href="https://www.indiacode.nic.in/handle/123456789/2263" target="_blank">Urban Land Ceiling Act</a></li>
+                            <li><a href="https://www.indiacode.nic.in/handle/123456789/1362" target="_blank">Rent Control Acts</a></li>
+                            <li><a href="https://www.indiacode.nic.in/handle/123456789/1891" target="_blank">Stamp Act 1899</a></li>
+                            <li><a href="https://www.indiacode.nic.in/handle/123456789/1988" target="_blank">Benami Transactions Act</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Legal Forms & Templates -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <h4 class="text-center text-warning mb-3">
+                            <i class="fas fa-file-contract me-2"></i>Legal Forms & Templates
+                        </h4>
+                    </div>
+                    <div class="col-md-3 mb-3 legal-links">
+                        <h5 class="text-primary">Court Forms</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="https://main.sci.gov.in/forms" target="_blank">Supreme Court Forms</a></li>
+                            <li><a href="https://ecourts.gov.in/ecourts_home/static/manuals/Forms.pdf" target="_blank">eCourts Forms</a></li>
+                            <li><a href="https://districts.ecourts.gov.in/forms" target="_blank">District Court Forms</a></li>
+                            <li><a href="https://nalsa.gov.in/forms" target="_blank">Legal Aid Forms</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-3 mb-3 legal-links">
+                        <h5 class="text-primary">Business Forms</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="https://www.mca.gov.in/content/mca/global/en/mca/master-data/forms.html" target="_blank">Company Registration Forms</a></li>
+                            <li><a href="https://www.gst.gov.in/forms" target="_blank">GST Registration Forms</a></li>
+                            <li><a href="https://www.incometaxindia.gov.in/forms" target="_blank">Income Tax Forms</a></li>
+                            <li><a href="https://www.sebi.gov.in/forms" target="_blank">SEBI Forms</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-3 mb-3 legal-links">
+                        <h5 class="text-primary">Property Forms</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="https://igrsup.gov.in/igrsup/forms" target="_blank">Property Registration Forms</a></li>
+                            <li><a href="https://rera.gov.in/forms" target="_blank">RERA Complaint Forms</a></li>
+                            <li><a href="https://www.registrationdept.gov.in/forms" target="_blank">Stamp Duty Forms</a></li>
+                            <li><a href="https://landrecords.gov.in/forms" target="_blank">Land Records Forms</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-3 mb-3 legal-links">
+                        <h5 class="text-primary">Consumer Forms</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="https://consumerhelpline.gov.in/forms" target="_blank">Consumer Complaint Forms</a></li>
+                            <li><a href="https://www.rbi.org.in/forms" target="_blank">Banking Complaint Forms</a></li>
+                            <li><a href="https://www.irda.gov.in/forms" target="_blank">Insurance Complaint Forms</a></li>
+                            <li><a href="https://www.trai.gov.in/forms" target="_blank">Telecom Complaint Forms</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lawyers Section -->
+    <div class="lawyers-section mb-5">
+        <div class="text-center py-5">
+            <div class="glass p-4 rounded-4">
+                <i class="fas fa-users fa-3x text-info mb-3"></i>
+                <h3 class="text-white mb-3">Find Expert Lawyers</h3>
+                <p class="text-light mb-4">Connect with verified legal professionals. Search by specialization, location, and experience.</p>
+                <div class="d-flex justify-content-center align-items-center">
+                    <div class="spinner-border text-info me-3" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <span class="text-light">Loading expert lawyers...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Document Viewer -->
+    <div id="documentViewer" class="document-viewer" style="display: none;">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="text-white mb-0" id="documentTitle">Document Title</h3>
+            <div>
+                <button class="btn download-btn me-2" onclick="downloadDocument()">
+                    <i class="fas fa-download me-2"></i>Download PDF
+                </button>
+                <button class="btn btn-outline-light" onclick="closeDocument()">
+                    <i class="fas fa-times me-2"></i>Close
+                </button>
+            </div>
+        </div>
+        <div id="documentContent" class="document-content">
+            <!-- Document content will be loaded here -->
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let allResources = [];
+    let displayedResources = [];
+    let currentFilter = 'all';
+    
+    // Past Legal Cases Database for Chatbot Integration
+    const pastLegalCases = [
+        {
+            id: 1,
+            title: "Vishaka vs State of Rajasthan (1997)",
+            category: "workplace_harassment",
+            keywords: ["harassment", "workplace", "women", "safety", "sexual harassment"],
+            facts: "Sexual harassment at workplace case that led to Vishaka Guidelines",
+            judgment: "Supreme Court laid down guidelines for prevention of sexual harassment at workplace",
+            precedent: "Established employer liability for workplace harassment prevention",
+            relevantLaw: "Article 14, 15, 19(1)(g) of Constitution"
+        },
+        {
+            id: 2,
+            title: "Mohd. Ahmed Khan vs Shah Bano Begum (1985)",
+            category: "family_law",
+            keywords: ["divorce", "maintenance", "muslim", "personal law", "alimony"],
+            facts: "Muslim woman sought maintenance from divorced husband under CrPC Section 125",
+            judgment: "Supreme Court held that divorced Muslim women entitled to maintenance",
+            precedent: "Uniform civil code debate and personal law vs constitutional rights",
+            relevantLaw: "Section 125 CrPC, Muslim Personal Law"
+        },
+        {
+            id: 3,
+            title: "Kesavananda Bharati vs State of Kerala (1973)",
+            category: "constitutional_law",
+            keywords: ["constitution", "amendment", "basic structure", "fundamental rights"],
+            facts: "Challenge to constitutional amendments affecting fundamental rights",
+            judgment: "Basic Structure Doctrine - Parliament cannot alter basic structure of Constitution",
+            precedent: "Limits on Parliament's power to amend Constitution",
+            relevantLaw: "Article 368, Fundamental Rights"
+        },
+        {
+            id: 4,
+            title: "Maneka Gandhi vs Union of India (1978)",
+            category: "fundamental_rights",
+            keywords: ["passport", "personal liberty", "due process", "article 21"],
+            facts: "Passport impounded without hearing, challenging Article 21 scope",
+            judgment: "Article 21 includes right to travel abroad and due process",
+            precedent: "Expanded interpretation of life and personal liberty",
+            relevantLaw: "Article 21, 14, 19 of Constitution"
+        },
+        {
+            id: 5,
+            title: "MC Mehta vs Union of India (1987)",
+            category: "environmental_law",
+            keywords: ["pollution", "environment", "ganga", "industrial waste", "public interest"],
+            facts: "PIL against pollution of River Ganga by industrial waste",
+            judgment: "Industries must treat effluents before discharge, compensation for pollution",
+            precedent: "Polluter pays principle and environmental protection",
+            relevantLaw: "Article 21, 48A, 51A(g) of Constitution"
+        },
+        {
+            id: 6,
+            title: "Indra Sawhney vs Union of India (1992)",
+            category: "reservation",
+            keywords: ["reservation", "obc", "backward classes", "equality", "mandal commission"],
+            facts: "Challenge to OBC reservations in government jobs",
+            judgment: "OBC reservation valid but creamy layer to be excluded, 50% ceiling",
+            precedent: "Reservation policy framework and equality principle",
+            relevantLaw: "Article 15(4), 16(4) of Constitution"
+        },
+        {
+            id: 7,
+            title: "Olga Tellis vs Bombay Municipal Corporation (1985)",
+            category: "fundamental_rights",
+            keywords: ["slum", "eviction", "livelihood", "right to life", "pavement dwellers"],
+            facts: "Pavement dwellers challenged eviction without alternative rehabilitation",
+            judgment: "Right to livelihood is part of right to life under Article 21",
+            precedent: "Expanded scope of Article 21 to include livelihood rights",
+            relevantLaw: "Article 21, 19(1)(e), 19(1)(g) of Constitution"
+        },
+        {
+            id: 8,
+            title: "Hussainara Khatoon vs Home Secretary Bihar (1979)",
+            category: "criminal_law",
+            keywords: ["undertrial", "speedy trial", "legal aid", "prison reform"],
+            facts: "Undertrials in Bihar jails for years without trial",
+            judgment: "Right to speedy trial and free legal aid for poor accused",
+            precedent: "Prison reforms and undertrial rights",
+            relevantLaw: "Article 21, 22 of Constitution, Section 304 CrPC"
+        },
+        {
+            id: 9,
+            title: "Bachan Singh vs State of Punjab (1980)",
+            category: "criminal_law",
+            keywords: ["death penalty", "capital punishment", "rarest of rare", "murder"],
+            facts: "Constitutional validity of death penalty under IPC Section 302",
+            judgment: "Death penalty constitutional but only in 'rarest of rare' cases",
+            precedent: "Guidelines for awarding death penalty",
+            relevantLaw: "Article 21, Section 302 IPC"
+        },
+        {
+            id: 10,
+            title: "Bandhua Mukti Morcha vs Union of India (1984)",
+            category: "labor_law",
+            keywords: ["bonded labor", "forced labor", "rehabilitation", "human rights"],
+            facts: "PIL for release and rehabilitation of bonded laborers",
+            judgment: "State duty to identify, release and rehabilitate bonded laborers",
+            precedent: "State responsibility for bonded labor eradication",
+            relevantLaw: "Article 23, 24 of Constitution, Bonded Labour Act 1976"
+        },
+        {
+            id: 11,
+            title: "Sunil Batra vs Delhi Administration (1978)",
+            category: "prison_rights",
+            keywords: ["prison", "torture", "human rights", "prisoner rights", "custodial violence"],
+            facts: "Prisoner's letter about torture and inhuman treatment in jail",
+            judgment: "Prisoners retain fundamental rights, prohibition of torture",
+            precedent: "Prisoner rights and prison reforms",
+            relevantLaw: "Article 21, 14 of Constitution"
+        },
+        {
+            id: 12,
+            title: "Sheela Barse vs State of Maharashtra (1983)",
+            category: "women_rights",
+            keywords: ["women", "custody", "police", "rape", "custodial violence"],
+            facts: "Women in police custody subjected to rape and torture",
+            judgment: "Guidelines for arrest and custody of women",
+            precedent: "Protection of women in police custody",
+            relevantLaw: "Article 21, 14 of Constitution"
+        },
+        {
+            id: 13,
+            title: "Francis Coralie Mullin vs Administrator UT Delhi (1981)",
+            category: "fundamental_rights",
+            keywords: ["foreign national", "deportation", "personal liberty", "due process"],
+            facts: "Foreign national's deportation without proper procedure",
+            judgment: "Article 21 applies to all persons, not just citizens",
+            precedent: "Extended Article 21 protection to non-citizens",
+            relevantLaw: "Article 21 of Constitution"
+        },
+        {
+            id: 14,
+            title: "Parmanand Katara vs Union of India (1989)",
+            category: "medical_law",
+            keywords: ["medical treatment", "emergency", "doctor duty", "right to health"],
+            facts: "Doctors refusing to treat accident victims without police clearance",
+            judgment: "Doctors have professional duty to provide emergency medical aid",
+            precedent: "Right to emergency medical treatment",
+            relevantLaw: "Article 21 of Constitution"
+        },
+        {
+            id: 15,
+            title: "Chameli Singh vs State of UP (1996)",
+            category: "housing_rights",
+            keywords: ["housing", "shelter", "right to life", "basic needs"],
+            facts: "Right to shelter as part of right to life",
+            judgment: "Right to shelter is fundamental right under Article 21",
+            precedent: "Housing as fundamental right",
+            relevantLaw: "Article 21 of Constitution"
+        }
+    ];
+    
+    // Enhanced Lawyer Database with Diverse Profiles
+    const expertLawyers = [
+        {
+            id: 1,
+            full_name: "Adv. Priya Sharma",
+            specializations: "Criminal Law, Cyber Crime, Women Rights",
+            years_experience: 12,
+            rating: 4.8,
+            consultation_fee: 3500,
+            location: "Delhi High Court",
+            contact: "+91-9876543210",
+            email: "priya.sharma@legalaid.in",
+            languages: ["Hindi", "English", "Punjabi"],
+            education: "LLM from Delhi University, Bar Council of Delhi",
+            notable_cases: ["Cyber fraud case worth ₹50 lakhs", "Domestic violence landmark judgment"],
+            success_rate: 89
+        },
+        {
+            id: 2,
+            full_name: "Adv. Rajesh Kumar Patel",
+            specializations: "Corporate Law, Mergers & Acquisitions, Banking",
+            years_experience: 18,
+            rating: 4.9,
+            consultation_fee: 5000,
+            location: "Bombay High Court",
+            contact: "+91-9876543211",
+            email: "rajesh.patel@corplaw.in",
+            languages: ["English", "Hindi", "Gujarati"],
+            education: "LLM Corporate Law from Mumbai University",
+            notable_cases: ["₹500 crore merger deal", "Banking fraud recovery case"],
+            success_rate: 94
+        },
+        {
+            id: 3,
+            full_name: "Adv. Dr. Kavitha Menon",
+            specializations: "Family Law, Child Custody, Matrimonial Disputes",
+            years_experience: 15,
+            rating: 4.7,
+            consultation_fee: 2800,
+            location: "Kerala High Court",
+            contact: "+91-9876543212",
+            email: "kavitha.menon@familylaw.in",
+            languages: ["Malayalam", "English", "Tamil"],
+            education: "PhD in Family Law, LLM from Cochin University",
+            notable_cases: ["International child custody case", "Landmark alimony judgment"],
+            success_rate: 87
+        },
+        {
+            id: 4,
+            full_name: "Adv. Arjun Singh Chauhan",
+            specializations: "Constitutional Law, Public Interest Litigation, Human Rights",
+            years_experience: 22,
+            rating: 4.9,
+            consultation_fee: 4500,
+            location: "Supreme Court of India",
+            contact: "+91-9876543213",
+            email: "arjun.chauhan@constitutionallaw.in",
+            languages: ["Hindi", "English", "Rajasthani"],
+            education: "LLM Constitutional Law from JNU, Senior Advocate",
+            notable_cases: ["Environmental protection PIL", "Fundamental rights case"],
+            success_rate: 91
+        },
+        {
+            id: 5,
+            full_name: "Adv. Meera Bansal",
+            specializations: "Property Law, Real Estate, Land Acquisition",
+            years_experience: 14,
+            rating: 4.6,
+            consultation_fee: 3200,
+            location: "Punjab & Haryana High Court",
+            contact: "+91-9876543214",
+            email: "meera.bansal@propertylaw.in",
+            languages: ["Hindi", "English", "Punjabi"],
+            education: "LLM Property Law from Panjab University",
+            notable_cases: ["₹100 crore land dispute", "Real estate fraud case"],
+            success_rate: 85
+        },
+        {
+            id: 6,
+            full_name: "Adv. Deepak Agarwal",
+            specializations: "Tax Law, GST, Income Tax, Corporate Taxation",
+            years_experience: 16,
+            rating: 4.8,
+            consultation_fee: 4000,
+            location: "Calcutta High Court",
+            contact: "+91-9876543215",
+            email: "deepak.agarwal@taxlaw.in",
+            languages: ["Bengali", "Hindi", "English"],
+            education: "LLM Taxation from Calcutta University, CA",
+            notable_cases: ["₹200 crore tax evasion case", "GST compliance landmark case"],
+            success_rate: 92
+        },
+        {
+            id: 7,
+            full_name: "Adv. Shalini Reddy",
+            specializations: "Intellectual Property, Patents, Trademarks, Copyright",
+            years_experience: 11,
+            rating: 4.7,
+            consultation_fee: 3800,
+            location: "Telangana High Court",
+            contact: "+91-9876543216",
+            email: "shalini.reddy@iplaw.in",
+            languages: ["Telugu", "English", "Hindi"],
+            education: "LLM IP Law from NALSAR University",
+            notable_cases: ["Software patent infringement", "Trademark dispute resolution"],
+            success_rate: 88
+        },
+        {
+            id: 8,
+            full_name: "Adv. Vikram Joshi",
+            specializations: "Labor Law, Industrial Disputes, Employment Rights",
+            years_experience: 19,
+            rating: 4.6,
+            consultation_fee: 2900,
+            location: "Gujarat High Court",
+            contact: "+91-9876543217",
+            email: "vikram.joshi@laborlaw.in",
+            languages: ["Gujarati", "Hindi", "English"],
+            education: "LLM Labor Law from Gujarat University",
+            notable_cases: ["Industrial strike settlement", "Employee rights case"],
+            success_rate: 86
+        }
+    ];
+
+    // Enhanced Legal Resources Data with Working Links
+    const legalResources = [
+        {
+            id: 1,
+            title: "Constitution of India",
+            description: "Complete text of the Indian Constitution with all amendments, fundamental rights, directive principles, and constitutional provisions.",
+            category: "constitution",
+            icon: "fas fa-landmark",
+            color: "primary",
+            type: "document",
+            content: `
+                <h1>Constitution of India</h1>
+                
+                <h2>Preamble</h2>
+                <div class="law-section">
+                    <p><strong>WE, THE PEOPLE OF INDIA,</strong> having solemnly resolved to constitute India into a <strong>SOVEREIGN SOCIALIST SECULAR DEMOCRATIC REPUBLIC</strong> and to secure to all its citizens:</p>
+                    <ul>
+                        <li><strong>JUSTICE,</strong> social, economic and political;</li>
+                        <li><strong>LIBERTY</strong> of thought, expression, belief, faith and worship;</li>
+                        <li><strong>EQUALITY</strong> of status and of opportunity;</li>
+                        <li>And to promote among them all <strong>FRATERNITY</strong> assuring the dignity of the individual and the unity and integrity of the Nation;</li>
+                    </ul>
+                    <p><strong>IN OUR CONSTITUENT ASSEMBLY</strong> this twenty-sixth day of November, 1949, do <strong>HEREBY ADOPT, ENACT AND GIVE TO OURSELVES THIS CONSTITUTION.</strong></p>
+                </div>
+
+                <h2>Part III - Fundamental Rights</h2>
+                
+                <div class="article-number">Article 14</div>
+                <h3>Equality before law</h3>
+                <p>The State shall not deny to any person equality before the law or the equal protection of the laws within the territory of India.</p>
+
+                <div class="article-number">Article 15</div>
+                <h3>Prohibition of discrimination on grounds of religion, race, caste, sex or place of birth</h3>
+                <p>(1) The State shall not discriminate against any citizen on grounds only of religion, race, caste, sex, place of birth or any of them.</p>
+
+                <div class="article-number">Article 19</div>
+                <h3>Protection of certain rights regarding freedom of speech, etc.</h3>
+                <p>(1) All citizens shall have the right to—</p>
+                <ul>
+                    <li>(a) freedom of speech and expression;</li>
+                    <li>(b) to assemble peaceably and without arms;</li>
+                    <li>(c) to form associations or unions;</li>
+                    <li>(d) to move freely throughout the territory of India;</li>
+                    <li>(e) to reside and settle in any part of the territory of India;</li>
+                    <li>(g) to practise any profession, or to carry on any occupation, trade or business.</li>
+                </ul>
+
+                <div class="article-number">Article 21</div>
+                <h3>Protection of life and personal liberty</h3>
+                <p>No person shall be deprived of his life or personal liberty except according to procedure established by law.</p>
+
+                <div class="article-number">Article 32</div>
+                <h3>Right to Constitutional Remedies</h3>
+                <p>(1) The right to move the Supreme Court by appropriate proceedings for the enforcement of the rights conferred in this Part is guaranteed.</p>
+                <p>(2) The Supreme Court shall have power to issue writs, including writs in the nature of habeas corpus, mandamus, prohibition, certiorari and quo-warranto, whichever may be appropriate, for the enforcement of any of the rights conferred in this Part.</p>
+            `
+        },
+        {
+            id: 2,
+            title: "Indian Penal Code (IPC) 1860",
+            description: "Complete Indian Penal Code with all sections covering crimes, punishments, and criminal law provisions in India.",
+            category: "ipc",
+            icon: "fas fa-gavel",
+            color: "danger",
+            type: "document",
+            content: `
+                <h1>Indian Penal Code, 1860</h1>
+                
+                <h2>Chapter I - Introduction</h2>
+                
+                <div class="article-number">Section 1</div>
+                <h3>Title and extent of operation of the Code</h3>
+                <p>This Act shall be called the Indian Penal Code, and shall extend to the whole of India except the State of Jammu and Kashmir.</p>
+
+                <div class="article-number">Section 2</div>
+                <h3>Punishment of offences committed within India</h3>
+                <p>Every person shall be liable to punishment under this Code and not otherwise for every act or omission contrary to the provisions thereof, of which he shall be guilty within India.</p>
+
+                <h2>Chapter IV - General Exceptions</h2>
+                
+                <div class="article-number">Section 76</div>
+                <h3>Act done by a person bound, or by mistake of fact believing himself bound, by law</h3>
+                <p>Nothing is an offence which is done by a person who is, or who by reason of a mistake of fact and not by reason of a mistake of law in good faith believes himself to be, bound by law to do it.</p>
+
+                <div class="article-number">Section 79</div>
+                <h3>Act done by a person justified, or by mistake of fact believing himself justified, by law</h3>
+                <p>Nothing is an offence which is done by any person who is justified by law, or who by reason of a mistake of fact and not by reason of a mistake of law in good faith, believes himself to be justified by law, in doing it.</p>
+
+                <h2>Chapter XVI - Of Offences Affecting the Human Body</h2>
+                
+                <div class="article-number">Section 299</div>
+                <h3>Culpable homicide</h3>
+                <p>Whoever causes death by doing an act with the intention of causing death, or with the intention of causing such bodily injury as is likely to cause death, or with the knowledge that he is likely by such act to cause death, commits the offence of culpable homicide.</p>
+
+                <div class="article-number">Section 300</div>
+                <h3>Murder</h3>
+                <p>Except in the cases hereinafter excepted, culpable homicide is murder, if the act by which the death is caused is done with the intention of causing death, or—</p>
+                <ul>
+                    <li>Secondly.—If it is done with the intention of causing such bodily injury as the offender knows to be likely to cause the death of the person to whom the harm is caused.</li>
+                    <li>Thirdly.—If it is done with the intention of causing bodily injury to any person and the bodily injury intended to be inflicted is sufficient in the ordinary course of nature to cause death.</li>
+                    <li>Fourthly.—If the person committing the act knows that it is so imminently dangerous that it must, in all probability, cause death, or such bodily injury as is likely to cause death, and commits such act without any excuse for incurring the risk of causing death or such injury as aforesaid.</li>
+                </ul>
+
+                <div class="article-number">Section 302</div>
+                <h3>Punishment for murder</h3>
+                <p>Whoever commits murder shall be punished with death, or imprisonment for life, and shall also be liable to fine.</p>
+
+                <h2>Chapter XVII - Of Offences Against Property</h2>
+                
+                <div class="article-number">Section 378</div>
+                <h3>Theft</h3>
+                <p>Whoever, intending to take dishonestly any moveable property out of the possession of any person without that person's consent, moves that property in order to such taking, is said to commit theft.</p>
+
+                <div class="article-number">Section 420</div>
+                <h3>Cheating and dishonestly inducing delivery of property</h3>
+                <p>Whoever cheats and thereby dishonestly induces the person deceived to deliver any property to any person, or to make, alter or destroy the whole or any part of a valuable security, or anything which is signed or sealed, and which is capable of being converted into a valuable security, shall be punished with imprisonment of either description for a term which may extend to seven years, and shall also be liable to fine.</p>
+            `
+        },
+        {
+            id: 3,
+            title: "Code of Criminal Procedure (CrPC) 1973",
+            description: "Criminal Procedure Code governing the procedure for criminal courts, investigation, trial, and appeals in criminal cases.",
+            category: "crpc",
+            icon: "fas fa-balance-scale",
+            color: "warning",
+            type: "document",
+            content: `
+                <h1>Code of Criminal Procedure, 1973</h1>
+                
+                <h2>Chapter II - Constitution of Criminal Courts and Offices</h2>
+                
+                <div class="article-number">Section 6</div>
+                <h3>Classes of Criminal Courts</h3>
+                <p>Besides the High Court and the Courts constituted under the Army Act, 1950, the Air Force Act, 1950 and the Navy Act, 1957, there shall be, in every State, the following classes of Criminal Courts, namely:—</p>
+                <ul>
+                    <li>(a) Courts of Session;</li>
+                    <li>(b) Judicial Magistrates of the first class and, in any district, such Judicial Magistrates of the second class as the High Court may think fit to appoint;</li>
+                    <li>(c) Executive Magistrates.</li>
+                </ul>
+
+                <h2>Chapter XII - Information to the Police and their Powers to Investigate</h2>
+                
+                <div class="article-number">Section 154</div>
+                <h3>Information in cognizable cases</h3>
+                <p>(1) Every information relating to the commission of a cognizable offence, if given orally to an officer in charge of a police station, shall be reduced to writing by him or under his direction, and be read over to the informant; and every such information, whether given in writing or reduced to writing as aforesaid, shall be signed by the person giving it, and the substance thereof shall be entered in a book to be kept by such officer in such form as the State Government may prescribe in this behalf.</p>
+
+                <div class="article-number">Section 156</div>
+                <h3>Police officer's power to investigate cognizable case</h3>
+                <p>(1) Any officer in charge of a police station may, without the order of a Magistrate, investigate any cognizable case which a Court having jurisdiction over the local area within the limits of such station would have power to inquire into or try under the provisions of Chapter XIII.</p>
+
+                <h2>Chapter XVI - Of the Commencement of Proceedings before Magistrates</h2>
+                
+                <div class="article-number">Section 190</div>
+                <h3>Cognizance of offences by Magistrates</h3>
+                <p>(1) Subject to the provisions of this Chapter, any Magistrate of the first class, and any Magistrate of the second class specially empowered in this behalf, may take cognizance of any offence—</p>
+                <ul>
+                    <li>(a) upon receiving a complaint of facts which constitute such offence;</li>
+                    <li>(b) upon a police report of such facts;</li>
+                    <li>(c) upon information received from any person other than a police officer, or upon his own knowledge, that such offence has been committed.</li>
+                </ul>
+
+                <h2>Chapter XXIX - Of Bail and Bonds</h2>
+                
+                <div class="article-number">Section 436</div>
+                <h3>In what cases bail to be taken</h3>
+                <p>When any person accused of any non-bailable offence is arrested or detained without warrant by an officer in charge of a police station, or appears or is brought before a Court, he may be released on bail, but he shall not be so released if there appear reasonable grounds for believing that he has been guilty of an offence punishable with death or imprisonment for life.</p>
+
+                <div class="article-number">Section 437</div>
+                <h3>When bail may be taken in case of non-bailable offence</h3>
+                <p>(1) When any person accused of any non-bailable offence is arrested or detained without warrant by an officer in charge of a police station, or appears or is brought before a Court, he may be released on bail, but he shall not be so released if there appear reasonable grounds for believing that he has been guilty of an offence punishable with death or imprisonment for life.</p>
+            `
+        },
+        {
+            id: 4,
+            title: "Civil Procedure Code (CPC) 1908",
+            description: "Code governing civil court procedures, suits, appeals, and execution of decrees in civil matters.",
+            category: "cpc",
+            icon: "fas fa-file-alt",
+            color: "info",
+            type: "document"
+        },
+        {
+            id: 5,
+            title: "Indian Evidence Act 1872",
+            description: "Complete Evidence Act covering rules of evidence, admissibility, burden of proof, and examination of witnesses.",
+            category: "evidence",
+            icon: "fas fa-search",
+            color: "success",
+            type: "document"
+        },
+        {
+            id: 6,
+            title: "Supreme Court of India",
+            description: "Information about the Supreme Court, its jurisdiction, procedures, landmark judgments, and filing procedures.",
+            category: "courts",
+            icon: "fas fa-university",
+            color: "primary",
+            type: "document"
+        },
+        {
+            id: 7,
+            title: "High Courts of India",
+            description: "Complete information about all High Courts in India, their jurisdiction, and procedures.",
+            category: "courts",
+            icon: "fas fa-building",
+            color: "secondary",
+            type: "document"
+        },
+        {
+            id: 8,
+            title: "Hindu Marriage Act 1955",
+            description: "Complete Hindu Marriage Act covering marriage, divorce, maintenance, and custody provisions.",
+            category: "family",
+            icon: "fas fa-heart",
+            color: "danger",
+            type: "document"
+        },
+        {
+            id: 9,
+            title: "Transfer of Property Act 1882",
+            description: "Property transfer laws, sale, mortgage, lease, gift, and exchange of immovable property.",
+            category: "property",
+            icon: "fas fa-home",
+            color: "warning",
+            type: "document"
+        },
+        {
+            id: 10,
+            title: "Companies Act 2013",
+            description: "Complete Companies Act covering incorporation, management, compliance, and winding up of companies.",
+            category: "corporate",
+            icon: "fas fa-building",
+            color: "info",
+            type: "document"
+        },
+        {
+            id: 11,
+            title: "Income Tax Act 1961",
+            description: "Complete Income Tax Act with all sections, exemptions, deductions, and tax procedures.",
+            category: "tax",
+            icon: "fas fa-calculator",
+            color: "success",
+            type: "document"
+        },
+        {
+            id: 12,
+            title: "Industrial Disputes Act 1947",
+            description: "Labor law covering industrial disputes, strikes, lockouts, and labor court procedures.",
+            category: "labor",
+            icon: "fas fa-users",
+            color: "primary",
+            type: "document"
+        }
+    ];
+
+    // Load resources on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        allResources = legalResources;
+        displayedResources = allResources;
+        displayResources(displayedResources);
+        loadLawyers(); // Load lawyers from API
+    });
+
+    function displayResources(resources) {
+        const resourcesGrid = document.getElementById('resourcesGrid');
+        resourcesGrid.innerHTML = '';
+
+        resources.forEach(resource => {
+            if (resource.type === 'lawyer') {
+                // Display lawyer card
+                resourcesGrid.innerHTML += displayLawyerCard(resource.lawyerData);
+            } else {
+                // Display regular resource card
+                const resourceCard = document.createElement('div');
+                resourceCard.className = 'col-lg-4 col-md-6 mb-4';
+                
+                resourceCard.innerHTML = `
+                    <div class="card glass resource-card" onclick="openDocument(${resource.id})">
+                        <div class="card-body text-center p-4">
+                            <div class="resource-icon text-${resource.color}">
+                                <i class="${resource.icon}"></i>
+                            </div>
+                            
+                            <h5 class="text-white mb-3">${resource.title}</h5>
+                            <p class="text-light mb-3">${resource.description}</p>
+                            
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge bg-${resource.color}">${resource.category.toUpperCase()}</span>
+                                <i class="fas fa-external-link-alt text-light"></i>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                resourcesGrid.appendChild(resourceCard);
+            }
+        });
+    }
+
+    function filterCategory(category) {
+        currentFilter = category;
+        
+        // Update active button
+        document.querySelectorAll('.category-filter').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        event.target.classList.add('active');
+        
+        // Filter resources
+        if (category === 'all') {
+            displayedResources = allResources;
+        } else {
+            displayedResources = allResources.filter(resource => resource.category === category);
+        }
+        
+        displayResources(displayedResources);
+    }
+
+    function filterByCategory() {
+        const category = document.getElementById('categoryFilter').value;
+        if (category) {
+            displayedResources = allResources.filter(resource => resource.category === category);
+        } else {
+            displayedResources = allResources;
+        }
+        displayResources(displayedResources);
+    }
+
+    function searchResources() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        
+        if (searchTerm.trim() === '') {
+            displayedResources = allResources;
+        } else {
+            displayedResources = allResources.filter(resource => 
+                resource.title.toLowerCase().includes(searchTerm) ||
+                resource.description.toLowerCase().includes(searchTerm) ||
+                resource.category.toLowerCase().includes(searchTerm)
+            );
+        }
+        
+        displayResources(displayedResources);
+    }
+
+    function openDocument(resourceId) {
+        const resource = allResources.find(r => r.id === resourceId);
+        if (!resource) return;
+
+        document.getElementById('documentTitle').textContent = resource.title;
+        
+        if (resource.content) {
+            document.getElementById('documentContent').innerHTML = resource.content;
+        } else {
+            document.getElementById('documentContent').innerHTML = `
+                <div class="text-center py-5">
+                    <i class="fas fa-file-alt fa-3x text-info mb-3"></i>
+                    <h4 class="text-white mb-3">${resource.title}</h4>
+                    <p class="text-light mb-4">${resource.description}</p>
+                    <p class="text-warning">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Full document content will be available in the complete version.
+                    </p>
+                    <button class="btn btn-accent" onclick="closeDocument()">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Resources
+                    </button>
+                </div>
+            `;
+        }
+        
+        document.getElementById('resourcesGrid').style.display = 'none';
+        document.getElementById('documentViewer').style.display = 'block';
+        
+        // Scroll to top
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function closeDocument() {
+        document.getElementById('resourcesGrid').style.display = 'flex';
+        document.getElementById('documentViewer').style.display = 'none';
+    }
+
+    function downloadDocument() {
+        const title = document.getElementById('documentTitle').textContent;
+        alert(`Download functionality for "${title}" will be available in the full version. This would generate a PDF of the complete document.`);
+    }
+
+    // Load lawyers from API
+    async function loadLawyers() {
+        try {
+            const response = await fetch('/api/search-lawyers');
+            const data = await response.json();
+            
+            if (data.success && data.lawyers.length > 0) {
+                // Add lawyers to resources
+                data.lawyers.forEach((lawyer, index) => {
+                    const lawyerResource = {
+                        id: 1000 + index, // Start from 1000 to avoid conflicts
+                        title: lawyer.full_name,
+                        description: `${lawyer.specializations} | ${lawyer.years_experience} years experience | Rating: ${lawyer.rating}/5 | Fee: ₹${lawyer.consultation_fee}`,
+                        category: "lawyers",
+                        icon: "fas fa-user-tie",
+                        color: "success",
+                        type: "lawyer",
+                        lawyer_data: lawyer
+                    };
+                    allResources.push(lawyerResource);
+                });
+                
+                // Update displayed resources if showing all
+                if (currentFilter === 'all') {
+                    displayedResources = allResources;
+                    displayResources(displayedResources);
+                }
+                
+                // Update the "No Lawyers Found" message
+                updateLawyersSection(data.lawyers);
+            }
+        } catch (error) {
+            console.error('Error loading lawyers:', error);
+        }
+    }
+    
+    function updateLawyersSection(lawyers) {
+        // Find the lawyers section and update it
+        const lawyersSection = document.querySelector('.lawyers-section');
+        if (lawyersSection) {
+            lawyersSection.innerHTML = `
+                <h3 class="text-white mb-4">
+                    <i class="fas fa-users me-2"></i>
+                    Expert Lawyers Found (${lawyers.length})
+                </h3>
+                <div class="row">
+                    ${lawyers.map(lawyer => `
+                        <div class="col-md-6 mb-3">
+                            <div class="card glass">
+                                <div class="card-body">
+                                    <h5 class="text-white">${lawyer.full_name}</h5>
+                                    <p class="text-light mb-2">
+                                        <i class="fas fa-star text-warning me-1"></i>
+                                        ${lawyer.rating}/5 | ${lawyer.years_experience} years exp
+                                    </p>
+                                    <p class="text-light mb-2">
+                                        <strong>Specialization:</strong> ${lawyer.specializations}
+                                    </p>
+                                    <p class="text-light mb-2">
+                                        <strong>Court:</strong> ${lawyer.court_locations}
+                                    </p>
+                                    <p class="text-light mb-3">
+                                        <strong>Fee:</strong> ₹${lawyer.consultation_fee}
+                                    </p>
+                                    <button class="btn btn-accent btn-sm" onclick="viewLawyerProfile(${lawyer.id})">
+                                        <i class="fas fa-eye me-1"></i>View Profile
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+    }
+    
+    function viewLawyerProfile(lawyerId) {
+        const lawyer = allResources.find(r => r.lawyer_data && r.lawyer_data.id === lawyerId);
+        if (!lawyer) return;
+        
+        const lawyerData = lawyer.lawyer_data;
+        
+        document.getElementById('documentTitle').textContent = lawyerData.full_name;
+        document.getElementById('documentContent').innerHTML = `
+            <div class="lawyer-profile">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h2 class="text-info mb-3">${lawyerData.full_name}</h2>
+                        
+                        <div class="mb-4">
+                            <h4 class="text-white">Professional Details</h4>
+                            <p><strong>Bar Council ID:</strong> ${lawyerData.bar_council_id}</p>
+                            <p><strong>License Number:</strong> ${lawyerData.license_number}</p>
+                            <p><strong>Experience:</strong> ${lawyerData.years_experience} years</p>
+                            <p><strong>Rating:</strong> 
+                                <span class="text-warning">
+                                    ${'★'.repeat(Math.floor(lawyerData.rating))}${'☆'.repeat(5-Math.floor(lawyerData.rating))}
+                                </span>
+                                ${lawyerData.rating}/5
+                            </p>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h4 class="text-white">Specializations</h4>
+                            <p>${lawyerData.specializations}</p>
+                            <p><strong>Practice Areas:</strong> ${lawyerData.practice_areas}</p>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h4 class="text-white">Court & Location</h4>
+                            <p><strong>Courts:</strong> ${lawyerData.court_locations}</p>
+                            <p><strong>Office:</strong> ${lawyerData.office_address}</p>
+                            <p><strong>Timing:</strong> ${lawyerData.office_timing}</p>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h4 class="text-white">About</h4>
+                            <p>${lawyerData.bio}</p>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h4 class="text-white">Education & Certifications</h4>
+                            <p><strong>Education:</strong> ${lawyerData.education}</p>
+                            <p><strong>Certifications:</strong> ${lawyerData.certifications}</p>
+                            <p><strong>Achievements:</strong> ${lawyerData.achievements}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card glass">
+                            <div class="card-body text-center">
+                                <h5 class="text-white mb-3">Consultation Details</h5>
+                                
+                                <div class="mb-3">
+                                    <h3 class="text-success">₹${lawyerData.consultation_fee}</h3>
+                                    <small class="text-light">Consultation Fee</small>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <p class="text-light mb-1"><strong>Languages:</strong></p>
+                                    <p class="text-light">${lawyerData.languages}</p>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <p class="text-light mb-1"><strong>Consultation Modes:</strong></p>
+                                    <p class="text-light">${lawyerData.consultation_modes}</p>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <div class="row text-center">
+                                        <div class="col-4">
+                                            <h5 class="text-info">${lawyerData.total_cases}</h5>
+                                            <small class="text-light">Total Cases</small>
+                                        </div>
+                                        <div class="col-4">
+                                            <h5 class="text-success">${lawyerData.cases_won}</h5>
+                                            <small class="text-light">Cases Won</small>
+                                        </div>
+                                        <div class="col-4">
+                                            <h5 class="text-warning">${lawyerData.cases_pending}</h5>
+                                            <small class="text-light">Pending</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <button class="btn btn-success w-100 mb-2">
+                                    <i class="fas fa-calendar me-2"></i>Book Consultation
+                                </button>
+                                <button class="btn btn-outline-light w-100">
+                                    <i class="fas fa-phone me-2"></i>Contact
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.getElementById('resourcesGrid').style.display = 'none';
+        document.getElementById('documentViewer').style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Constitution and legal resource functions
+    function showConstitutionPreview() {
+        const previewContent = `
+            <h2 class="text-info mb-3">Constitution of India - Preview</h2>
+            
+            <h3 class="text-white">Preamble</h3>
+            <div class="law-section mb-4">
+                <p><strong>WE, THE PEOPLE OF INDIA,</strong> having solemnly resolved to constitute India into a <strong>SOVEREIGN SOCIALIST SECULAR DEMOCRATIC REPUBLIC</strong> and to secure to all its citizens:</p>
+                <ul>
+                    <li><strong>JUSTICE,</strong> social, economic and political;</li>
+                    <li><strong>LIBERTY</strong> of thought, expression, belief, faith and worship;</li>
+                    <li><strong>EQUALITY</strong> of status and of opportunity;</li>
+                    <li>And to promote among them all <strong>FRATERNITY</strong> assuring the dignity of the individual and the unity and integrity of the Nation;</li>
+                </ul>
+            </div>
+
+            <h3 class="text-white">Key Articles</h3>
+            <div class="article-number">Article 14</div>
+            <h4 class="text-info">Equality before law</h4>
+            <p>The State shall not deny to any person equality before the law or the equal protection of the laws within the territory of India.</p>
+
+            <div class="article-number">Article 19</div>
+            <h4 class="text-info">Freedom of speech and expression</h4>
+            <p>All citizens shall have the right to freedom of speech and expression, to assemble peaceably, to form associations, and to move freely throughout India.</p>
+
+            <div class="article-number">Article 21</div>
+            <h4 class="text-info">Protection of life and personal liberty</h4>
+            <p>No person shall be deprived of his life or personal liberty except according to procedure established by law.</p>
+
+            <div class="mt-4">
+                <a href="https://legislative.gov.in/sites/default/files/COI_1.pdf" 
+                   target="_blank" class="btn btn-warning me-2">
+                    <i class="fas fa-book-open me-2"></i>Read Complete Constitution
+                </a>
+                <a href="https://www.constitutionofindia.net/" 
+                   target="_blank" class="btn btn-info me-2">
+                    <i class="fas fa-globe me-2"></i>Online Version
+                </a>
+                <button class="btn btn-outline-light" onclick="closeDocument()">
+                    <i class="fas fa-times me-2"></i>Close Preview
+                </button>
+            </div>
+        `;
+        
+        document.getElementById('documentTitle').textContent = 'Constitution of India - Preview';
+        document.getElementById('documentContent').innerHTML = previewContent;
+        document.getElementById('resourcesGrid').style.display = 'none';
+        document.querySelector('.lawyers-section').style.display = 'none';
+        document.querySelectorAll('.row.mb-5').forEach(row => row.style.display = 'none');
+        document.getElementById('documentViewer').style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function downloadConstitution() {
+        // Show download options
+        const modal = document.createElement('div');
+        modal.className = 'modal fade show';
+        modal.style.display = 'block';
+        modal.innerHTML = `
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content glass">
+                    <div class="modal-header">
+                        <h5 class="modal-title text-white">Download Constitution of India</h5>
+                        <button type="button" class="btn-close btn-close-white" onclick="this.closest('.modal').remove()"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="text-light mb-3">Choose your preferred download source:</p>
+                        <div class="d-grid gap-2">
+                            <a href="https://legislative.gov.in/sites/default/files/COI_1.pdf" target="_blank" 
+                               class="btn btn-warning" onclick="this.closest('.modal').remove()">
+                                <i class="fas fa-download me-2"></i>Legislative Department (Official)
+                            </a>
+                            <a href="https://www.india.gov.in/sites/upload_files/npi/files/coi_part_full.pdf" target="_blank" 
+                               class="btn btn-success" onclick="this.closest('.modal').remove()">
+                                <i class="fas fa-file-pdf me-2"></i>India.gov.in (Complete)
+                            </a>
+                            <a href="https://www.constitutionofindia.net/constitution_of_india/constitution_of_india_full_text" target="_blank" 
+                               class="btn btn-info" onclick="this.closest('.modal').remove()">
+                                <i class="fas fa-globe me-2"></i>Online Text Version
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        
+        // Remove modal when clicking outside
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.remove();
+            }
+        });
+    }
+
+    // Enhanced close document function
+    function closeDocument() {
+        document.getElementById('resourcesGrid').style.display = 'flex';
+        document.querySelector('.lawyers-section').style.display = 'block';
+        document.querySelectorAll('.row.mb-5').forEach(row => row.style.display = 'flex');
+        document.getElementById('documentViewer').style.display = 'none';
+    }
+
+    // Search on Enter key
+    document.getElementById('searchInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            searchResources();
+        }
+    });
+    
+    // Function to get relevant past cases for chatbot integration
+    function getRelevantCases(query) {
+        const queryLower = query.toLowerCase();
+        const relevantCases = pastLegalCases.filter(case_ => 
+            case_.keywords.some(keyword => queryLower.includes(keyword)) ||
+            queryLower.includes(case_.category.replace('_', ' '))
+        );
+        return relevantCases.slice(0, 3); // Return top 3 relevant cases
+    }
+    
+    // Enhanced chatbot integration with past cases
+    function enhanceChatbotResponse(userQuery, baseResponse) {
+        const relevantCases = getRelevantCases(userQuery);
+        
+        if (relevantCases.length > 0) {
+            let caseExamples = "\n\n📚 **Relevant Past Cases:**\n";
+            relevantCases.forEach(case_ => {
+                caseExamples += `\n🏛️ **${case_.title}**\n`;
+                caseExamples += `   📋 Facts: ${case_.facts}\n`;
+                caseExamples += `   ⚖️ Judgment: ${case_.judgment}\n`;
+                caseExamples += `   📖 Legal Precedent: ${case_.precedent}\n`;
+                caseExamples += `   📜 Relevant Law: ${case_.relevantLaw}\n`;
+            });
+            return baseResponse + caseExamples;
+        }
+        return baseResponse;
+    }
+    
+    // Load enhanced lawyers from local database
+    async function loadLawyers() {
+        try {
+            // Use local expert lawyers database
+            const lawyers = expertLawyers;
+            
+            // Add lawyers to resources
+            lawyers.forEach((lawyer, index) => {
+                const lawyerResource = {
+                    id: 1000 + index, // Start from 1000 to avoid conflicts
+                    title: lawyer.full_name,
+                    description: `${lawyer.specializations} | ${lawyer.years_experience} years experience | Rating: ${lawyer.rating}/5 | Fee: ₹${lawyer.consultation_fee} | Success Rate: ${lawyer.success_rate}%`,
+                    category: "lawyers",
+                    icon: "fas fa-user-tie",
+                    color: "info",
+                    type: "lawyer",
+                    lawyerData: lawyer
+                };
+                
+                allResources.push(lawyerResource);
+            });
+            
+            // Update display
+            if (currentFilter === 'all' || currentFilter === 'lawyers') {
+                displayResources(displayedResources);
+            }
+            
+            // Update lawyers section
+            updateLawyersSection(lawyers);
+            
+        } catch (error) {
+            console.error('Error loading lawyers:', error);
+            // Fallback to show loading message
+            document.querySelector('.lawyers-section .glass').innerHTML = `
+                <i class="fas fa-users fa-3x text-warning mb-3"></i>
+                <h3 class="text-white mb-3">Expert Lawyers Available</h3>
+                <p class="text-light mb-4">Our network of ${expertLawyers.length} verified legal professionals is ready to assist you.</p>
+                <button class="btn btn-accent" onclick="filterCategory('lawyers')">
+                    <i class="fas fa-search me-2"></i>Browse Lawyers
+                </button>
+            `;
+        }
+    }
+    
+    // Update lawyers section with enhanced data
+    function updateLawyersSection(lawyers) {
+        const lawyersSection = document.querySelector('.lawyers-section .glass');
+        
+        lawyersSection.innerHTML = `
+            <i class="fas fa-users fa-3x text-info mb-3"></i>
+            <h3 class="text-white mb-3">Expert Legal Professionals</h3>
+            <p class="text-light mb-4">
+                Connect with ${lawyers.length} verified lawyers across India. Specializing in Criminal Law, 
+                Corporate Law, Family Law, Constitutional Law, and more.
+            </p>
+            <div class="row mb-4">
+                <div class="col-md-3 text-center">
+                    <h4 class="text-warning">${lawyers.length}</h4>
+                    <small class="text-light">Expert Lawyers</small>
+                </div>
+                <div class="col-md-3 text-center">
+                    <h4 class="text-success">${Math.round(lawyers.reduce((sum, l) => sum + l.success_rate, 0) / lawyers.length)}%</h4>
+                    <small class="text-light">Avg Success Rate</small>
+                </div>
+                <div class="col-md-3 text-center">
+                    <h4 class="text-info">${Math.round(lawyers.reduce((sum, l) => sum + l.years_experience, 0) / lawyers.length)}</h4>
+                    <small class="text-light">Avg Experience</small>
+                </div>
+                <div class="col-md-3 text-center">
+                    <h4 class="text-warning">${Math.round(lawyers.reduce((sum, l) => sum + l.rating, 0) / lawyers.length * 10) / 10}</h4>
+                    <small class="text-light">Avg Rating</small>
+                </div>
+            </div>
+            <button class="btn btn-accent btn-lg" onclick="filterCategory('lawyers')">
+                <i class="fas fa-search me-2"></i>Find Your Lawyer
+            </button>
+        `;
+    }
+    
+    // Enhanced lawyer card display
+    function displayLawyerCard(lawyer) {
+        return `
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card glass resource-card">
+                    <div class="card-body p-4">
+                        <div class="text-center mb-3">
+                            <div class="resource-icon text-info">
+                                <i class="fas fa-user-tie"></i>
+                            </div>
+                            <h5 class="text-white mb-2">${lawyer.full_name}</h5>
+                            <p class="text-warning mb-1">${lawyer.specializations}</p>
+                            <small class="text-light">${lawyer.location}</small>
+                        </div>
+                        
+                        <div class="row text-center mb-3">
+                            <div class="col-4">
+                                <h6 class="text-success mb-0">${lawyer.years_experience}</h6>
+                                <small class="text-light">Years</small>
+                            </div>
+                            <div class="col-4">
+                                <h6 class="text-warning mb-0">${lawyer.rating}/5</h6>
+                                <small class="text-light">Rating</small>
+                            </div>
+                            <div class="col-4">
+                                <h6 class="text-info mb-0">${lawyer.success_rate}%</h6>
+                                <small class="text-light">Success</small>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center mb-3">
+                            <span class="badge bg-success">₹${lawyer.consultation_fee} Consultation</span>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <small class="text-light">
+                                <i class="fas fa-language me-1"></i>
+                                ${lawyer.languages.join(', ')}
+                            </small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <small class="text-light">
+                                <i class="fas fa-graduation-cap me-1"></i>
+                                ${lawyer.education}
+                            </small>
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <a href="tel:${lawyer.contact}" class="btn btn-success btn-sm flex-fill">
+                                <i class="fas fa-phone me-1"></i>Call
+                            </a>
+                            <a href="mailto:${lawyer.email}" class="btn btn-info btn-sm flex-fill">
+                                <i class="fas fa-envelope me-1"></i>Email
+                            </a>
+                        </div>
+                        
+                        <div class="mt-2">
+                            <small class="text-muted">
+                                <i class="fas fa-trophy me-1"></i>
+                                Notable: ${lawyer.notable_cases[0]}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    // Show Constitution preview
+    function showConstitutionPreview() {
+        openDocument(1); // Open Constitution document
+    }
+    
+    // Make functions globally available
+    window.getRelevantCases = getRelevantCases;
+    window.enhanceChatbotResponse = enhanceChatbotResponse;
+</script>
+{% endblock %}

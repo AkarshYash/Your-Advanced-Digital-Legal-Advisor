@@ -1,0 +1,767 @@
+{% extends "base.html" %}
+
+{% block title %}Subject Tutor - LegalEase AI Advanced{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="glass p-4 rounded-4">
+                <h1 class="text-white mb-2">
+                    <i class="fas fa-chalkboard-teacher text-success me-2"></i>
+                    AI Subject Tutor
+                </h1>
+                <p class="text-light mb-0">
+                    Your personal AI tutor for all LLB subjects. Get detailed explanations, examples, 
+                    case studies, and exam tips tailored to your learning level.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tutor Interface -->
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="card glass h-100">
+                <div class="card-header">
+                    <h4 class="text-white mb-0">
+                        <i class="fas fa-cog text-primary me-2"></i>
+                        Tutor Settings
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <!-- Subject Selection -->
+                    <div class="mb-3">
+                        <label for="subject" class="form-label">Subject</label>
+                        <select class="form-control" id="subject" onchange="updateTopics()">
+                            <option value="">Select Subject</option>
+                            <option value="Constitutional Law">Constitutional Law</option>
+                            <option value="Contract Law">Contract Law</option>
+                            <option value="Criminal Law">Criminal Law</option>
+                            <option value="Tort Law">Tort Law</option>
+                            <option value="Property Law">Property Law</option>
+                            <option value="Family Law">Family Law</option>
+                            <option value="Administrative Law">Administrative Law</option>
+                            <option value="Company Law">Company Law</option>
+                            <option value="Labour Law">Labour Law</option>
+                            <option value="Environmental Law">Environmental Law</option>
+                            <option value="International Law">International Law</option>
+                            <option value="Jurisprudence">Jurisprudence</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Topic Selection -->
+                    <div class="mb-3">
+                        <label for="topic" class="form-label">Topic</label>
+                        <select class="form-control" id="topic">
+                            <option value="">Select Topic</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Difficulty Level -->
+                    <div class="mb-3">
+                        <label for="difficultyLevel" class="form-label">Difficulty Level</label>
+                        <select class="form-control" id="difficultyLevel">
+                            <option value="beginner">Beginner (1st-2nd Year)</option>
+                            <option value="intermediate" selected>Intermediate (3rd Year)</option>
+                            <option value="advanced">Advanced (4th-5th Year)</option>
+                            <option value="professional">Professional Level</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Question Input -->
+                    <div class="mb-3">
+                        <label for="question" class="form-label">Your Question (Optional)</label>
+                        <textarea 
+                            class="form-control" 
+                            id="question" 
+                            rows="4" 
+                            placeholder="Ask a specific question about the topic, or leave blank for general explanation...
+
+Examples:
+- What are the essential elements of a valid contract?
+- Explain the difference between murder and culpable homicide
+- How does the basic structure doctrine work?
+- What are the remedies for breach of contract?"
+                        ></textarea>
+                    </div>
+                    
+                    <!-- Quick Questions -->
+                    <div class="mb-3">
+                        <label class="form-label">Quick Questions</label>
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-outline-light btn-sm" onclick="setQuickQuestion('explain')">
+                                Explain this topic
+                            </button>
+                            <button class="btn btn-outline-light btn-sm" onclick="setQuickQuestion('examples')">
+                                Give me examples
+                            </button>
+                            <button class="btn btn-outline-light btn-sm" onclick="setQuickQuestion('cases')">
+                                Important cases
+                            </button>
+                            <button class="btn btn-outline-light btn-sm" onclick="setQuickQuestion('exam')">
+                                Exam preparation tips
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Start Tutoring Button -->
+                    <div class="d-grid">
+                        <button class="btn btn-success btn-lg" id="startTutoringBtn" onclick="startTutoring()">
+                            <i class="fas fa-play me-2"></i>
+                            Start Tutoring Session
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tutoring Content -->
+        <div class="col-lg-8">
+            <div class="card glass h-100">
+                <div class="card-header">
+                    <h4 class="text-white mb-0">
+                        <i class="fas fa-graduation-cap text-warning me-2"></i>
+                        Tutoring Session
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div id="tutoringContent">
+                        <div class="text-center py-5">
+                            <i class="fas fa-chalkboard fa-4x text-muted mb-3"></i>
+                            <h5 class="text-light">Ready to Learn</h5>
+                            <p class="text-muted">
+                                Select a subject and topic to start your personalized tutoring session
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Loading State -->
+                    <div id="tutoringLoading" style="display: none;">
+                        <div class="text-center py-5">
+                            <div class="spinner-border text-success mb-3" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <h5 class="text-white">Preparing Your Lesson...</h5>
+                            <p class="text-light">AI tutor is creating personalized content for you</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Subject Overview -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card glass">
+                <div class="card-header">
+                    <h4 class="text-white mb-0">
+                        <i class="fas fa-book text-info me-2"></i>
+                        Available Subjects & Topics
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <div class="subject-card p-3 rounded">
+                                <h6 class="text-primary mb-2">
+                                    <i class="fas fa-scroll me-2"></i>Constitutional Law
+                                </h6>
+                                <ul class="text-light small">
+                                    <li>Fundamental Rights</li>
+                                    <li>Directive Principles</li>
+                                    <li>Basic Structure Doctrine</li>
+                                    <li>Judicial Review</li>
+                                    <li>Emergency Provisions</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="subject-card p-3 rounded">
+                                <h6 class="text-success mb-2">
+                                    <i class="fas fa-handshake me-2"></i>Contract Law
+                                </h6>
+                                <ul class="text-light small">
+                                    <li>Formation of Contract</li>
+                                    <li>Consideration</li>
+                                    <li>Capacity to Contract</li>
+                                    <li>Free Consent</li>
+                                    <li>Breach and Remedies</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="subject-card p-3 rounded">
+                                <h6 class="text-danger mb-2">
+                                    <i class="fas fa-gavel me-2"></i>Criminal Law
+                                </h6>
+                                <ul class="text-light small">
+                                    <li>General Principles</li>
+                                    <li>Offenses Against Person</li>
+                                    <li>Offenses Against Property</li>
+                                    <li>General Exceptions</li>
+                                    <li>Criminal Procedure</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="subject-card p-3 rounded">
+                                <h6 class="text-warning mb-2">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>Tort Law
+                                </h6>
+                                <ul class="text-light small">
+                                    <li>Negligence</li>
+                                    <li>Defamation</li>
+                                    <li>Nuisance</li>
+                                    <li>Trespass</li>
+                                    <li>Strict Liability</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="subject-card p-3 rounded">
+                                <h6 class="text-info mb-2">
+                                    <i class="fas fa-home me-2"></i>Property Law
+                                </h6>
+                                <ul class="text-light small">
+                                    <li>Transfer of Property</li>
+                                    <li>Sale of Goods</li>
+                                    <li>Easements</li>
+                                    <li>Mortgages</li>
+                                    <li>Lease and License</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="subject-card p-3 rounded">
+                                <h6 class="text-purple mb-2">
+                                    <i class="fas fa-users me-2"></i>Family Law
+                                </h6>
+                                <ul class="text-light small">
+                                    <li>Marriage Laws</li>
+                                    <li>Divorce</li>
+                                    <li>Maintenance</li>
+                                    <li>Child Custody</li>
+                                    <li>Adoption</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .subject-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .subject-card:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateY(-5px);
+    }
+    
+    .text-purple {
+        color: #8b5cf6 !important;
+    }
+    
+    .tutoring-section {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border-left: 4px solid var(--accent-color);
+    }
+    
+    .example-box {
+        background: rgba(59, 130, 246, 0.1);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 0.5rem 0;
+    }
+    
+    .case-box {
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 0.5rem 0;
+    }
+    
+    .tip-box {
+        background: rgba(245, 158, 11, 0.1);
+        border: 1px solid rgba(245, 158, 11, 0.3);
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 0.5rem 0;
+    }
+    
+    /* Fix form control styling */
+    .form-control, .form-select {
+        background: rgba(255, 255, 255, 0.1) !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        color: white !important;
+        border-radius: 8px;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        background: rgba(255, 255, 255, 0.15) !important;
+        border-color: var(--accent-color) !important;
+        box-shadow: 0 0 0 0.2rem rgba(245, 158, 11, 0.25) !important;
+        color: white !important;
+    }
+    
+    .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.7) !important;
+    }
+    
+    .form-control option, .form-select option {
+        background: #2d3748 !important;
+        color: white !important;
+    }
+    
+    .form-label {
+        color: rgba(255, 255, 255, 0.9) !important;
+        font-weight: 500;
+    }
+    
+    /* Additional form styling for better visibility */
+    select.form-control {
+        background: rgba(30, 41, 59, 0.9) !important;
+        border: 2px solid rgba(255, 255, 255, 0.3) !important;
+        color: white !important;
+    }
+    
+    select.form-control:focus {
+        background: rgba(30, 41, 59, 0.95) !important;
+        border-color: #f59e0b !important;
+        box-shadow: 0 0 0 0.2rem rgba(245, 158, 11, 0.25) !important;
+    }
+    
+    select.form-control option {
+        background: #1e293b !important;
+        color: white !important;
+        padding: 8px;
+    }
+    
+    textarea.form-control {
+        background: rgba(30, 41, 59, 0.9) !important;
+        border: 2px solid rgba(255, 255, 255, 0.3) !important;
+        color: white !important;
+    }
+    
+    textarea.form-control:focus {
+        background: rgba(30, 41, 59, 0.95) !important;
+        border-color: #f59e0b !important;
+        box-shadow: 0 0 0 0.2rem rgba(245, 158, 11, 0.25) !important;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Subject-Topic mapping
+    const subjectTopics = {
+        "Constitutional Law": [
+            "Preamble and Basic Features",
+            "Fundamental Rights",
+            "Directive Principles of State Policy",
+            "Fundamental Duties",
+            "Union Executive",
+            "Parliament",
+            "State Executive and Legislature",
+            "Judiciary",
+            "Centre-State Relations",
+            "Emergency Provisions",
+            "Constitutional Amendments",
+            "Basic Structure Doctrine"
+        ],
+        "Contract Law": [
+            "Nature and Formation of Contract",
+            "Offer and Acceptance",
+            "Consideration",
+            "Capacity to Contract",
+            "Free Consent",
+            "Legality of Object",
+            "Void and Voidable Contracts",
+            "Performance of Contract",
+            "Breach of Contract",
+            "Remedies for Breach",
+            "Quasi Contracts",
+            "Discharge of Contract"
+        ],
+        "Criminal Law": [
+            "General Principles of Criminal Law",
+            "Stages of Crime",
+            "General Exceptions",
+            "Right of Private Defence",
+            "Offences Against Human Body",
+            "Offences Against Property",
+            "Offences Against Public Tranquility",
+            "Offences Against State",
+            "Criminal Conspiracy",
+            "Attempt and Abetment"
+        ],
+        "Tort Law": [
+            "Nature and Definition of Tort",
+            "Negligence",
+            "Defamation",
+            "Nuisance",
+            "Trespass to Person",
+            "Trespass to Land",
+            "Trespass to Goods",
+            "Strict Liability",
+            "Vicarious Liability",
+            "Remedies in Tort"
+        ],
+        "Property Law": [
+            "Transfer of Property Act",
+            "Sale of Immovable Property",
+            "Mortgage",
+            "Lease",
+            "Exchange and Gift",
+            "Easements",
+            "Sale of Goods Act",
+            "Conditions and Warranties",
+            "Transfer of Title"
+        ],
+        "Family Law": [
+            "Hindu Marriage Act",
+            "Muslim Personal Law",
+            "Christian Marriage Act",
+            "Special Marriage Act",
+            "Divorce Laws",
+            "Maintenance and Alimony",
+            "Child Custody",
+            "Adoption Laws",
+            "Succession Laws"
+        ],
+        "Administrative Law": [
+            "Nature and Scope",
+            "Separation of Powers",
+            "Delegated Legislation",
+            "Administrative Tribunals",
+            "Natural Justice",
+            "Judicial Review",
+            "Ombudsman",
+            "Public Interest Litigation"
+        ],
+        "Company Law": [
+            "Nature of Company",
+            "Incorporation of Company",
+            "Memorandum of Association",
+            "Articles of Association",
+            "Share Capital",
+            "Directors and Management",
+            "Meetings and Resolutions",
+            "Winding Up"
+        ],
+        "Labour Law": [
+            "Industrial Disputes Act",
+            "Trade Unions Act",
+            "Factories Act",
+            "Minimum Wages Act",
+            "Contract Labour Act",
+            "Workmen's Compensation",
+            "Social Security Laws"
+        ],
+        "Environmental Law": [
+            "Constitutional Provisions",
+            "Environmental Protection Act",
+            "Water and Air Pollution",
+            "Forest Conservation",
+            "Wildlife Protection",
+            "Environmental Impact Assessment",
+            "Public Interest Litigation"
+        ],
+        "International Law": [
+            "Sources of International Law",
+            "State Recognition",
+            "State Succession",
+            "Diplomatic Relations",
+            "Treaty Law",
+            "International Disputes",
+            "Human Rights",
+            "Law of Sea"
+        ],
+        "Jurisprudence": [
+            "Nature and Definition of Law",
+            "Schools of Jurisprudence",
+            "Legal Rights and Duties",
+            "Legal Personality",
+            "Ownership and Possession",
+            "Sources of Law",
+            "Justice and Equity"
+        ]
+    };
+    
+    function updateTopics() {
+        const subject = document.getElementById('subject').value;
+        const topicSelect = document.getElementById('topic');
+        
+        // Clear existing options
+        topicSelect.innerHTML = '<option value="">Select Topic</option>';
+        
+        if (subject && subjectTopics[subject]) {
+            subjectTopics[subject].forEach(topic => {
+                const option = document.createElement('option');
+                option.value = topic;
+                option.textContent = topic;
+                topicSelect.appendChild(option);
+            });
+        }
+    }
+    
+    function setQuickQuestion(type) {
+        const subject = document.getElementById('subject').value;
+        const topic = document.getElementById('topic').value;
+        const questionInput = document.getElementById('question');
+        
+        if (!subject || !topic) {
+            alert('Please select a subject and topic first');
+            return;
+        }
+        
+        const questions = {
+            'explain': `Explain ${topic} in ${subject} in detail with examples`,
+            'examples': `Give me practical examples of ${topic} in ${subject}`,
+            'cases': `What are the important cases related to ${topic} in ${subject}?`,
+            'exam': `What should I focus on for exams regarding ${topic} in ${subject}?`
+        };
+        
+        questionInput.value = questions[type];
+    }
+    
+    function startTutoring() {
+        const subject = document.getElementById('subject').value;
+        const topic = document.getElementById('topic').value;
+        const question = document.getElementById('question').value;
+        const difficultyLevel = document.getElementById('difficultyLevel').value;
+        
+        if (!subject || !topic) {
+            alert('Please select both subject and topic');
+            return;
+        }
+        
+        // Show loading state
+        document.getElementById('tutoringContent').style.display = 'none';
+        document.getElementById('tutoringLoading').style.display = 'block';
+        
+        // Disable button
+        const startBtn = document.getElementById('startTutoringBtn');
+        startBtn.disabled = true;
+        startBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Loading...';
+        
+        // Send request to API
+        fetch('/student/api/subject-tutor', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                subject: subject,
+                topic: topic,
+                question: question,
+                difficulty_level: difficultyLevel
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Hide loading state
+            document.getElementById('tutoringLoading').style.display = 'none';
+            document.getElementById('tutoringContent').style.display = 'block';
+            
+            if (data.success) {
+                displayTutoringContent(data.response, data.processing_time);
+            } else {
+                displayTutoringError(data.error || 'An error occurred during tutoring');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('tutoringLoading').style.display = 'none';
+            document.getElementById('tutoringContent').style.display = 'block';
+            displayTutoringError('Network error. Please try again.');
+        })
+        .finally(() => {
+            // Re-enable button
+            startBtn.disabled = false;
+            startBtn.innerHTML = '<i class="fas fa-play me-2"></i>Start Tutoring Session';
+        });
+    }
+    
+    function displayTutoringContent(response, processingTime) {
+        const contentDiv = document.getElementById('tutoringContent');
+        const subject = document.getElementById('subject').value;
+        const topic = document.getElementById('topic').value;
+        
+        contentDiv.innerHTML = `
+            <div class="tutoring-header mb-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="text-white mb-1">${subject}: ${topic}</h5>
+                        <small class="text-light">
+                            <i class="fas fa-clock me-1"></i>Generated in ${processingTime}s
+                        </small>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-light btn-sm" onclick="exportTutoring()">
+                            <i class="fas fa-download me-1"></i>Export
+                        </button>
+                        <button class="btn btn-outline-light btn-sm" onclick="startNewSession()">
+                            <i class="fas fa-plus me-1"></i>New Session
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tutoring-content">
+                ${formatTutoringContent(response)}
+            </div>
+            
+            <div class="tutoring-actions mt-3">
+                <div class="d-flex gap-2 flex-wrap">
+                    <button class="btn btn-primary btn-sm" onclick="askFollowUp('more_examples')">
+                        More Examples
+                    </button>
+                    <button class="btn btn-success btn-sm" onclick="askFollowUp('related_topics')">
+                        Related Topics
+                    </button>
+                    <button class="btn btn-warning btn-sm" onclick="askFollowUp('exam_questions')">
+                        Practice Questions
+                    </button>
+                    <button class="btn btn-info btn-sm" onclick="askFollowUp('case_studies')">
+                        Case Studies
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+    
+    function formatTutoringContent(response) {
+        let content = '';
+        
+        if (response.explanation) {
+            content += `
+                <div class="tutoring-section">
+                    <h6 class="text-primary mb-2"><i class="fas fa-book-open me-2"></i>Explanation</h6>
+                    <div class="text-light" style="white-space: pre-line;">${response.explanation}</div>
+                </div>
+            `;
+        }
+        
+        if (response.examples) {
+            content += `
+                <div class="example-box">
+                    <h6 class="text-info mb-2"><i class="fas fa-lightbulb me-2"></i>Examples</h6>
+                    <div class="text-light" style="white-space: pre-line;">${response.examples}</div>
+                </div>
+            `;
+        }
+        
+        if (response.cases) {
+            content += `
+                <div class="case-box">
+                    <h6 class="text-success mb-2"><i class="fas fa-gavel me-2"></i>Important Cases</h6>
+                    <div class="text-light" style="white-space: pre-line;">${response.cases}</div>
+                </div>
+            `;
+        }
+        
+        if (response.exam_tips) {
+            content += `
+                <div class="tip-box">
+                    <h6 class="text-warning mb-2"><i class="fas fa-graduation-cap me-2"></i>Exam Tips</h6>
+                    <div class="text-light" style="white-space: pre-line;">${response.exam_tips}</div>
+                </div>
+            `;
+        }
+        
+        return content;
+    }
+    
+    function displayTutoringError(errorMessage) {
+        const contentDiv = document.getElementById('tutoringContent');
+        
+        contentDiv.innerHTML = `
+            <div class="text-center py-4">
+                <i class="fas fa-exclamation-triangle fa-3x text-danger mb-3"></i>
+                <h5 class="text-white">Tutoring Error</h5>
+                <p class="text-light">${errorMessage}</p>
+                <button class="btn btn-outline-light btn-sm" onclick="startTutoring()">
+                    <i class="fas fa-refresh me-1"></i>Try Again
+                </button>
+            </div>
+        `;
+    }
+    
+    function askFollowUp(type) {
+        const subject = document.getElementById('subject').value;
+        const topic = document.getElementById('topic').value;
+        
+        const followUpQuestions = {
+            'more_examples': `Give me more practical examples of ${topic}`,
+            'related_topics': `What topics are related to ${topic} in ${subject}?`,
+            'exam_questions': `Give me practice questions on ${topic}`,
+            'case_studies': `Provide case studies related to ${topic}`
+        };
+        
+        document.getElementById('question').value = followUpQuestions[type];
+        startTutoring();
+    }
+    
+    function exportTutoring() {
+        const content = document.getElementById('tutoringContent').innerText;
+        const subject = document.getElementById('subject').value;
+        const topic = document.getElementById('topic').value;
+        
+        const exportContent = `TUTORING SESSION NOTES
+Subject: ${subject}
+Topic: ${topic}
+Date: ${new Date().toLocaleDateString()}
+
+${content}
+
+---
+Generated by LegalEase AI Advanced - Your Legal Education Companion`;
+        
+        const blob = new Blob([exportContent], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `tutoring-${subject.replace(/\s+/g, '-')}-${topic.replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+    
+    function startNewSession() {
+        document.getElementById('subject').value = '';
+        document.getElementById('topic').innerHTML = '<option value="">Select Topic</option>';
+        document.getElementById('question').value = '';
+        
+        document.getElementById('tutoringContent').innerHTML = `
+            <div class="text-center py-5">
+                <i class="fas fa-chalkboard fa-4x text-muted mb-3"></i>
+                <h5 class="text-light">Ready to Learn</h5>
+                <p class="text-muted">
+                    Select a subject and topic to start your personalized tutoring session
+                </p>
+            </div>
+        `;
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}Client Dashboard - LegalEase AI Advanced{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="glass p-4 rounded-4">
+                <h1 class="text-white mb-2">
+                    <i class="fas fa-user text-primary me-2"></i>
+                    Client Dashboard
+                </h1>
+                <p class="text-light mb-0">
+                    Welcome to your personal legal assistance dashboard. Access all your legal tools and services.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Statistics -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-3 col-md-6">
+            <div class="card glass text-center">
+                <div class="card-body p-4">
+                    <i class="fas fa-calendar fa-3x text-primary mb-3"></i>
+                    <h3 class="text-white fw-bold">{{ stats.total_appointments or 0 }}</h3>
+                    <p class="text-light mb-0">Total Appointments</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6">
+            <div class="card glass text-center">
+                <div class="card-body p-4">
+                    <i class="fas fa-comments fa-3x text-success mb-3"></i>
+                    <h3 class="text-white fw-bold">{{ stats.chat_sessions or 0 }}</h3>
+                    <p class="text-light mb-0">Chat Sessions</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6">
+            <div class="card glass text-center">
+                <div class="card-body p-4">
+                    <i class="fas fa-file-alt fa-3x text-warning mb-3"></i>
+                    <h3 class="text-white fw-bold">{{ stats.documents_analyzed or 0 }}</h3>
+                    <p class="text-light mb-0">Documents Analyzed</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6">
+            <div class="card glass text-center">
+                <div class="card-body p-4">
+                    <i class="fas fa-star fa-3x text-info mb-3"></i>
+                    <h3 class="text-white fw-bold">4.8</h3>
+                    <p class="text-light mb-0">Satisfaction Rating</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card glass h-100">
+                <div class="card-header">
+                    <h5 class="text-white mb-0">
+                        <i class="fas fa-rocket text-primary me-2"></i>
+                        Quick Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('chat.chat_interface') }}" class="btn btn-primary">
+                            <i class="fas fa-robot me-2"></i>Start AI Chat
+                        </a>
+                        <a href="{{ url_for('main.document_analysis') }}" class="btn btn-success">
+                            <i class="fas fa-file-upload me-2"></i>Analyze Document
+                        </a>
+                        <a href="{{ url_for('main.find_lawyers') }}" class="btn btn-warning">
+                            <i class="fas fa-user-tie me-2"></i>Find Lawyers
+                        </a>
+                        <a href="{{ url_for('student.student_dashboard') }}" class="btn btn-info">
+                            <i class="fas fa-graduation-cap me-2"></i>Student Tools
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card glass h-100">
+                <div class="card-header">
+                    <h5 class="text-white mb-0">
+                        <i class="fas fa-clock text-success me-2"></i>
+                        Recent Activity
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center py-3">
+                        <i class="fas fa-history fa-2x text-muted mb-2"></i>
+                        <p class="text-light">No recent activity</p>
+                        <small class="text-muted">Start using our services to see your activity here</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

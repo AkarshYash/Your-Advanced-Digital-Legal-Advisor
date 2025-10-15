@@ -1,0 +1,634 @@
+{% extends "base.html" %}
+
+{% block title %}Study Planner - LegalEase AI Advanced{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="glass p-4 rounded-4">
+                <h1 class="text-white mb-2">
+                    <i class="fas fa-calendar-alt text-info me-2"></i>
+                    AI Study Planner
+                </h1>
+                <p class="text-light mb-0">
+                    Create personalized study plans for your LLB exams with AI assistance. 
+                    Get optimized schedules, revision strategies, and milestone tracking.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Study Plan Creator -->
+    <div class="row g-4">
+        <div class="col-lg-5">
+            <div class="card glass h-100">
+                <div class="card-header">
+                    <h4 class="text-white mb-0">
+                        <i class="fas fa-plus text-success me-2"></i>
+                        Create Study Plan
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form id="studyPlanForm">
+                        <!-- Semester Selection -->
+                        <div class="mb-3">
+                            <label for="semester" class="form-label">Semester/Year</label>
+                            <select class="form-control" id="semester" required>
+                                <option value="">Select Semester</option>
+                                <option value="1st Semester">1st Semester</option>
+                                <option value="2nd Semester">2nd Semester</option>
+                                <option value="3rd Semester">3rd Semester</option>
+                                <option value="4th Semester">4th Semester</option>
+                                <option value="5th Semester">5th Semester</option>
+                                <option value="6th Semester">6th Semester</option>
+                                <option value="7th Semester">7th Semester</option>
+                                <option value="8th Semester">8th Semester</option>
+                                <option value="9th Semester">9th Semester</option>
+                                <option value="10th Semester">10th Semester</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Subjects Selection -->
+                        <div class="mb-3">
+                            <label class="form-label">Subjects</label>
+                            <div class="subjects-grid">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="constitutional" value="Constitutional Law">
+                                    <label class="form-check-label text-light" for="constitutional">Constitutional Law</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="contract" value="Contract Law">
+                                    <label class="form-check-label text-light" for="contract">Contract Law</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="criminal" value="Criminal Law">
+                                    <label class="form-check-label text-light" for="criminal">Criminal Law</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="tort" value="Tort Law">
+                                    <label class="form-check-label text-light" for="tort">Tort Law</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="property" value="Property Law">
+                                    <label class="form-check-label text-light" for="property">Property Law</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="family" value="Family Law">
+                                    <label class="form-check-label text-light" for="family">Family Law</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="administrative" value="Administrative Law">
+                                    <label class="form-check-label text-light" for="administrative">Administrative Law</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="company" value="Company Law">
+                                    <label class="form-check-label text-light" for="company">Company Law</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Exam Date -->
+                        <div class="mb-3">
+                            <label for="examDate" class="form-label">Exam Start Date</label>
+                            <input type="date" class="form-control" id="examDate" required>
+                        </div>
+                        
+                        <!-- Study Hours -->
+                        <div class="mb-3">
+                            <label for="studyHours" class="form-label">Daily Study Hours</label>
+                            <select class="form-control" id="studyHours" required>
+                                <option value="">Select Hours</option>
+                                <option value="2">2 hours/day</option>
+                                <option value="3">3 hours/day</option>
+                                <option value="4">4 hours/day</option>
+                                <option value="5">5 hours/day</option>
+                                <option value="6">6 hours/day</option>
+                                <option value="8">8 hours/day</option>
+                                <option value="10">10 hours/day</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Weak Subjects -->
+                        <div class="mb-3">
+                            <label class="form-label">Weak Subjects (Need Extra Focus)</label>
+                            <div class="weak-subjects-grid">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="weak-constitutional" value="Constitutional Law">
+                                    <label class="form-check-label text-light" for="weak-constitutional">Constitutional Law</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="weak-contract" value="Contract Law">
+                                    <label class="form-check-label text-light" for="weak-contract">Contract Law</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="weak-criminal" value="Criminal Law">
+                                    <label class="form-check-label text-light" for="weak-criminal">Criminal Law</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="weak-tort" value="Tort Law">
+                                    <label class="form-check-label text-light" for="weak-tort">Tort Law</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Study Preferences -->
+                        <div class="mb-3">
+                            <label class="form-label">Study Preferences</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="morningStudy">
+                                <label class="form-check-label text-light" for="morningStudy">Morning Study (6 AM - 10 AM)</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="eveningStudy">
+                                <label class="form-check-label text-light" for="eveningStudy">Evening Study (6 PM - 10 PM)</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="weekendExtra">
+                                <label class="form-check-label text-light" for="weekendExtra">Extra Hours on Weekends</label>
+                            </div>
+                        </div>
+                        
+                        <!-- Create Plan Button -->
+                        <div class="d-grid">
+                            <button type="button" class="btn btn-info btn-lg" id="createPlanBtn" onclick="createStudyPlan()">
+                                <i class="fas fa-magic me-2"></i>
+                                Create AI Study Plan
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Study Plan Display -->
+        <div class="col-lg-7">
+            <div class="card glass h-100">
+                <div class="card-header">
+                    <h4 class="text-white mb-0">
+                        <i class="fas fa-calendar-week text-warning me-2"></i>
+                        Your Study Plan
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div id="studyPlanContent">
+                        <div class="text-center py-5">
+                            <i class="fas fa-calendar-plus fa-4x text-muted mb-3"></i>
+                            <h5 class="text-light">Create Your Study Plan</h5>
+                            <p class="text-muted">
+                                Fill in your details and let AI create a personalized study schedule for your exams
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Loading State -->
+                    <div id="planLoading" style="display: none;">
+                        <div class="text-center py-5">
+                            <div class="spinner-border text-info mb-3" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <h5 class="text-white">Creating Your Study Plan...</h5>
+                            <p class="text-light">AI is analyzing your requirements and creating an optimized schedule</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Study Tips -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card glass">
+                <div class="card-header">
+                    <h4 class="text-white mb-0">
+                        <i class="fas fa-lightbulb text-warning me-2"></i>
+                        Study Planning Tips
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <div class="tip-card p-3 rounded">
+                                <h6 class="text-primary mb-2">
+                                    <i class="fas fa-clock me-2"></i>Time Management
+                                </h6>
+                                <ul class="text-light small">
+                                    <li>Start planning at least 2 months before exams</li>
+                                    <li>Allocate more time to difficult subjects</li>
+                                    <li>Include buffer time for unexpected delays</li>
+                                    <li>Schedule regular breaks to avoid burnout</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="tip-card p-3 rounded">
+                                <h6 class="text-success mb-2">
+                                    <i class="fas fa-repeat me-2"></i>Revision Strategy
+                                </h6>
+                                <ul class="text-light small">
+                                    <li>Plan 3 rounds of revision minimum</li>
+                                    <li>Focus on case laws and landmark judgments</li>
+                                    <li>Create summary notes for quick revision</li>
+                                    <li>Practice previous year question papers</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="tip-card p-3 rounded">
+                                <h6 class="text-warning mb-2">
+                                    <i class="fas fa-target me-2"></i>Goal Setting
+                                </h6>
+                                <ul class="text-light small">
+                                    <li>Set weekly and daily study targets</li>
+                                    <li>Track your progress regularly</li>
+                                    <li>Reward yourself for achieving milestones</li>
+                                    <li>Adjust plan based on your progress</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .subjects-grid, .weak-subjects-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 0.5rem;
+    }
+    
+    .tip-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .tip-card:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateY(-5px);
+    }
+    
+    .plan-section {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border-left: 4px solid var(--accent-color);
+    }
+    
+    .week-schedule {
+        background: rgba(59, 130, 246, 0.1);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 0.5rem 0;
+    }
+    
+    .milestone-item {
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        border-radius: 8px;
+        padding: 0.75rem;
+        margin: 0.25rem 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .progress-tracker {
+        background: rgba(245, 158, 11, 0.1);
+        border: 1px solid rgba(245, 158, 11, 0.3);
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 0.5rem 0;
+    }
+    
+    /* Fix form control styling */
+    .form-control, .form-select {
+        background: rgba(30, 41, 59, 0.9) !important;
+        border: 2px solid rgba(255, 255, 255, 0.3) !important;
+        color: white !important;
+        border-radius: 8px;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        background: rgba(30, 41, 59, 0.95) !important;
+        border-color: #f59e0b !important;
+        box-shadow: 0 0 0 0.2rem rgba(245, 158, 11, 0.25) !important;
+        color: white !important;
+    }
+    
+    .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.7) !important;
+    }
+    
+    .form-control option, .form-select option {
+        background: #1e293b !important;
+        color: white !important;
+        padding: 8px;
+    }
+    
+    .form-label {
+        color: rgba(255, 255, 255, 0.9) !important;
+        font-weight: 500;
+    }
+    
+    /* Fix checkbox and radio styling */
+    .form-check-input {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    }
+    
+    .form-check-input:checked {
+        background-color: #f59e0b !important;
+        border-color: #f59e0b !important;
+    }
+    
+    .form-check-input:focus {
+        border-color: #f59e0b !important;
+        box-shadow: 0 0 0 0.2rem rgba(245, 158, 11, 0.25) !important;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function createStudyPlan() {
+        // Get form data
+        const semester = document.getElementById('semester').value;
+        const examDate = document.getElementById('examDate').value;
+        const studyHours = document.getElementById('studyHours').value;
+        
+        // Get selected subjects
+        const subjects = [];
+        document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+            if (checkbox.id.startsWith('weak-')) return; // Skip weak subjects for now
+            if (['morningStudy', 'eveningStudy', 'weekendExtra'].includes(checkbox.id)) return; // Skip preferences
+            subjects.push(checkbox.value);
+        });
+        
+        // Get weak subjects
+        const weakSubjects = [];
+        document.querySelectorAll('input[id^="weak-"]:checked').forEach(checkbox => {
+            weakSubjects.push(checkbox.value);
+        });
+        
+        // Validation
+        if (!semester || !examDate || !studyHours || subjects.length === 0) {
+            alert('Please fill in all required fields and select at least one subject');
+            return;
+        }
+        
+        // Check if exam date is in the future
+        const examDateTime = new Date(examDate);
+        const today = new Date();
+        if (examDateTime <= today) {
+            alert('Exam date should be in the future');
+            return;
+        }
+        
+        // Show loading state
+        document.getElementById('studyPlanContent').style.display = 'none';
+        document.getElementById('planLoading').style.display = 'block';
+        
+        // Disable button
+        const createBtn = document.getElementById('createPlanBtn');
+        createBtn.disabled = true;
+        createBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Creating...';
+        
+        // Send request to API
+        fetch('/student/api/create-study-plan', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                semester: semester,
+                subjects: subjects,
+                exam_date: examDate,
+                study_hours_per_day: parseInt(studyHours),
+                weak_subjects: weakSubjects
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Hide loading state
+            document.getElementById('planLoading').style.display = 'none';
+            document.getElementById('studyPlanContent').style.display = 'block';
+            
+            if (data.success) {
+                displayStudyPlan(data.study_plan);
+            } else {
+                displayPlanError(data.error || 'An error occurred while creating study plan');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('planLoading').style.display = 'none';
+            document.getElementById('studyPlanContent').style.display = 'block';
+            displayPlanError('Network error. Please try again.');
+        })
+        .finally(() => {
+            // Re-enable button
+            createBtn.disabled = false;
+            createBtn.innerHTML = '<i class="fas fa-magic me-2"></i>Create AI Study Plan';
+        });
+    }
+    
+    function displayStudyPlan(studyPlan) {
+        const contentDiv = document.getElementById('studyPlanContent');
+        const semester = document.getElementById('semester').value;
+        const examDate = document.getElementById('examDate').value;
+        const studyHours = document.getElementById('studyHours').value;
+        
+        // Calculate days until exam
+        const daysUntilExam = Math.ceil((new Date(examDate) - new Date()) / (1000 * 60 * 60 * 24));
+        
+        contentDiv.innerHTML = `
+            <div class="plan-header mb-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="text-white mb-1">Study Plan for ${semester}</h5>
+                        <small class="text-light">
+                            <i class="fas fa-calendar me-1"></i>${daysUntilExam} days until exam
+                            <i class="fas fa-clock ms-3 me-1"></i>${studyHours} hours/day
+                        </small>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-light btn-sm" onclick="exportStudyPlan()">
+                            <i class="fas fa-download me-1"></i>Export
+                        </button>
+                        <button class="btn btn-outline-light btn-sm" onclick="printStudyPlan()">
+                            <i class="fas fa-print me-1"></i>Print
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="plan-content">
+                ${formatStudyPlanContent(studyPlan)}
+            </div>
+            
+            <div class="plan-actions mt-4">
+                <div class="d-flex gap-2 flex-wrap">
+                    <button class="btn btn-success btn-sm" onclick="startStudyPlan()">
+                        <i class="fas fa-play me-1"></i>Start Following Plan
+                    </button>
+                    <button class="btn btn-primary btn-sm" onclick="customizePlan()">
+                        <i class="fas fa-edit me-1"></i>Customize Plan
+                    </button>
+                    <button class="btn btn-warning btn-sm" onclick="createStudyPlan()">
+                        <i class="fas fa-redo me-1"></i>Generate New Plan
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        // Store plan for export
+        window.currentStudyPlan = {
+            plan: studyPlan,
+            semester: semester,
+            examDate: examDate,
+            studyHours: studyHours
+        };
+    }
+    
+    function formatStudyPlanContent(studyPlan) {
+        let content = '';
+        
+        if (studyPlan.weekly_schedule) {
+            content += `
+                <div class="plan-section">
+                    <h6 class="text-primary mb-2"><i class="fas fa-calendar-week me-2"></i>Weekly Schedule</h6>
+                    <div class="week-schedule">
+                        <div class="text-light" style="white-space: pre-line;">${studyPlan.weekly_schedule}</div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        if (studyPlan.subject_allocation) {
+            content += `
+                <div class="plan-section">
+                    <h6 class="text-success mb-2"><i class="fas fa-chart-pie me-2"></i>Subject Time Allocation</h6>
+                    <div class="text-light" style="white-space: pre-line;">${studyPlan.subject_allocation}</div>
+                </div>
+            `;
+        }
+        
+        if (studyPlan.revision_schedule) {
+            content += `
+                <div class="plan-section">
+                    <h6 class="text-warning mb-2"><i class="fas fa-repeat me-2"></i>Revision Schedule</h6>
+                    <div class="text-light" style="white-space: pre-line;">${studyPlan.revision_schedule}</div>
+                </div>
+            `;
+        }
+        
+        if (studyPlan.study_techniques) {
+            content += `
+                <div class="plan-section">
+                    <h6 class="text-info mb-2"><i class="fas fa-lightbulb me-2"></i>Recommended Study Techniques</h6>
+                    <div class="text-light" style="white-space: pre-line;">${studyPlan.study_techniques}</div>
+                </div>
+            `;
+        }
+        
+        // If no specific sections, show full plan
+        if (!content && studyPlan.plan) {
+            content = `
+                <div class="plan-section">
+                    <h6 class="text-white mb-2"><i class="fas fa-calendar-alt me-2"></i>Complete Study Plan</h6>
+                    <div class="text-light" style="white-space: pre-line;">${studyPlan.plan}</div>
+                </div>
+            `;
+        }
+        
+        // Add progress tracker
+        content += `
+            <div class="progress-tracker">
+                <h6 class="text-warning mb-2"><i class="fas fa-chart-line me-2"></i>Progress Tracker</h6>
+                <div class="row g-2">
+                    <div class="col-md-6">
+                        <div class="milestone-item">
+                            <span class="text-light">Week 1 Completion</span>
+                            <span class="badge bg-secondary">0%</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="milestone-item">
+                            <span class="text-light">First Revision Round</span>
+                            <span class="badge bg-secondary">Pending</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        return content;
+    }
+    
+    function displayPlanError(errorMessage) {
+        const contentDiv = document.getElementById('studyPlanContent');
+        
+        contentDiv.innerHTML = `
+            <div class="text-center py-4">
+                <i class="fas fa-exclamation-triangle fa-3x text-danger mb-3"></i>
+                <h5 class="text-white">Study Plan Creation Error</h5>
+                <p class="text-light">${errorMessage}</p>
+                <button class="btn btn-outline-light btn-sm" onclick="createStudyPlan()">
+                    <i class="fas fa-refresh me-1"></i>Try Again
+                </button>
+            </div>
+        `;
+    }
+    
+    function exportStudyPlan() {
+        if (!window.currentStudyPlan) return;
+        
+        const plan = window.currentStudyPlan;
+        const exportContent = `PERSONALIZED STUDY PLAN
+Semester: ${plan.semester}
+Exam Date: ${plan.examDate}
+Daily Study Hours: ${plan.studyHours}
+Generated: ${new Date().toLocaleDateString()}
+
+${plan.plan.plan || 'Study plan content'}
+
+---
+Generated by LegalEase AI Advanced - Your Legal Education Companion`;
+        
+        const blob = new Blob([exportContent], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `study-plan-${plan.semester.replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+    
+    function printStudyPlan() {
+        window.print();
+    }
+    
+    function startStudyPlan() {
+        alert('Study plan tracking feature will be available soon! For now, you can export and follow the plan manually.');
+    }
+    
+    function customizePlan() {
+        alert('Plan customization feature coming soon! You can modify the form inputs and generate a new plan.');
+    }
+    
+    // Set minimum date to today
+    document.getElementById('examDate').min = new Date().toISOString().split('T')[0];
+</script>
+{% endblock %}

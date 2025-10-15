@@ -1,0 +1,473 @@
+{% extends "base.html" %}
+
+{% block title %}Register - LegalEase AI Advanced{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center py-5">
+        <div class="col-lg-8 col-md-10">
+            <div class="card glass">
+                <div class="card-header text-center py-4">
+                    <h2 class="text-white mb-0">
+                        <i class="fas fa-user-plus text-warning me-2"></i>
+                        Join LegalEase AI
+                    </h2>
+                    <p class="text-light mt-2 mb-0">Create your account and start your legal journey</p>
+                </div>
+                
+                <div class="card-body p-4">
+                    <form method="POST" id="registerForm">
+                        <!-- Account Type Selection -->
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-user-tag me-2"></i>Account Type
+                            </label>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="account-type-card" data-type="client">
+                                        <input type="radio" name="user_type" value="client" id="client" required>
+                                        <label for="client" class="account-type-label">
+                                            <div class="text-center p-3">
+                                                <i class="fas fa-user fa-2x text-primary mb-2"></i>
+                                                <h6 class="text-white">Client</h6>
+                                                <small class="text-light">Seeking Legal Help</small>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="account-type-card" data-type="advocate">
+                                        <input type="radio" name="user_type" value="advocate" id="advocate" required>
+                                        <label for="advocate" class="account-type-label">
+                                            <div class="text-center p-3">
+                                                <i class="fas fa-user-tie fa-2x text-success mb-2"></i>
+                                                <h6 class="text-white">Advocate</h6>
+                                                <small class="text-light">Legal Professional</small>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Basic Information -->
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="full_name" class="form-label">
+                                    <i class="fas fa-id-card me-2"></i>Full Name
+                                </label>
+                                <input type="text" class="form-control" id="full_name" name="full_name" 
+                                       placeholder="Enter your full name" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="username" class="form-label">
+                                    <i class="fas fa-at me-2"></i>Username
+                                </label>
+                                <input type="text" class="form-control" id="username" name="username" 
+                                       placeholder="Choose a username" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="email" class="form-label">
+                                    <i class="fas fa-envelope me-2"></i>Email Address
+                                </label>
+                                <input type="email" class="form-control" id="email" name="email" 
+                                       placeholder="Enter your email" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="phone" class="form-label">
+                                    <i class="fas fa-phone me-2"></i>Phone Number
+                                </label>
+                                <input type="tel" class="form-control" id="phone" name="phone" 
+                                       placeholder="Enter your phone number" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="password" class="form-label">
+                                    <i class="fas fa-lock me-2"></i>Password
+                                </label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="password" name="password" 
+                                           placeholder="Create a strong password" required>
+                                    <button class="btn btn-outline-light" type="button" id="togglePassword">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                <div class="password-strength mt-1">
+                                    <div class="progress" style="height: 4px;">
+                                        <div class="progress-bar" id="passwordStrength" style="width: 0%"></div>
+                                    </div>
+                                    <small class="text-light" id="passwordText">Password strength</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="preferred_language" class="form-label">
+                                    <i class="fas fa-language me-2"></i>Preferred Language
+                                </label>
+                                <select class="form-control" id="preferred_language" name="preferred_language">
+                                    <option value="en">English</option>
+                                    <option value="hi">हिंदी (Hindi)</option>
+                                    <option value="ta">தமிழ் (Tamil)</option>
+                                    <option value="te">తెలుగు (Telugu)</option>
+                                    <option value="bn">বাংলা (Bengali)</option>
+                                    <option value="mr">मराठी (Marathi)</option>
+                                    <option value="gu">ગુજરાતી (Gujarati)</option>
+                                    <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
+                                    <option value="kn">ಕನ್ನಡ (Kannada)</option>
+                                    <option value="ml">മലയാളം (Malayalam)</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="date_of_birth" class="form-label">
+                                    <i class="fas fa-calendar me-2"></i>Date of Birth
+                                </label>
+                                <input type="date" class="form-control" id="date_of_birth" name="date_of_birth">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="gender" class="form-label">
+                                    <i class="fas fa-venus-mars me-2"></i>Gender
+                                </label>
+                                <select class="form-control" id="gender" name="gender">
+                                    <option value="">Select Gender</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                    <option value="prefer_not_to_say">Prefer not to say</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="address" class="form-label">
+                                <i class="fas fa-map-marker-alt me-2"></i>Address
+                            </label>
+                            <textarea class="form-control" id="address" name="address" rows="3" 
+                                      placeholder="Enter your complete address" required></textarea>
+                        </div>
+                        
+                        <!-- Advocate-specific fields -->
+                        <div id="advocateFields" class="advocate-fields" style="display: none;">
+                            <div class="glass p-4 rounded-3 mb-3">
+                                <h5 class="text-white mb-3">
+                                    <i class="fas fa-briefcase me-2"></i>Professional Information
+                                </h5>
+                                
+                                <div class="row g-3 mb-3">
+                                    <div class="col-md-6">
+                                        <label for="bar_council_id" class="form-label">Bar Council ID</label>
+                                        <input type="text" class="form-control" id="bar_council_id" name="bar_council_id" 
+                                               placeholder="Enter your Bar Council ID">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="years_experience" class="form-label">Years of Experience</label>
+                                        <input type="number" class="form-control" id="years_experience" name="years_experience" 
+                                               min="0" max="50" placeholder="Years of practice">
+                                    </div>
+                                </div>
+                                
+                                <div class="row g-3 mb-3">
+                                    <div class="col-md-6">
+                                        <label for="specializations" class="form-label">Specializations</label>
+                                        <input type="text" class="form-control" id="specializations" name="specializations" 
+                                               placeholder="e.g., Criminal Law, Civil Law, Family Law">
+                                        <small class="text-light">Separate multiple specializations with commas</small>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="consultation_fee" class="form-label">Consultation Fee (₹)</label>
+                                        <input type="number" class="form-control" id="consultation_fee" name="consultation_fee" 
+                                               min="0" placeholder="Fee per consultation">
+                                    </div>
+                                </div>
+                                
+                                <div class="row g-3 mb-3">
+                                    <div class="col-md-6">
+                                        <label for="languages" class="form-label">Languages Spoken</label>
+                                        <input type="text" class="form-control" id="languages" name="languages" 
+                                               placeholder="e.g., Hindi, English, Tamil">
+                                        <small class="text-light">Separate multiple languages with commas</small>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="court_locations" class="form-label">Court Locations</label>
+                                        <input type="text" class="form-control" id="court_locations" name="court_locations" 
+                                               placeholder="e.g., Delhi High Court, District Court">
+                                        <small class="text-light">Separate multiple locations with commas</small>
+                                    </div>
+                                </div>
+                                
+                                <div class="row g-3 mb-3">
+                                    <div class="col-md-12">
+                                        <label for="office_timing" class="form-label">Office Timing</label>
+                                        <input type="text" class="form-control" id="office_timing" name="office_timing" 
+                                               placeholder="e.g., 9:00 AM - 6:00 PM">
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="bio" class="form-label">Professional Bio</label>
+                                    <textarea class="form-control" id="bio" name="bio" rows="3" 
+                                              placeholder="Brief description about your practice and expertise"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Client-specific fields -->
+                        <div id="clientFields" class="client-fields" style="display: none;">
+                            <div class="glass p-4 rounded-3 mb-3">
+                                <h5 class="text-white mb-3">
+                                    <i class="fas fa-user me-2"></i>Additional Information
+                                </h5>
+                                
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="occupation" class="form-label">Occupation</label>
+                                        <input type="text" class="form-control" id="occupation" name="occupation" 
+                                               placeholder="Your profession or occupation">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="emergency_contact" class="form-label">Emergency Contact</label>
+                                        <input type="tel" class="form-control" id="emergency_contact" name="emergency_contact" 
+                                               placeholder="Emergency contact number">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Terms and Conditions -->
+                        <div class="mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="terms" required>
+                                <label class="form-check-label text-light" for="terms">
+                                    I agree to the 
+                                    <a href="#" class="text-warning">Terms of Service</a> and 
+                                    <a href="#" class="text-warning">Privacy Policy</a>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid mb-3">
+                            <button type="submit" class="btn btn-accent btn-lg" id="registerBtn">
+                                <i class="fas fa-user-plus me-2"></i>
+                                Create Account
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="card-footer text-center py-3">
+                    <p class="text-light mb-0">
+                        Already have an account? 
+                        <a href="{{ url_for('auth.login') }}" class="text-warning text-decoration-none fw-bold">
+                            Sign In Here
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .account-type-card {
+        position: relative;
+        cursor: pointer;
+    }
+    
+    .account-type-card input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        cursor: pointer;
+    }
+    
+    .account-type-label {
+        display: block;
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-radius: 15px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        margin: 0;
+    }
+    
+    .account-type-label:hover {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: rgba(255, 255, 255, 0.4);
+        transform: translateY(-2px);
+    }
+    
+    .account-type-card input[type="radio"]:checked + .account-type-label {
+        background: rgba(245, 158, 11, 0.2);
+        border-color: #f59e0b;
+        box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+    }
+    
+    .advocate-fields, .client-fields {
+        animation: slideDown 0.3s ease;
+    }
+    
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .password-strength .progress {
+        background: rgba(255, 255, 255, 0.2);
+    }
+    
+    .progress-bar.weak {
+        background-color: #ef4444;
+    }
+    
+    .progress-bar.medium {
+        background-color: #f59e0b;
+    }
+    
+    .progress-bar.strong {
+        background-color: #10b981;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Account type selection
+    document.querySelectorAll('input[name="user_type"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            const advocateFields = document.getElementById('advocateFields');
+            const clientFields = document.getElementById('clientFields');
+            
+            if (this.value === 'advocate') {
+                advocateFields.style.display = 'block';
+                clientFields.style.display = 'none';
+            } else if (this.value === 'client') {
+                advocateFields.style.display = 'none';
+                clientFields.style.display = 'block';
+            }
+        });
+    });
+    
+    // Password visibility toggle
+    document.getElementById('togglePassword').addEventListener('click', function() {
+        const passwordField = document.getElementById('password');
+        const icon = this.querySelector('i');
+        
+        if (passwordField.type === 'password') {
+            passwordField.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            passwordField.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    });
+    
+    // Password strength checker
+    document.getElementById('password').addEventListener('input', function() {
+        const password = this.value;
+        const strengthBar = document.getElementById('passwordStrength');
+        const strengthText = document.getElementById('passwordText');
+        
+        let strength = 0;
+        let text = 'Very Weak';
+        let className = 'weak';
+        
+        if (password.length >= 6) strength += 20;
+        if (password.length >= 8) strength += 20;
+        if (/[a-z]/.test(password)) strength += 20;
+        if (/[A-Z]/.test(password)) strength += 20;
+        if (/[0-9]/.test(password)) strength += 10;
+        if (/[^A-Za-z0-9]/.test(password)) strength += 10;
+        
+        if (strength >= 80) {
+            text = 'Very Strong';
+            className = 'strong';
+        } else if (strength >= 60) {
+            text = 'Strong';
+            className = 'strong';
+        } else if (strength >= 40) {
+            text = 'Medium';
+            className = 'medium';
+        } else if (strength >= 20) {
+            text = 'Weak';
+            className = 'weak';
+        }
+        
+        strengthBar.style.width = strength + '%';
+        strengthBar.className = 'progress-bar ' + className;
+        strengthText.textContent = text;
+    });
+    
+    // Form validation
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+        const password = document.getElementById('password').value;
+        const email = document.getElementById('email').value;
+        const phone = document.getElementById('phone').value;
+        
+        // Password validation
+        if (password.length < 6) {
+            e.preventDefault();
+            alert('Password must be at least 6 characters long');
+            return;
+        }
+        
+        // Email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            e.preventDefault();
+            alert('Please enter a valid email address');
+            return;
+        }
+        
+        // Phone validation
+        const phoneRegex = /^[+]?[0-9]{10,15}$/;
+        if (!phoneRegex.test(phone.replace(/\s/g, ''))) {
+            e.preventDefault();
+            alert('Please enter a valid phone number');
+            return;
+        }
+        
+        // Show loading state
+        const btn = document.getElementById('registerBtn');
+        const originalText = btn.innerHTML;
+        
+        btn.innerHTML = '<span class="loading me-2"></span>Creating Account...';
+        btn.disabled = true;
+        
+        // Re-enable button after 10 seconds (in case of error)
+        setTimeout(() => {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }, 10000);
+    });
+    
+    // Username availability check (debounced)
+    let usernameTimeout;
+    document.getElementById('username').addEventListener('input', function() {
+        const username = this.value;
+        
+        clearTimeout(usernameTimeout);
+        usernameTimeout = setTimeout(() => {
+            if (username.length >= 3) {
+                // Here you could add an AJAX call to check username availability
+                console.log('Checking username availability:', username);
+            }
+        }, 500);
+    });
+</script>
+{% endblock %}

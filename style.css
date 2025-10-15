@@ -1,0 +1,218 @@
+/* 
+ * LegalEase AI Advanced - Custom Styles
+ * Developed by Akarsh Chaturvedi
+ */
+
+/* Additional custom styles for enhanced UI */
+.animate__animated {
+    animation-duration: 0.8s;
+    animation-fill-mode: both;
+}
+
+.animate__fadeInUp {
+    animation-name: fadeInUp;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translate3d(0, 40px, 0);
+    }
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+/* Voice status indicator */
+.voice-status {
+    animation: pulse 2s infinite;
+}
+
+/* Enhanced button styles */
+.btn-enhanced {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.btn-enhanced:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Loading spinner */
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+/* Chat interface enhancements */
+.chat-container {
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.message-bubble {
+    max-width: 80%;
+    word-wrap: break-word;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 15px;
+    }
+    
+    .card {
+        margin-bottom: 1rem;
+    }
+    
+    .btn-lg {
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+    }
+}
+
+/* Print styles */
+@media print {
+    .navbar,
+    .footer,
+    .btn,
+    .voice-status {
+        display: none !important;
+    }
+    
+    .container {
+        max-width: 100% !important;
+    }
+}/*
+ Global Form Control Fixes for Dark Theme */
+.form-control, .form-select {
+    background: rgba(30, 41, 59, 0.9) !important;
+    border: 2px solid rgba(255, 255, 255, 0.3) !important;
+    color: white !important;
+    border-radius: 8px;
+}
+
+.form-control:focus, .form-select:focus {
+    background: rgba(30, 41, 59, 0.95) !important;
+    border-color: #f59e0b !important;
+    box-shadow: 0 0 0 0.2rem rgba(245, 158, 11, 0.25) !important;
+    color: white !important;
+}
+
+.form-control::placeholder {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.form-control option, .form-select option {
+    background: #1e293b !important;
+    color: white !important;
+    padding: 8px;
+}
+
+.form-label {
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-weight: 500;
+}
+
+/* Fix checkbox and radio styling */
+.form-check-input {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+.form-check-input:checked {
+    background-color: #f59e0b !important;
+    border-color: #f59e0b !important;
+}
+
+.form-check-input:focus {
+    border-color: #f59e0b !important;
+    box-shadow: 0 0 0 0.2rem rgba(245, 158, 11, 0.25) !important;
+}
+
+.form-check-label {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Light theme overrides */
+[data-theme="light"] .form-control,
+[data-theme="light"] .form-select {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: 2px solid rgba(0, 0, 0, 0.2) !important;
+    color: #1e293b !important;
+}
+
+[data-theme="light"] .form-control:focus,
+[data-theme="light"] .form-select:focus {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25) !important;
+    color: #1e293b !important;
+}
+
+[data-theme="light"] .form-control::placeholder {
+    color: rgba(30, 41, 59, 0.6) !important;
+}
+
+[data-theme="light"] .form-control option,
+[data-theme="light"] .form-select option {
+    background: #ffffff !important;
+    color: #1e293b !important;
+}
+
+[data-theme="light"] .form-label {
+    color: #1e293b !important;
+}
+
+[data-theme="light"] .form-check-input {
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid rgba(0, 0, 0, 0.3) !important;
+}
+
+[data-theme="light"] .form-check-input:checked {
+    background-color: #3b82f6 !important;
+    border-color: #3b82f6 !important;
+}
+
+[data-theme="light"] .form-check-input:focus {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25) !important;
+}
+
+[data-theme="light"] .form-check-label {
+    color: #1e293b !important;
+}

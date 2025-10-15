@@ -1,0 +1,407 @@
+{% extends "base.html" %}
+
+{% block title %}Document Analysis - LegalEase AI Advanced{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="glass p-4 rounded-4">
+                <h1 class="text-white mb-2">
+                    <i class="fas fa-file-search text-info me-2"></i>
+                    AI Document Analysis
+                </h1>
+                <p class="text-light mb-0">
+                    Upload legal documents for AI-powered analysis. Get insights, key points, and legal implications.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="card glass h-100">
+                <div class="card-header">
+                    <h4 class="text-white mb-0">
+                        <i class="fas fa-upload text-success me-2"></i>
+                        Upload Document
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="upload-area text-center p-4 mb-3" id="uploadArea">
+                        <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
+                        <h5 class="text-white">Drag & Drop Files Here</h5>
+                        <p class="text-light">or click to browse</p>
+                        <input type="file" id="fileInput" class="d-none" accept=".pdf,.doc,.docx,.txt">
+                        <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">
+                            <i class="fas fa-folder-open me-2"></i>Choose File
+                        </button>
+                    </div>
+                    
+                    <div class="supported-formats">
+                        <small class="text-light">
+                            <strong>Supported formats:</strong> PDF, DOC, DOCX, TXT (Max 16MB)
+                        </small>
+                    </div>
+                    
+                    <div id="fileInfo" class="file-info mt-3" style="display: none;">
+                        <div class="alert alert-info">
+                            <i class="fas fa-file me-2"></i>
+                            <span id="fileName"></span>
+                            <span class="badge bg-secondary ms-2" id="fileSize"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="analysis-options mt-4">
+                        <h6 class="text-white mb-3">Analysis Options</h6>
+                        
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="extractKeyPoints" checked>
+                            <label class="form-check-label text-light" for="extractKeyPoints">
+                                Extract Key Points
+                            </label>
+                        </div>
+                        
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="identifyIssues" checked>
+                            <label class="form-check-label text-light" for="identifyIssues">
+                                Identify Legal Issues
+                            </label>
+                        </div>
+                        
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="suggestActions">
+                            <label class="form-check-label text-light" for="suggestActions">
+                                Suggest Actions
+                            </label>
+                        </div>
+                        
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="riskAssessment">
+                            <label class="form-check-label text-light" for="riskAssessment">
+                                Risk Assessment
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button class="btn btn-success btn-lg" id="analyzeBtn" onclick="analyzeDocument()" disabled>
+                            <i class="fas fa-brain me-2"></i>
+                            Analyze Document
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-6">
+            <div class="card glass h-100">
+                <div class="card-header">
+                    <h4 class="text-white mb-0">
+                        <i class="fas fa-chart-line text-warning me-2"></i>
+                        Analysis Results
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div id="analysisResults">
+                        <div class="text-center py-5">
+                            <i class="fas fa-file-search fa-4x text-muted mb-3"></i>
+                            <h5 class="text-light">Ready for Analysis</h5>
+                            <p class="text-muted">
+                                Upload a document to get AI-powered legal analysis
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div id="analysisLoading" style="display: none;">
+                        <div class="text-center py-5">
+                            <div class="spinner-border text-success mb-3" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <h5 class="text-white">Analyzing Document...</h5>
+                            <p class="text-light">AI is processing your document and extracting insights</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Analysis -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card glass">
+                <div class="card-header">
+                    <h5 class="text-white mb-0">
+                        <i class="fas fa-history text-secondary me-2"></i>
+                        Recent Document Analysis
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center py-3">
+                        <i class="fas fa-clock fa-2x text-muted mb-2"></i>
+                        <p class="text-light">No recent analysis history</p>
+                        <small class="text-muted">Upload and analyze documents to see your history here</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .upload-area {
+        border: 2px dashed rgba(255, 255, 255, 0.3);
+        border-radius: 15px;
+        background: rgba(255, 255, 255, 0.05);
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .upload-area:hover {
+        border-color: rgba(255, 255, 255, 0.5);
+        background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .upload-area.dragover {
+        border-color: var(--accent-color);
+        background: rgba(245, 158, 11, 0.1);
+    }
+    
+    .file-info {
+        animation: slideIn 0.3s ease;
+    }
+    
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .analysis-section {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border-left: 4px solid var(--accent-color);
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let selectedFile = null;
+    
+    // File upload handling
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('fileInput');
+    
+    uploadArea.addEventListener('click', () => fileInput.click());
+    
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.classList.add('dragover');
+    });
+    
+    uploadArea.addEventListener('dragleave', () => {
+        uploadArea.classList.remove('dragover');
+    });
+    
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            handleFileSelect(files[0]);
+        }
+    });
+    
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            handleFileSelect(e.target.files[0]);
+        }
+    });
+    
+    function handleFileSelect(file) {
+        // Validate file
+        const maxSize = 16 * 1024 * 1024; // 16MB
+        const allowedTypes = ['application/pdf', 'application/msword', 
+                             'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                             'text/plain'];
+        
+        if (file.size > maxSize) {
+            alert('File size must be less than 16MB');
+            return;
+        }
+        
+        if (!allowedTypes.includes(file.type)) {
+            alert('Please select a PDF, DOC, DOCX, or TXT file');
+            return;
+        }
+        
+        selectedFile = file;
+        
+        // Show file info
+        document.getElementById('fileName').textContent = file.name;
+        document.getElementById('fileSize').textContent = formatFileSize(file.size);
+        document.getElementById('fileInfo').style.display = 'block';
+        
+        // Enable analyze button
+        document.getElementById('analyzeBtn').disabled = false;
+    }
+    
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+    
+    function analyzeDocument() {
+        if (!selectedFile) {
+            alert('Please select a file first');
+            return;
+        }
+        
+        // Show loading state
+        document.getElementById('analysisResults').style.display = 'none';
+        document.getElementById('analysisLoading').style.display = 'block';
+        
+        // Disable analyze button
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        analyzeBtn.disabled = true;
+        analyzeBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Analyzing...';
+        
+        // Simulate analysis (replace with actual API call)
+        setTimeout(() => {
+            // Hide loading state
+            document.getElementById('analysisLoading').style.display = 'none';
+            document.getElementById('analysisResults').style.display = 'block';
+            
+            // Show mock results
+            displayAnalysisResults({
+                summary: 'This appears to be a legal contract with standard terms and conditions.',
+                keyPoints: [
+                    'Contract duration: 12 months',
+                    'Payment terms: Net 30 days',
+                    'Termination clause included',
+                    'Liability limitations specified'
+                ],
+                legalIssues: [
+                    'Review termination notice period',
+                    'Verify jurisdiction clause',
+                    'Check penalty provisions'
+                ],
+                recommendations: [
+                    'Consider adding force majeure clause',
+                    'Review intellectual property terms',
+                    'Ensure compliance with local laws'
+                ],
+                riskLevel: 'Medium'
+            });
+            
+            // Re-enable analyze button
+            analyzeBtn.disabled = false;
+            analyzeBtn.innerHTML = '<i class="fas fa-brain me-2"></i>Analyze Document';
+            
+        }, 3000);
+    }
+    
+    function displayAnalysisResults(results) {
+        const resultsDiv = document.getElementById('analysisResults');
+        
+        resultsDiv.innerHTML = `
+            <div class="analysis-header mb-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="text-white mb-0">Analysis Complete</h5>
+                    <div class="d-flex gap-2">
+                        <span class="badge bg-${results.riskLevel === 'High' ? 'danger' : results.riskLevel === 'Medium' ? 'warning' : 'success'}">
+                            ${results.riskLevel} Risk
+                        </span>
+                        <button class="btn btn-outline-light btn-sm" onclick="exportAnalysis()">
+                            <i class="fas fa-download me-1"></i>Export
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="analysis-content">
+                <div class="analysis-section">
+                    <h6 class="text-primary mb-2"><i class="fas fa-file-alt me-2"></i>Document Summary</h6>
+                    <p class="text-light">${results.summary}</p>
+                </div>
+                
+                <div class="analysis-section">
+                    <h6 class="text-success mb-2"><i class="fas fa-list me-2"></i>Key Points</h6>
+                    <ul class="text-light">
+                        ${results.keyPoints.map(point => `<li>${point}</li>`).join('')}
+                    </ul>
+                </div>
+                
+                <div class="analysis-section">
+                    <h6 class="text-warning mb-2"><i class="fas fa-exclamation-triangle me-2"></i>Legal Issues</h6>
+                    <ul class="text-light">
+                        ${results.legalIssues.map(issue => `<li>${issue}</li>`).join('')}
+                    </ul>
+                </div>
+                
+                <div class="analysis-section">
+                    <h6 class="text-info mb-2"><i class="fas fa-lightbulb me-2"></i>Recommendations</h6>
+                    <ul class="text-light">
+                        ${results.recommendations.map(rec => `<li>${rec}</li>`).join('')}
+                    </ul>
+                </div>
+            </div>
+        `;
+        
+        // Store results for export
+        window.currentAnalysis = {
+            file: selectedFile.name,
+            results: results,
+            timestamp: new Date().toISOString()
+        };
+    }
+    
+    function exportAnalysis() {
+        if (!window.currentAnalysis) return;
+        
+        const analysis = window.currentAnalysis;
+        const exportContent = `DOCUMENT ANALYSIS REPORT
+File: ${analysis.file}
+Date: ${new Date(analysis.timestamp).toLocaleDateString()}
+Risk Level: ${analysis.results.riskLevel}
+
+SUMMARY:
+${analysis.results.summary}
+
+KEY POINTS:
+${analysis.results.keyPoints.map(point => `• ${point}`).join('\n')}
+
+LEGAL ISSUES:
+${analysis.results.legalIssues.map(issue => `• ${issue}`).join('\n')}
+
+RECOMMENDATIONS:
+${analysis.results.recommendations.map(rec => `• ${rec}`).join('\n')}
+
+---
+Generated by LegalEase AI Advanced - Document Analysis Tool`;
+        
+        const blob = new Blob([exportContent], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `document-analysis-${new Date().toISOString().split('T')[0]}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+</script>
+{% endblock %}

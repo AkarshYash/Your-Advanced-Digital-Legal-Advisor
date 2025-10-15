@@ -1,0 +1,1051 @@
+{% extends "base.html" %}
+
+{% block title %}AI Legal Assistant - LegalEase AI Advanced{% endblock %}
+
+{% block extra_css %}
+<style>
+    .chat-container {
+        height: calc(100vh - 120px);
+        display: flex;
+        flex-direction: column;
+        background: rgba(15, 23, 42, 0.9) !important;
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .chat-header {
+        background: rgba(30, 41, 59, 0.9) !important;
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 1rem;
+        border-radius: 20px 20px 0 0;
+        color: white !important;
+    }
+    
+    .chat-messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 1rem;
+        background: rgba(15, 23, 42, 0.8) !important;
+        backdrop-filter: blur(10px);
+        color: white !important;
+    }
+    
+    .chat-input-area {
+        background: rgba(30, 41, 59, 0.9) !important;
+        backdrop-filter: blur(20px);
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 1rem;
+        border-radius: 0 0 20px 20px;
+    }
+    
+    .message {
+        margin-bottom: 1rem;
+        animation: slideIn 0.3s ease;
+    }
+    
+    .message-user {
+        text-align: right;
+    }
+    
+    .message-assistant {
+        text-align: left;
+    }
+    
+    .message-bubble {
+        display: inline-block;
+        max-width: 80%;
+        padding: 1rem 1.5rem;
+        border-radius: 20px;
+        word-wrap: break-word;
+    }
+    
+    .message-user .message-bubble {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        color: white !important;
+        border-bottom-right-radius: 5px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .message-assistant .message-bubble {
+        background: rgba(30, 41, 59, 0.9) !important;
+        color: white !important;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-bottom-left-radius: 5px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .message-time {
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.6);
+        margin-top: 0.5rem;
+    }
+    
+    .typing-indicator {
+        display: none;
+        text-align: left;
+        margin-bottom: 1rem;
+    }
+    
+    .typing-bubble {
+        display: inline-block;
+        background: rgba(30, 41, 59, 0.9) !important;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 20px;
+        padding: 1rem 1.5rem;
+        border-bottom-left-radius: 5px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .typing-dots {
+        display: flex;
+        gap: 4px;
+    }
+    
+    .typing-dot {
+        width: 8px;
+        height: 8px;
+        background: rgba(255, 255, 255, 0.6);
+        border-radius: 50%;
+        animation: typing 1.4s infinite;
+    }
+    
+    .typing-dot:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+    
+    .typing-dot:nth-child(3) {
+        animation-delay: 0.4s;
+    }
+    
+    @keyframes typing {
+        0%, 60%, 100% {
+            transform: translateY(0);
+            opacity: 0.4;
+        }
+        30% {
+            transform: translateY(-10px);
+            opacity: 1;
+        }
+    }
+    
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .chat-input {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 25px;
+        color: white;
+        padding: 12px 20px;
+        resize: none;
+        min-height: 50px;
+        max-height: 120px;
+    }
+    
+    .chat-input:focus {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 0.2rem rgba(245, 158, 11, 0.25);
+        color: white;
+    }
+    
+    .chat-input::placeholder {
+        color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .send-btn {
+        background: var(--gradient-accent);
+        border: none;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+    
+    .send-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
+    }
+    
+    .send-btn:disabled {
+        opacity: 0.5;
+        transform: none;
+    }
+    
+    .quick-questions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .quick-question {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        padding: 0.5rem 1rem;
+        color: white;
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+    }
+    
+    .quick-question:hover {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        transform: translateY(-2px);
+    }
+    
+    .language-selector {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 10px;
+        color: white;
+        padding: 0.5rem;
+    }
+    
+    .language-selector:focus {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: var(--accent-color);
+        color: white;
+    }
+    
+    .chat-sidebar {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(20px);
+        border-right: 1px solid rgba(255, 255, 255, 0.2);
+        height: 100%;
+        overflow-y: auto;
+    }
+    
+    .session-item {
+        padding: 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .session-item:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .session-item.active {
+        background: rgba(245, 158, 11, 0.2);
+        border-left: 3px solid var(--accent-color);
+    }
+    
+    .voice-btn {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        transition: all 0.3s ease;
+    }
+    
+    .voice-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+    }
+    
+    .voice-btn.recording {
+        background: #ef4444;
+        animation: pulse 1s infinite;
+    }
+    
+    .confidence-indicator {
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.7);
+        margin-top: 0.5rem;
+    }
+    
+    .legal-categories {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem;
+        margin-top: 0.5rem;
+    }
+    
+    .legal-category {
+        background: rgba(245, 158, 11, 0.3);
+        color: #f59e0b;
+        padding: 0.2rem 0.5rem;
+        border-radius: 10px;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+    }
+    
+    /* Advocate Recommendation Styles */
+    .recommended-advocates {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        padding: 1rem;
+        margin-top: 1rem;
+    }
+    
+    .advocate-card {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 12px;
+        padding: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    /* Additional fixes for text visibility */
+    .chat-messages * {
+        color: white !important;
+    }
+    
+    .message-bubble * {
+        color: white !important;
+    }
+    
+    .message-bubble p,
+    .message-bubble div,
+    .message-bubble span,
+    .message-bubble strong,
+    .message-bubble em {
+        color: white !important;
+    }
+    
+    /* Fix for any markdown or formatted content */
+    .message-bubble h1,
+    .message-bubble h2,
+    .message-bubble h3,
+    .message-bubble h4,
+    .message-bubble h5,
+    .message-bubble h6 {
+        color: #60a5fa !important;
+    }
+    
+    .message-bubble ul,
+    .message-bubble ol,
+    .message-bubble li {
+        color: white !important;
+    }
+    
+    .message-bubble code {
+        background: rgba(0, 0, 0, 0.3) !important;
+        color: #fbbf24 !important;
+        padding: 2px 4px;
+        border-radius: 4px;
+    }
+    
+    .message-bubble pre {
+        background: rgba(0, 0, 0, 0.3) !important;
+        color: white !important;
+        padding: 1rem;
+        border-radius: 8px;
+        overflow-x: auto;
+    }
+    
+    /* Specific fixes for welcome message and content */
+    .chat-messages .message-bubble strong {
+        color: #fbbf24 !important;
+        font-weight: bold;
+    }
+    
+    .chat-messages .message-bubble p {
+        color: white !important;
+        margin-bottom: 0.5rem;
+    }
+    
+    .chat-messages .message-bubble ul li {
+        color: white !important;
+        margin-bottom: 0.25rem;
+    }
+    
+    .chat-messages .message-time {
+        color: rgba(255, 255, 255, 0.6) !important;
+    }
+    
+    /* Quick questions styling */
+    .quick-questions .quick-question {
+        color: white !important;
+        background: rgba(59, 130, 246, 0.2) !important;
+        border: 1px solid rgba(59, 130, 246, 0.4) !important;
+    }
+    
+    .quick-questions .quick-question:hover {
+        color: white !important;
+        background: rgba(59, 130, 246, 0.3) !important;
+        text-decoration: none;
+    }
+    
+    /* Ensure all icons are visible */
+    .chat-messages i {
+        color: inherit !important;
+    }
+    
+    .message-bubble .text-warning {
+        color: #fbbf24 !important;
+    }
+    }
+    
+    .advocate-card:hover {
+        background: rgba(255, 255, 255, 0.12);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    }
+    
+    .advocate-name {
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+    
+    .advocate-specialization {
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+    
+    .advocate-details {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        align-items: center;
+        font-size: 0.85rem;
+    }
+    
+    .advocate-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    .advocate-actions .btn {
+        font-size: 0.85rem;
+        padding: 0.4rem 0.8rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+    
+    .advocate-actions .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+    
+    .advocate-location {
+        font-size: 0.8rem;
+        opacity: 0.8;
+    }
+    
+    .advocate-disclaimer {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        padding: 0.75rem;
+        border-left: 3px solid var(--accent-color);
+    }
+    
+    .legal-categories {
+        margin-top: 0.5rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    .legal-category {
+        background: rgba(96, 165, 250, 0.2);
+        color: #60a5fa;
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+    
+    .confidence-indicator {
+        margin-top: 0.5rem;
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.7);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid h-100">
+    <div class="row h-100">
+        <!-- Chat Sidebar -->
+        <div class="col-lg-3 d-none d-lg-block p-0">
+            <div class="chat-sidebar">
+                <div class="p-3 border-bottom border-light border-opacity-25">
+                    <h5 class="text-white mb-3">
+                        <i class="fas fa-comments me-2"></i>Chat Sessions
+                    </h5>
+                    <button class="btn btn-accent btn-sm w-100" onclick="startNewChat()">
+                        <i class="fas fa-plus me-2"></i>New Chat
+                    </button>
+                </div>
+                <div id="chatSessions">
+                    <!-- Chat sessions will be loaded here -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Chat Area -->
+        <div class="col-lg-9 p-0">
+            <div class="chat-container glass">
+                <!-- Chat Header -->
+                <div class="chat-header">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h4 class="text-white mb-0">
+                                <i class="fas fa-robot text-warning me-2"></i>
+                                LegalEase AI Assistant
+                            </h4>
+                            <small class="text-light">
+                                <i class="fas fa-circle text-success me-1" style="font-size: 0.6rem;"></i>
+                                Online • Powered by Gemini AI
+                            </small>
+                        </div>
+                        <div class="col-auto">
+                            <div class="d-flex align-items-center gap-3">
+                                <select class="language-selector" id="languageSelect">
+                                    <option value="en">English</option>
+                                    <option value="hi">हिंदी</option>
+                                    <option value="ta">தமிழ்</option>
+                                    <option value="te">తెలుగు</option>
+                                    <option value="bn">বাংলা</option>
+                                    <option value="mr">मराठी</option>
+                                    <option value="gu">ગુજરાતી</option>
+                                    <option value="pa">ਪੰਜਾਬੀ</option>
+                                    <option value="kn">ಕನ್ನಡ</option>
+                                    <option value="ml">മലയാളം</option>
+                                </select>
+                                
+                                <button class="btn btn-outline-light btn-sm" onclick="exportChat()">
+                                    <i class="fas fa-download me-1"></i>Export
+                                </button>
+                                
+                                <button class="btn btn-outline-light btn-sm" onclick="clearChat()">
+                                    <i class="fas fa-trash me-1"></i>Clear
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Chat Messages -->
+                <div class="chat-messages" id="chatMessages">
+                    <!-- Welcome Message -->
+                    <div class="message message-assistant">
+                        <div class="message-bubble">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-balance-scale text-warning me-2"></i>
+                                <strong>Welcome to LegalEase AI!</strong>
+                            </div>
+                            <p class="mb-2">
+                                I'm your advanced AI legal assistant, here to help you with Indian legal matters. 
+                                I can assist you with:
+                            </p>
+                            <ul class="mb-2">
+                                <li>Legal advice and guidance</li>
+                                <li>IPC sections and constitutional articles</li>
+                                <li>Court procedures and documentation</li>
+                                <li>Consumer rights and protection</li>
+                                <li>Property and family law matters</li>
+                            </ul>
+                            <p class="mb-0">
+                                <strong>How can I help you today?</strong>
+                            </p>
+                        </div>
+                        <div class="message-time">
+                            <i class="fas fa-clock me-1"></i>
+                            Just now
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Questions -->
+                    <div class="quick-questions">
+                        <a href="#" class="quick-question" onclick="sendQuickQuestion('What are my rights as a consumer?')">
+                            Consumer Rights
+                        </a>
+                        <a href="#" class="quick-question" onclick="sendQuickQuestion('How to file an FIR?')">
+                            File FIR
+                        </a>
+                        <a href="#" class="quick-question" onclick="sendQuickQuestion('Property registration process')">
+                            Property Registration
+                        </a>
+                        <a href="#" class="quick-question" onclick="sendQuickQuestion('Divorce procedure in India')">
+                            Divorce Process
+                        </a>
+                        <a href="#" class="quick-question" onclick="sendQuickQuestion('What is Section 420 IPC?')">
+                            IPC Section 420
+                        </a>
+                        <a href="#" class="quick-question" onclick="sendQuickQuestion('Fundamental rights under Constitution')">
+                            Fundamental Rights
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Typing Indicator -->
+                <div class="typing-indicator" id="typingIndicator">
+                    <div class="typing-bubble">
+                        <div class="typing-dots">
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Chat Input -->
+                <div class="chat-input-area">
+                    <div class="row align-items-end g-2">
+                        <div class="col">
+                            <textarea 
+                                class="form-control chat-input" 
+                                id="messageInput" 
+                                placeholder="Type your legal question here... (Press Shift+Enter for new line)"
+                                rows="1"
+                            ></textarea>
+                        </div>
+                        <div class="col-auto">
+                            <button class="voice-btn me-2" id="voiceBtn" onclick="toggleVoiceInput()">
+                                <i class="fas fa-microphone"></i>
+                            </button>
+                        </div>
+                        <div class="col-auto">
+                            <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let currentSessionId = null;
+    let isRecording = false;
+    let recognition = null;
+    
+    // Initialize speech recognition
+    if ('webkitSpeechRecognition' in window) {
+        recognition = new webkitSpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = 'en-IN';
+        
+        recognition.onresult = function(event) {
+            const transcript = event.results[0][0].transcript;
+            document.getElementById('messageInput').value = transcript;
+        };
+        
+        recognition.onend = function() {
+            isRecording = false;
+            document.getElementById('voiceBtn').classList.remove('recording');
+        };
+    }
+    
+    // Auto-resize textarea
+    const messageInput = document.getElementById('messageInput');
+    messageInput.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+    });
+    
+    // Send message on Enter (but not Shift+Enter)
+    messageInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+    
+    // Load chat sessions if user is logged in
+    {% if session.user_id %}
+        loadChatSessions();
+    {% endif %}
+    
+    function sendMessage() {
+        const messageInput = document.getElementById('messageInput');
+        const message = messageInput.value.trim();
+        
+        if (!message) return;
+        
+        // Add user message to chat
+        addMessage(message, 'user');
+        
+        // Clear input
+        messageInput.value = '';
+        messageInput.style.height = 'auto';
+        
+        // Show typing indicator
+        showTypingIndicator();
+        
+        // Send to API
+        const language = document.getElementById('languageSelect').value;
+        
+        fetch('/api/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                message: message,
+                language: language,
+                session_id: currentSessionId
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            hideTypingIndicator();
+            
+            if (data.error) {
+                addMessage('Sorry, I encountered an error. Please try again.', 'assistant');
+            } else {
+                addMessage(data.response, 'assistant', {
+                    confidence: data.confidence_score,
+                    categories: data.legal_categories,
+                    responseTime: data.response_time,
+                    advocates: data.recommended_advocates,
+                    showAdvocateContact: data.show_advocate_contact
+                });
+                
+                if (data.session_id) {
+                    currentSessionId = data.session_id;
+                }
+            }
+        })
+        .catch(error => {
+            hideTypingIndicator();
+            console.error('Error:', error);
+            addMessage('Sorry, I encountered an error. Please try again.', 'assistant');
+        });
+    }
+    
+    function addMessage(content, sender, metadata = {}) {
+        const messagesContainer = document.getElementById('chatMessages');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message message-${sender}`;
+        
+        const now = new Date();
+        const timeString = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        
+        let categoriesHtml = '';
+        if (metadata.categories && metadata.categories.length > 0) {
+            categoriesHtml = `
+                <div class="legal-categories">
+                    ${metadata.categories.map(cat => `<span class="legal-category">${cat}</span>`).join('')}
+                </div>
+            `;
+        }
+        
+        let confidenceHtml = '';
+        if (metadata.confidence) {
+            const confidencePercent = Math.round(metadata.confidence * 100);
+            confidenceHtml = `
+                <div class="confidence-indicator">
+                    <i class="fas fa-chart-line me-1"></i>
+                    Confidence: ${confidencePercent}%
+                    ${metadata.responseTime ? ` • Response time: ${metadata.responseTime}s` : ''}
+                </div>
+            `;
+        }
+        
+        let advocatesHtml = '';
+        if (metadata.advocates && metadata.advocates.length > 0 && metadata.showAdvocateContact) {
+            advocatesHtml = `
+                <div class="recommended-advocates mt-3">
+                    <h6 class="text-info mb-3">
+                        <i class="fas fa-user-tie me-2"></i>
+                        Recommended Legal Experts for Your Case
+                    </h6>
+                    <div class="advocates-list">
+                        ${metadata.advocates.map(advocate => `
+                            <div class="advocate-card mb-3">
+                                <div class="advocate-header">
+                                    <div class="advocate-info">
+                                        <h6 class="advocate-name text-white mb-1">${advocate.name}</h6>
+                                        <p class="advocate-specialization text-light mb-1">
+                                            <i class="fas fa-gavel me-1"></i>
+                                            ${advocate.specialization}
+                                        </p>
+                                        <div class="advocate-details">
+                                            <span class="badge bg-success me-2">
+                                                <i class="fas fa-star me-1"></i>
+                                                ${advocate.rating}/5
+                                            </span>
+                                            <span class="text-light me-2">
+                                                <i class="fas fa-calendar me-1"></i>
+                                                ${advocate.experience} years exp
+                                            </span>
+                                            <span class="text-warning">
+                                                <i class="fas fa-rupee-sign me-1"></i>
+                                                ₹${advocate.consultation_fee} consultation
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="advocate-actions mt-2">
+                                    <button class="btn btn-success btn-sm me-2" onclick="callAdvocate('${advocate.phone}', '${advocate.name}')">
+                                        <i class="fas fa-phone me-1"></i>
+                                        Call Now
+                                    </button>
+                                    <button class="btn btn-info btn-sm me-2" onclick="chatWithAdvocate(${advocate.id}, '${advocate.name}')">
+                                        <i class="fas fa-comments me-1"></i>
+                                        Chat
+                                    </button>
+                                    <button class="btn btn-outline-light btn-sm" onclick="viewAdvocateProfile(${advocate.id})">
+                                        <i class="fas fa-eye me-1"></i>
+                                        View Profile
+                                    </button>
+                                </div>
+                                <div class="advocate-location mt-2">
+                                    <small class="text-light">
+                                        <i class="fas fa-map-marker-alt me-1"></i>
+                                        ${advocate.location}
+                                    </small>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="advocate-disclaimer mt-2">
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle me-1"></i>
+                            These recommendations are based on your case type and advocate specializations. 
+                            Consultation fees may vary.
+                        </small>
+                    </div>
+                </div>
+            `;
+        }
+        
+        messageDiv.innerHTML = `
+            <div class="message-bubble">
+                ${formatMessage(content)}
+                ${categoriesHtml}
+                ${confidenceHtml}
+                ${advocatesHtml}
+            </div>
+            <div class="message-time">
+                <i class="fas fa-clock me-1"></i>
+                ${timeString}
+            </div>
+        `;
+        
+        messagesContainer.appendChild(messageDiv);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        
+        // Remove quick questions after first message
+        const quickQuestions = document.querySelector('.quick-questions');
+        if (quickQuestions && sender === 'user') {
+            quickQuestions.style.display = 'none';
+        }
+    }
+    
+    function formatMessage(content) {
+        // Convert markdown-like formatting to HTML
+        return content
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\*(.*?)\*/g, '<em>$1</em>')
+            .replace(/\n/g, '<br>')
+            .replace(/- (.*?)(?=\n|$)/g, '• $1');
+    }
+    
+    // Advocate interaction functions
+    function callAdvocate(phone, name) {
+        if (confirm(`Do you want to call ${name} at ${phone}?`)) {
+            // For mobile devices, this will open the phone dialer
+            window.location.href = `tel:${phone}`;
+        }
+    }
+    
+    function chatWithAdvocate(advocateId, name) {
+        // Show chat modal or redirect to advocate chat
+        alert(`Chat feature with ${name} will be available soon. For now, please use the call option or visit their profile.`);
+        // In future: window.location.href = `/chat/advocate/${advocateId}`;
+    }
+    
+    function viewAdvocateProfile(advocateId) {
+        // Open advocate profile in new tab
+        window.open(`/advocate/profile/${advocateId}`, '_blank');
+    }
+    
+    function showTypingIndicator() {
+        document.getElementById('typingIndicator').style.display = 'block';
+        const messagesContainer = document.getElementById('chatMessages');
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+    
+    function hideTypingIndicator() {
+        document.getElementById('typingIndicator').style.display = 'none';
+    }
+    
+    function sendQuickQuestion(question) {
+        document.getElementById('messageInput').value = question;
+        sendMessage();
+    }
+    
+    function toggleVoiceInput() {
+        if (!recognition) {
+            alert('Speech recognition is not supported in your browser.');
+            return;
+        }
+        
+        if (isRecording) {
+            recognition.stop();
+        } else {
+            const language = document.getElementById('languageSelect').value;
+            recognition.lang = language === 'hi' ? 'hi-IN' : 'en-IN';
+            recognition.start();
+            isRecording = true;
+            document.getElementById('voiceBtn').classList.add('recording');
+        }
+    }
+    
+    function startNewChat() {
+        currentSessionId = null;
+        document.getElementById('chatMessages').innerHTML = `
+            <div class="message message-assistant">
+                <div class="message-bubble">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-balance-scale text-warning me-2"></i>
+                        <strong>New Chat Started!</strong>
+                    </div>
+                    <p class="mb-0">How can I help you with your legal questions today?</p>
+                </div>
+                <div class="message-time">
+                    <i class="fas fa-clock me-1"></i>
+                    Just now
+                </div>
+            </div>
+        `;
+        
+        // Show quick questions again
+        const quickQuestions = document.querySelector('.quick-questions');
+        if (quickQuestions) {
+            quickQuestions.style.display = 'flex';
+        }
+    }
+    
+    function clearChat() {
+        if (confirm('Are you sure you want to clear this chat?')) {
+            startNewChat();
+        }
+    }
+    
+    function exportChat() {
+        const messages = document.querySelectorAll('.message');
+        let chatText = 'LegalEase AI Chat Export\n';
+        chatText += '========================\n\n';
+        
+        messages.forEach(message => {
+            const sender = message.classList.contains('message-user') ? 'You' : 'LegalEase AI';
+            const content = message.querySelector('.message-bubble').textContent.trim();
+            const time = message.querySelector('.message-time').textContent.trim();
+            
+            chatText += `${sender} (${time}):\n${content}\n\n`;
+        });
+        
+        const blob = new Blob([chatText], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `legalease-chat-${new Date().toISOString().split('T')[0]}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+    
+    function loadChatSessions() {
+        fetch('/api/chat/sessions')
+        .then(response => response.json())
+        .then(data => {
+            const sessionsContainer = document.getElementById('chatSessions');
+            sessionsContainer.innerHTML = '';
+            
+            if (data.sessions && data.sessions.length > 0) {
+                data.sessions.forEach(session => {
+                    const sessionDiv = document.createElement('div');
+                    sessionDiv.className = 'session-item';
+                    sessionDiv.onclick = () => loadSession(session.id);
+                    
+                    const date = new Date(session.created_at).toLocaleDateString();
+                    sessionDiv.innerHTML = `
+                        <div class="text-white fw-bold">${session.session_title || 'Untitled Chat'}</div>
+                        <div class="text-light small">${session.total_messages} messages • ${date}</div>
+                    `;
+                    
+                    sessionsContainer.appendChild(sessionDiv);
+                });
+            } else {
+                sessionsContainer.innerHTML = `
+                    <div class="p-3 text-center text-light">
+                        <i class="fas fa-comments fa-2x mb-2 opacity-50"></i>
+                        <p class="mb-0">No chat sessions yet.<br>Start a new conversation!</p>
+                    </div>
+                `;
+            }
+        })
+        .catch(error => {
+            console.error('Error loading sessions:', error);
+        });
+    }
+    
+    function loadSession(sessionId) {
+        fetch(`/api/chat/session/${sessionId}/messages`)
+        .then(response => response.json())
+        .then(data => {
+            const messagesContainer = document.getElementById('chatMessages');
+            messagesContainer.innerHTML = '';
+            
+            if (data.messages) {
+                data.messages.forEach(message => {
+                    const sender = message.sender_type === 'user' ? 'user' : 'assistant';
+                    const metadata = {
+                        confidence: message.confidence_score,
+                        categories: message.legal_categories ? JSON.parse(message.legal_categories) : [],
+                        responseTime: message.response_time
+                    };
+                    
+                    addMessage(message.message, sender, metadata);
+                });
+            }
+            
+            currentSessionId = sessionId;
+            
+            // Update active session in sidebar
+            document.querySelectorAll('.session-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.closest('.session-item').classList.add('active');
+        })
+        .catch(error => {
+            console.error('Error loading session:', error);
+        });
+    }
+    
+    // Language change handler
+    document.getElementById('languageSelect').addEventListener('change', function() {
+        const language = this.value;
+        if (recognition) {
+            recognition.lang = language === 'hi' ? 'hi-IN' : 'en-IN';
+        }
+    });
+</script>
+{% endblock %}

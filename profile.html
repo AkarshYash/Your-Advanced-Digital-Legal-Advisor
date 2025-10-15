@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - LegalEase AI Advanced{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="glass p-4 rounded-4">
+                <h1 class="text-white mb-2">
+                    <i class="fas fa-user-circle text-primary me-2"></i>
+                    My Profile
+                </h1>
+                <p class="text-light mb-0">
+                    Manage your account information and professional details.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card glass">
+                <div class="card-header">
+                    <h4 class="text-white mb-0">
+                        <i class="fas fa-edit text-success me-2"></i>
+                        Profile Information
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="full_name" class="form-label">Full Name</label>
+                                <input type="text" class="form-control" id="full_name" name="full_name" 
+                                       value="{{ user.full_name if user else '' }}" required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="username" class="form-label">Username</label>
+                                <input type="text" class="form-control" id="username" name="username" 
+                                       value="{{ user.username if user else '' }}" readonly>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" 
+                                       value="{{ user.email if user else '' }}" required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="phone" class="form-label">Phone</label>
+                                <input type="tel" class="form-control" id="phone" name="phone" 
+                                       value="{{ user.phone if user else '' }}">
+                            </div>
+                            
+                            <div class="col-12">
+                                <label for="address" class="form-label">Address</label>
+                                <textarea class="form-control" id="address" name="address" rows="3">{{ user.address if user else '' }}</textarea>
+                            </div>
+                        </div>
+                        
+                        {% if user and user.user_type == 'advocate' and profile %}
+                        <hr class="my-4">
+                        <h5 class="text-white mb-3">Professional Information</h5>
+                        
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="bar_council_id" class="form-label">Bar Council ID</label>
+                                <input type="text" class="form-control" id="bar_council_id" name="bar_council_id" 
+                                       value="{{ profile.bar_council_id if profile else '' }}">
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="years_experience" class="form-label">Years of Experience</label>
+                                <input type="number" class="form-control" id="years_experience" name="years_experience" 
+                                       value="{{ profile.years_experience if profile else '' }}" min="0">
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="consultation_fee" class="form-label">Consultation Fee (₹)</label>
+                                <input type="number" class="form-control" id="consultation_fee" name="consultation_fee" 
+                                       value="{{ profile.consultation_fee if profile else '' }}" min="0">
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="office_timing" class="form-label">Office Timing</label>
+                                <input type="text" class="form-control" id="office_timing" name="office_timing" 
+                                       value="{{ profile.office_timing if profile else '' }}" 
+                                       placeholder="e.g., 9:00 AM - 6:00 PM">
+                            </div>
+                            
+                            <div class="col-12">
+                                <label for="bio" class="form-label">Professional Bio</label>
+                                <textarea class="form-control" id="bio" name="bio" rows="4" 
+                                          placeholder="Brief description about your practice and expertise">{{ profile.bio if profile else '' }}</textarea>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save me-2"></i>Update Profile
+                            </button>
+                            <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline-light ms-2">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card glass">
+                <div class="card-header">
+                    <h5 class="text-white mb-0">
+                        <i class="fas fa-info-circle text-info me-2"></i>
+                        Account Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if user %}
+                    <div class="info-item mb-3">
+                        <strong class="text-light">Account Type:</strong>
+                        <span class="badge bg-primary ms-2">{{ user.user_type.title() }}</span>
+                    </div>
+                    
+                    <div class="info-item mb-3">
+                        <strong class="text-light">Member Since:</strong>
+                        <p class="text-light mb-0">{{ user.created_at if user.created_at else 'N/A' }}</p>
+                    </div>
+                    
+                    <div class="info-item mb-3">
+                        <strong class="text-light">Last Login:</strong>
+                        <p class="text-light mb-0">{{ user.last_login if user.last_login else 'N/A' }}</p>
+                    </div>
+                    
+                    <div class="info-item mb-3">
+                        <strong class="text-light">Account Status:</strong>
+                        {% if user.is_active %}
+                            <span class="badge bg-success ms-2">Active</span>
+                        {% else %}
+                            <span class="badge bg-danger ms-2">Inactive</span>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="card glass mt-4">
+                <div class="card-header">
+                    <h5 class="text-white mb-0">
+                        <i class="fas fa-shield-alt text-warning me-2"></i>
+                        Security
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-warning btn-sm">
+                            <i class="fas fa-key me-2"></i>Change Password
+                        </button>
+                        <button class="btn btn-outline-info btn-sm">
+                            <i class="fas fa-shield me-2"></i>Two-Factor Auth
+                        </button>
+                        <button class="btn btn-outline-danger btn-sm">
+                            <i class="fas fa-sign-out-alt me-2"></i>Logout All Devices
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

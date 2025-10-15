@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+
+{% block title %}Legal Templates - LegalEase AI Advanced{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="glass p-4 rounded-4">
+                <h1 class="text-white mb-2">
+                    <i class="fas fa-file-alt text-warning me-2"></i>
+                    Legal Document Templates
+                </h1>
+                <p class="text-light mb-0">
+                    Professional legal document templates for various legal needs. Generate customized documents instantly.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Filter -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <div class="card glass">
+                <div class="card-body">
+                    <form method="GET" class="row g-3">
+                        <div class="col-md-8">
+                            <select class="form-control" name="category">
+                                <option value="">All Categories</option>
+                                {% for cat in categories %}
+                                <option value="{{ cat }}" {% if cat == current_category %}selected{% endif %}>
+                                    {{ cat }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-filter me-2"></i>Filter
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card glass">
+                <div class="card-body text-center">
+                    <h5 class="text-white mb-2">{{ templates|length if templates else 0 }}</h5>
+                    <p class="text-light mb-0">Templates Available</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Templates Grid -->
+    <div class="row g-4">
+        {% if templates %}
+            {% for template in templates %}
+            <div class="col-lg-6">
+                <div class="card glass h-100">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h5 class="text-white mb-0">{{ template.title }}</h5>
+                            <span class="badge bg-info">{{ template.complexity_level or 'Basic' }}</span>
+                        </div>
+                        <small class="text-light">{{ template.category }}</small>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-light">{{ template.description or 'Professional legal document template' }}</p>
+                        
+                        <div class="template-stats mb-3">
+                            <small class="text-light">
+                                <i class="fas fa-download me-1"></i>{{ template.usage_count or 0 }} downloads
+                                {% if template.rating %}
+                                <i class="fas fa-star ms-3 me-1"></i>{{ template.rating }} rating
+                                {% endif %}
+                            </small>
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-primary btn-sm flex-fill" onclick="previewTemplate({{ template.id }})">
+                                <i class="fas fa-eye me-1"></i>Preview
+                            </button>
+                            <button class="btn btn-success btn-sm flex-fill" onclick="useTemplate({{ template.id }})">
+                                <i class="fas fa-edit me-1"></i>Use Template
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="card glass">
+                    <div class="card-body text-center py-5">
+                        <i class="fas fa-file-plus fa-3x text-muted mb-3"></i>
+                        <h5 class="text-white">No Templates Found</h5>
+                        <p class="text-light">Try selecting a different category or check back later for new templates.</p>
+                        <a href="{{ url_for('main.legal_templates') }}" class="btn btn-primary">
+                            <i class="fas fa-refresh me-2"></i>View All Templates
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Popular Categories -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card glass">
+                <div class="card-header">
+                    <h4 class="text-white mb-0">
+                        <i class="fas fa-fire text-danger me-2"></i>
+                        Popular Template Categories
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="category-card p-3 text-center">
+                                <i class="fas fa-handshake fa-2x text-primary mb-2"></i>
+                                <h6 class="text-white">Contracts & Agreements</h6>
+                                <p class="text-light small">Service agreements, NDAs, employment contracts</p>
+                                <a href="?category=Contract" class="btn btn-outline-primary btn-sm">Browse</a>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="category-card p-3 text-center">
+                                <i class="fas fa-exclamation-triangle fa-2x text-warning mb-2"></i>
+                                <h6 class="text-white">Legal Notices</h6>
+                                <p class="text-light small">Demand notices, legal warnings, cease & desist</p>
+                                <a href="?category=Notice" class="btn btn-outline-warning btn-sm">Browse</a>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="category-card p-3 text-center">
+                                <i class="fas fa-file-signature fa-2x text-success mb-2"></i>
+                                <h6 class="text-white">Court Applications</h6>
+                                <p class="text-light small">Petitions, applications, affidavits</p>
+                                <a href="?category=Court" class="btn btn-outline-success btn-sm">Browse</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Template Modal -->
+<div class="modal fade" id="templateModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content glass">
+            <div class="modal-header">
+                <h5 class="modal-title text-white" id="templateModalTitle">Template Preview</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="templateModalBody">
+                <!-- Template content will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" onclick="generateDocument()">
+                    <i class="fas fa-magic me-2"></i>Generate Document
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .category-card {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .category-card:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateY(-5px);
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function previewTemplate(templateId) {
+        document.getElementById('templateModalTitle').textContent = 'Template Preview #' + templateId;
+        document.getElementById('templateModalBody').innerHTML = `
+            <div class="text-center py-4">
+                <i class="fas fa-file-alt fa-3x text-warning mb-3"></i>
+                <h5 class="text-white">Template Preview</h5>
+                <p class="text-light">This will show the template preview for template ID: ${templateId}</p>
+                <div class="template-preview bg-dark p-3 rounded mt-3">
+                    <pre class="text-light">Template content will be displayed here...</pre>
+                </div>
+            </div>
+        `;
+        
+        const modal = new bootstrap.Modal(document.getElementById('templateModal'));
+        modal.show();
+    }
+    
+    function useTemplate(templateId) {
+        alert(`Template generator for template ${templateId} will be available soon!`);
+    }
+    
+    function generateDocument() {
+        alert('Document generation feature coming soon!');
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,910 @@
+{% extends "base.html" %}
+
+{% block title %}Quiz Generator - LegalEase AI Advanced{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="glass p-4 rounded-4">
+                <h1 class="text-white mb-2">
+                    <i class="fas fa-question-circle text-warning me-2"></i>
+                    AI Quiz Generator
+                </h1>
+                <p class="text-light mb-0">
+                    Generate custom practice quizzes for any law subject and topic. 
+                    Test your knowledge with AI-generated questions tailored to your level.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quiz Generator Interface -->
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="card glass h-100">
+                <div class="card-header">
+                    <h4 class="text-white mb-0">
+                        <i class="fas fa-cogs text-primary me-2"></i>
+                        Quiz Settings
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <!-- Subject Selection -->
+                    <div class="mb-3">
+                        <label for="quizSubject" class="form-label">Subject</label>
+                        <select class="form-control" id="quizSubject" onchange="updateQuizTopics()">
+                            <option value="">Select Subject</option>
+                            <option value="Constitutional Law">Constitutional Law</option>
+                            <option value="Contract Law">Contract Law</option>
+                            <option value="Criminal Law">Criminal Law</option>
+                            <option value="Tort Law">Tort Law</option>
+                            <option value="Property Law">Property Law</option>
+                            <option value="Family Law">Family Law</option>
+                            <option value="Administrative Law">Administrative Law</option>
+                            <option value="Company Law">Company Law</option>
+                            <option value="Labour Law">Labour Law</option>
+                            <option value="Environmental Law">Environmental Law</option>
+                            <option value="International Law">International Law</option>
+                            <option value="Jurisprudence">Jurisprudence</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Topic Selection -->
+                    <div class="mb-3">
+                        <label for="quizTopic" class="form-label">Topic</label>
+                        <select class="form-control" id="quizTopic">
+                            <option value="">Select Topic</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Number of Questions -->
+                    <div class="mb-3">
+                        <label for="numQuestions" class="form-label">Number of Questions</label>
+                        <select class="form-control" id="numQuestions">
+                            <option value="5">5 Questions</option>
+                            <option value="10" selected>10 Questions</option>
+                            <option value="15">15 Questions</option>
+                            <option value="20">20 Questions</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Difficulty Level -->
+                    <div class="mb-3">
+                        <label for="quizDifficulty" class="form-label">Difficulty Level</label>
+                        <select class="form-control" id="quizDifficulty">
+                            <option value="beginner">Beginner (Basic Concepts)</option>
+                            <option value="intermediate" selected>Intermediate (Application)</option>
+                            <option value="advanced">Advanced (Analysis)</option>
+                            <option value="expert">Expert (Critical Thinking)</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Question Types -->
+                    <div class="mb-3">
+                        <label class="form-label">Question Types</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="mcq" checked>
+                            <label class="form-check-label text-light" for="mcq">
+                                Multiple Choice Questions
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="truefalse">
+                            <label class="form-check-label text-light" for="truefalse">
+                                True/False Questions
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="casebased">
+                            <label class="form-check-label text-light" for="casebased">
+                                Case-based Questions
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Generate Quiz Button -->
+                    <div class="d-grid mb-3">
+                        <button class="btn btn-warning btn-lg" id="generateQuizBtn" onclick="generateQuiz()">
+                            <i class="fas fa-magic me-2"></i>
+                            Generate Quiz
+                        </button>
+                    </div>
+                    
+                    <!-- Quick Quiz Options -->
+                    <div class="mb-3">
+                        <label class="form-label">Quick Quiz</label>
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-outline-light btn-sm" onclick="quickQuiz('constitutional', 'fundamental-rights')">
+                                Fundamental Rights (5Q)
+                            </button>
+                            <button class="btn btn-outline-light btn-sm" onclick="quickQuiz('contract', 'essentials')">
+                                Contract Essentials (5Q)
+                            </button>
+                            <button class="btn btn-outline-light btn-sm" onclick="quickQuiz('criminal', 'ipc-basics')">
+                                IPC Basics (5Q)
+                            </button>
+                            <button class="btn btn-outline-light btn-sm" onclick="quickQuiz('tort', 'negligence')">
+                                Negligence (5Q)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quiz Display -->
+        <div class="col-lg-8">
+            <div class="card glass h-100">
+                <div class="card-header">
+                    <h4 class="text-white mb-0">
+                        <i class="fas fa-clipboard-list text-success me-2"></i>
+                        Quiz Questions
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div id="quizContent">
+                        <div class="text-center py-5">
+                            <i class="fas fa-clipboard-question fa-4x text-muted mb-3"></i>
+                            <h5 class="text-light">Ready to Generate Quiz</h5>
+                            <p class="text-muted">
+                                Configure your quiz settings and click "Generate Quiz" to create custom practice questions
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Loading State -->
+                    <div id="quizLoading" style="display: none;">
+                        <div class="text-center py-5">
+                            <div class="spinner-border text-warning mb-3" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <h5 class="text-white">Generating Quiz Questions...</h5>
+                            <p class="text-light">AI is creating personalized questions for you</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quiz Statistics -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card glass">
+                <div class="card-header">
+                    <h4 class="text-white mb-0">
+                        <i class="fas fa-chart-bar text-info me-2"></i>
+                        Quiz Performance
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row g-4">
+                        <div class="col-md-3">
+                            <div class="stat-card text-center p-3">
+                                <i class="fas fa-clipboard-check fa-2x text-success mb-2"></i>
+                                <h4 class="text-white">0</h4>
+                                <p class="text-light mb-0">Quizzes Completed</p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <div class="stat-card text-center p-3">
+                                <i class="fas fa-percentage fa-2x text-warning mb-2"></i>
+                                <h4 class="text-white">0%</h4>
+                                <p class="text-light mb-0">Average Score</p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <div class="stat-card text-center p-3">
+                                <i class="fas fa-trophy fa-2x text-info mb-2"></i>
+                                <h4 class="text-white">0</h4>
+                                <p class="text-light mb-0">Best Score</p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <div class="stat-card text-center p-3">
+                                <i class="fas fa-fire fa-2x text-danger mb-2"></i>
+                                <h4 class="text-white">0</h4>
+                                <p class="text-light mb-0">Day Streak</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .stat-card {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateY(-5px);
+    }
+    
+    .question-card {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .question-card:hover {
+        background: rgba(255, 255, 255, 0.08);
+    }
+    
+    .option-btn {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 0.75rem 1rem;
+        margin: 0.25rem 0;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        text-align: left;
+        width: 100%;
+    }
+    
+    .option-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        transform: translateX(5px);
+    }
+    
+    .option-btn.selected {
+        background: rgba(59, 130, 246, 0.3);
+        border-color: #3b82f6;
+        color: white;
+    }
+    
+    .option-btn.correct {
+        background: rgba(16, 185, 129, 0.3);
+        border-color: #10b981;
+        color: white;
+    }
+    
+    .option-btn.incorrect {
+        background: rgba(239, 68, 68, 0.3);
+        border-color: #ef4444;
+        color: white;
+    }
+    
+    .quiz-timer {
+        background: rgba(245, 158, 11, 0.2);
+        border: 1px solid rgba(245, 158, 11, 0.3);
+        border-radius: 10px;
+        padding: 0.5rem 1rem;
+        color: #f59e0b;
+        font-weight: bold;
+    }
+    
+    .quiz-progress {
+        background: rgba(255, 255, 255, 0.1);
+        height: 8px;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+    
+    .quiz-progress-bar {
+        background: linear-gradient(90deg, #3b82f6, #10b981);
+        height: 100%;
+        transition: width 0.3s ease;
+    }
+    
+    /* Fix form control styling - same as subject tutor */
+    .form-control, .form-select {
+        background: rgba(30, 41, 59, 0.9) !important;
+        border: 2px solid rgba(255, 255, 255, 0.3) !important;
+        color: white !important;
+        border-radius: 8px;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        background: rgba(30, 41, 59, 0.95) !important;
+        border-color: #f59e0b !important;
+        box-shadow: 0 0 0 0.2rem rgba(245, 158, 11, 0.25) !important;
+        color: white !important;
+    }
+    
+    .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.7) !important;
+    }
+    
+    .form-control option, .form-select option {
+        background: #1e293b !important;
+        color: white !important;
+        padding: 8px;
+    }
+    
+    .form-label {
+        color: rgba(255, 255, 255, 0.9) !important;
+        font-weight: 500;
+    }
+    
+    /* Fix checkbox styling */
+    .form-check-input {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    }
+    
+    .form-check-input:checked {
+        background-color: #f59e0b !important;
+        border-color: #f59e0b !important;
+    }
+    
+    .form-check-input:focus {
+        border-color: #f59e0b !important;
+        box-shadow: 0 0 0 0.2rem rgba(245, 158, 11, 0.25) !important;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let currentQuiz = null;
+    let currentQuestionIndex = 0;
+    let userAnswers = [];
+    let quizStartTime = null;
+    let quizTimer = null;
+    
+    // Subject-Topic mapping (same as tutor)
+    const subjectTopics = {
+        "Constitutional Law": [
+            "Preamble and Basic Features",
+            "Fundamental Rights",
+            "Directive Principles of State Policy",
+            "Fundamental Duties",
+            "Union Executive",
+            "Parliament",
+            "State Executive and Legislature",
+            "Judiciary",
+            "Centre-State Relations",
+            "Emergency Provisions",
+            "Constitutional Amendments",
+            "Basic Structure Doctrine"
+        ],
+        "Contract Law": [
+            "Nature and Formation of Contract",
+            "Offer and Acceptance",
+            "Consideration",
+            "Capacity to Contract",
+            "Free Consent",
+            "Legality of Object",
+            "Void and Voidable Contracts",
+            "Performance of Contract",
+            "Breach of Contract",
+            "Remedies for Breach",
+            "Quasi Contracts",
+            "Discharge of Contract"
+        ],
+        "Criminal Law": [
+            "General Principles of Criminal Law",
+            "Stages of Crime",
+            "General Exceptions",
+            "Right of Private Defence",
+            "Offences Against Human Body",
+            "Offences Against Property",
+            "Offences Against Public Tranquility",
+            "Offences Against State",
+            "Criminal Conspiracy",
+            "Attempt and Abetment"
+        ],
+        "Tort Law": [
+            "Nature and Definition of Tort",
+            "Negligence",
+            "Defamation",
+            "Nuisance",
+            "Trespass to Person",
+            "Trespass to Land",
+            "Trespass to Goods",
+            "Strict Liability",
+            "Vicarious Liability",
+            "Remedies in Tort"
+        ]
+        // Add other subjects as needed
+    };
+    
+    function updateQuizTopics() {
+        const subject = document.getElementById('quizSubject').value;
+        const topicSelect = document.getElementById('quizTopic');
+        
+        // Clear existing options
+        topicSelect.innerHTML = '<option value="">Select Topic</option>';
+        
+        if (subject && subjectTopics[subject]) {
+            subjectTopics[subject].forEach(topic => {
+                const option = document.createElement('option');
+                option.value = topic;
+                option.textContent = topic;
+                topicSelect.appendChild(option);
+            });
+        }
+    }
+    
+    function generateQuiz() {
+        const subject = document.getElementById('quizSubject').value;
+        const topic = document.getElementById('quizTopic').value;
+        const numQuestions = document.getElementById('numQuestions').value;
+        const difficulty = document.getElementById('quizDifficulty').value;
+        
+        if (!subject || !topic) {
+            alert('Please select both subject and topic');
+            return;
+        }
+        
+        // Show loading state
+        document.getElementById('quizContent').style.display = 'none';
+        document.getElementById('quizLoading').style.display = 'block';
+        
+        // Disable button
+        const generateBtn = document.getElementById('generateQuizBtn');
+        generateBtn.disabled = true;
+        generateBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Generating...';
+        
+        // Send request to API
+        fetch('/student/api/generate-quiz', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                subject: subject,
+                topic: topic,
+                num_questions: parseInt(numQuestions),
+                difficulty: difficulty
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Hide loading state
+            document.getElementById('quizLoading').style.display = 'none';
+            document.getElementById('quizContent').style.display = 'block';
+            
+            if (data.success) {
+                currentQuiz = data.quiz;
+                currentQuestionIndex = 0;
+                userAnswers = [];
+                displayQuiz();
+            } else {
+                displayQuizError(data.error || 'An error occurred while generating quiz');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('quizLoading').style.display = 'none';
+            document.getElementById('quizContent').style.display = 'block';
+            displayQuizError('Network error. Please try again.');
+        })
+        .finally(() => {
+            // Re-enable button
+            generateBtn.disabled = false;
+            generateBtn.innerHTML = '<i class="fas fa-magic me-2"></i>Generate Quiz';
+        });
+    }
+    
+    function quickQuiz(subject, topic) {
+        // Set quick quiz parameters
+        document.getElementById('quizSubject').value = subject === 'constitutional' ? 'Constitutional Law' : 
+                                                     subject === 'contract' ? 'Contract Law' :
+                                                     subject === 'criminal' ? 'Criminal Law' : 'Tort Law';
+        updateQuizTopics();
+        
+        // Set topic based on quick quiz type
+        setTimeout(() => {
+            const topicMap = {
+                'fundamental-rights': 'Fundamental Rights',
+                'essentials': 'Nature and Formation of Contract',
+                'ipc-basics': 'General Principles of Criminal Law',
+                'negligence': 'Negligence'
+            };
+            document.getElementById('quizTopic').value = topicMap[topic];
+            document.getElementById('numQuestions').value = '5';
+            generateQuiz();
+        }, 100);
+    }
+    
+    function displayQuiz() {
+        if (!currentQuiz || !currentQuiz.questions) {
+            displayQuizError('No questions available');
+            return;
+        }
+        
+        const contentDiv = document.getElementById('quizContent');
+        const subject = document.getElementById('quizSubject').value;
+        const topic = document.getElementById('quizTopic').value;
+        
+        quizStartTime = new Date();
+        
+        contentDiv.innerHTML = `
+            <div class="quiz-header mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h5 class="text-white mb-1">${subject}: ${topic}</h5>
+                        <small class="text-light">${currentQuiz.questions.length} Questions</small>
+                    </div>
+                    <div class="d-flex gap-2 align-items-center">
+                        <div class="quiz-timer" id="quizTimer">00:00</div>
+                        <button class="btn btn-outline-light btn-sm" onclick="submitQuiz()">
+                            <i class="fas fa-check me-1"></i>Submit
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="quiz-progress mb-3">
+                    <div class="quiz-progress-bar" id="quizProgressBar" style="width: 0%"></div>
+                </div>
+                
+                <div class="text-center">
+                    <small class="text-light">
+                        Question <span id="currentQuestionNum">1</span> of ${currentQuiz.questions.length}
+                    </small>
+                </div>
+            </div>
+            
+            <div id="quizQuestions">
+                ${displayCurrentQuestion()}
+            </div>
+            
+            <div class="quiz-navigation mt-4">
+                <div class="d-flex justify-content-between">
+                    <button class="btn btn-outline-light" id="prevBtn" onclick="previousQuestion()" disabled>
+                        <i class="fas fa-arrow-left me-1"></i>Previous
+                    </button>
+                    <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">
+                        Next<i class="fas fa-arrow-right ms-1"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        startQuizTimer();
+        updateQuizProgress();
+    }
+    
+    function displayCurrentQuestion() {
+        if (!currentQuiz || currentQuestionIndex >= currentQuiz.questions.length) {
+            return '<p class="text-light">No more questions</p>';
+        }
+        
+        const question = currentQuiz.questions[currentQuestionIndex];
+        
+        return `
+            <div class="question-card">
+                <h6 class="text-white mb-3">
+                    <span class="badge bg-primary me-2">${currentQuestionIndex + 1}</span>
+                    ${question.question}
+                </h6>
+                
+                <div class="options">
+                    ${question.options.map((option, index) => `
+                        <button class="option-btn" onclick="selectOption(${index})" id="option-${index}">
+                            <strong>${String.fromCharCode(65 + index)})</strong> ${option}
+                        </button>
+                    `).join('')}
+                </div>
+                
+                <div class="question-info mt-3">
+                    <small class="text-light">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Select the best answer and click Next to continue
+                    </small>
+                </div>
+            </div>
+        `;
+    }
+    
+    function selectOption(optionIndex) {
+        // Clear previous selections
+        document.querySelectorAll('.option-btn').forEach(btn => {
+            btn.classList.remove('selected');
+        });
+        
+        // Select current option
+        document.getElementById(`option-${optionIndex}`).classList.add('selected');
+        
+        // Store answer
+        userAnswers[currentQuestionIndex] = optionIndex;
+        
+        // Enable next button
+        document.getElementById('nextBtn').disabled = false;
+    }
+    
+    function nextQuestion() {
+        if (currentQuestionIndex < currentQuiz.questions.length - 1) {
+            currentQuestionIndex++;
+            document.getElementById('quizQuestions').innerHTML = displayCurrentQuestion();
+            updateQuizProgress();
+            updateNavigationButtons();
+            
+            // Restore previous answer if exists
+            if (userAnswers[currentQuestionIndex] !== undefined) {
+                document.getElementById(`option-${userAnswers[currentQuestionIndex]}`).classList.add('selected');
+            }
+        } else {
+            // Last question, show submit
+            submitQuiz();
+        }
+    }
+    
+    function previousQuestion() {
+        if (currentQuestionIndex > 0) {
+            currentQuestionIndex--;
+            document.getElementById('quizQuestions').innerHTML = displayCurrentQuestion();
+            updateQuizProgress();
+            updateNavigationButtons();
+            
+            // Restore previous answer if exists
+            if (userAnswers[currentQuestionIndex] !== undefined) {
+                document.getElementById(`option-${userAnswers[currentQuestionIndex]}`).classList.add('selected');
+                document.getElementById('nextBtn').disabled = false;
+            }
+        }
+    }
+    
+    function updateQuizProgress() {
+        const progress = ((currentQuestionIndex + 1) / currentQuiz.questions.length) * 100;
+        document.getElementById('quizProgressBar').style.width = progress + '%';
+        document.getElementById('currentQuestionNum').textContent = currentQuestionIndex + 1;
+    }
+    
+    function updateNavigationButtons() {
+        document.getElementById('prevBtn').disabled = currentQuestionIndex === 0;
+        
+        const nextBtn = document.getElementById('nextBtn');
+        if (currentQuestionIndex === currentQuiz.questions.length - 1) {
+            nextBtn.innerHTML = 'Submit<i class="fas fa-check ms-1"></i>';
+        } else {
+            nextBtn.innerHTML = 'Next<i class="fas fa-arrow-right ms-1"></i>';
+        }
+        
+        nextBtn.disabled = userAnswers[currentQuestionIndex] === undefined;
+    }
+    
+    function startQuizTimer() {
+        const timerElement = document.getElementById('quizTimer');
+        
+        quizTimer = setInterval(() => {
+            const elapsed = Math.floor((new Date() - quizStartTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            
+            timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }, 1000);
+    }
+    
+    function submitQuiz() {
+        if (quizTimer) {
+            clearInterval(quizTimer);
+        }
+        
+        // Calculate score
+        let correctAnswers = 0;
+        const results = [];
+        
+        currentQuiz.questions.forEach((question, index) => {
+            const userAnswer = userAnswers[index];
+            const correctAnswer = question.correct === 'A' ? 0 : 
+                                 question.correct === 'B' ? 1 :
+                                 question.correct === 'C' ? 2 : 3;
+            
+            const isCorrect = userAnswer === correctAnswer;
+            if (isCorrect) correctAnswers++;
+            
+            results.push({
+                question: question.question,
+                userAnswer: userAnswer !== undefined ? question.options[userAnswer] : 'Not answered',
+                correctAnswer: question.options[correctAnswer],
+                isCorrect: isCorrect,
+                explanation: question.explanation || 'No explanation available'
+            });
+        });
+        
+        const score = Math.round((correctAnswers / currentQuiz.questions.length) * 100);
+        const timeTaken = Math.floor((new Date() - quizStartTime) / 1000);
+        
+        displayQuizResults(score, correctAnswers, currentQuiz.questions.length, timeTaken, results);
+    }
+    
+    function displayQuizResults(score, correct, total, timeTaken, results) {
+        const contentDiv = document.getElementById('quizContent');
+        const minutes = Math.floor(timeTaken / 60);
+        const seconds = timeTaken % 60;
+        
+        const scoreColor = score >= 80 ? 'success' : score >= 60 ? 'warning' : 'danger';
+        
+        contentDiv.innerHTML = `
+            <div class="quiz-results">
+                <div class="text-center mb-4">
+                    <div class="score-circle mb-3">
+                        <h1 class="text-${scoreColor} display-3">${score}%</h1>
+                    </div>
+                    <h4 class="text-white">Quiz Completed!</h4>
+                    <p class="text-light">
+                        You scored ${correct} out of ${total} questions correctly
+                        <br>
+                        Time taken: ${minutes}:${seconds.toString().padStart(2, '0')}
+                    </p>
+                </div>
+                
+                <div class="results-summary mb-4">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <div class="stat-card text-center p-3">
+                                <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
+                                <h5 class="text-white">${correct}</h5>
+                                <p class="text-light mb-0">Correct</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card text-center p-3">
+                                <i class="fas fa-times-circle fa-2x text-danger mb-2"></i>
+                                <h5 class="text-white">${total - correct}</h5>
+                                <p class="text-light mb-0">Incorrect</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card text-center p-3">
+                                <i class="fas fa-percentage fa-2x text-${scoreColor} mb-2"></i>
+                                <h5 class="text-white">${score}%</h5>
+                                <p class="text-light mb-0">Score</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card text-center p-3">
+                                <i class="fas fa-clock fa-2x text-info mb-2"></i>
+                                <h5 class="text-white">${minutes}:${seconds.toString().padStart(2, '0')}</h5>
+                                <p class="text-light mb-0">Time</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="results-actions mb-4">
+                    <div class="d-flex gap-2 justify-content-center flex-wrap">
+                        <button class="btn btn-primary" onclick="showDetailedResults()">
+                            <i class="fas fa-list me-1"></i>View Detailed Results
+                        </button>
+                        <button class="btn btn-success" onclick="generateQuiz()">
+                            <i class="fas fa-redo me-1"></i>Retake Quiz
+                        </button>
+                        <button class="btn btn-warning" onclick="generateNewQuiz()">
+                            <i class="fas fa-plus me-1"></i>New Quiz
+                        </button>
+                        <button class="btn btn-info" onclick="exportResults()">
+                            <i class="fas fa-download me-1"></i>Export Results
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="detailedResults" style="display: none;">
+                    ${results.map((result, index) => `
+                        <div class="result-item mb-3 p-3 rounded" style="background: rgba(255, 255, 255, 0.05);">
+                            <h6 class="text-white mb-2">
+                                <span class="badge ${result.isCorrect ? 'bg-success' : 'bg-danger'} me-2">${index + 1}</span>
+                                ${result.question}
+                            </h6>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p class="text-light mb-1">
+                                        <strong>Your Answer:</strong> 
+                                        <span class="${result.isCorrect ? 'text-success' : 'text-danger'}">${result.userAnswer}</span>
+                                    </p>
+                                    <p class="text-light mb-1">
+                                        <strong>Correct Answer:</strong> 
+                                        <span class="text-success">${result.correctAnswer}</span>
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="text-light mb-0">
+                                        <strong>Explanation:</strong> ${result.explanation}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+        
+        // Store results for export
+        window.currentQuizResults = {
+            score, correct, total, timeTaken, results,
+            subject: document.getElementById('quizSubject').value,
+            topic: document.getElementById('quizTopic').value
+        };
+    }
+    
+    function showDetailedResults() {
+        const detailedDiv = document.getElementById('detailedResults');
+        if (detailedDiv.style.display === 'none') {
+            detailedDiv.style.display = 'block';
+        } else {
+            detailedDiv.style.display = 'none';
+        }
+    }
+    
+    function generateNewQuiz() {
+        // Reset form
+        document.getElementById('quizSubject').value = '';
+        document.getElementById('quizTopic').innerHTML = '<option value="">Select Topic</option>';
+        
+        // Reset quiz state
+        currentQuiz = null;
+        currentQuestionIndex = 0;
+        userAnswers = [];
+        
+        // Show initial state
+        document.getElementById('quizContent').innerHTML = `
+            <div class="text-center py-5">
+                <i class="fas fa-clipboard-question fa-4x text-muted mb-3"></i>
+                <h5 class="text-light">Ready to Generate Quiz</h5>
+                <p class="text-muted">
+                    Configure your quiz settings and click "Generate Quiz" to create custom practice questions
+                </p>
+            </div>
+        `;
+    }
+    
+    function exportResults() {
+        if (!window.currentQuizResults) return;
+        
+        const results = window.currentQuizResults;
+        const date = new Date().toLocaleDateString();
+        
+        let exportContent = `QUIZ RESULTS REPORT
+Subject: ${results.subject}
+Topic: ${results.topic}
+Date: ${date}
+Score: ${results.score}% (${results.correct}/${results.total})
+Time Taken: ${Math.floor(results.timeTaken / 60)}:${(results.timeTaken % 60).toString().padStart(2, '0')}
+
+DETAILED RESULTS:
+${results.results.map((result, index) => `
+Question ${index + 1}: ${result.question}
+Your Answer: ${result.userAnswer}
+Correct Answer: ${result.correctAnswer}
+Result: ${result.isCorrect ? 'CORRECT' : 'INCORRECT'}
+Explanation: ${result.explanation}
+`).join('\n')}
+
+---
+Generated by LegalEase AI Advanced - Your Legal Education Companion`;
+        
+        const blob = new Blob([exportContent], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `quiz-results-${results.subject.replace(/\s+/g, '-')}-${date.replace(/\//g, '-')}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+    
+    function displayQuizError(errorMessage) {
+        const contentDiv = document.getElementById('quizContent');
+        
+        contentDiv.innerHTML = `
+            <div class="text-center py-4">
+                <i class="fas fa-exclamation-triangle fa-3x text-danger mb-3"></i>
+                <h5 class="text-white">Quiz Generation Error</h5>
+                <p class="text-light">${errorMessage}</p>
+                <button class="btn btn-outline-light btn-sm" onclick="generateQuiz()">
+                    <i class="fas fa-refresh me-1"></i>Try Again
+                </button>
+            </div>
+        `;
+    }
+</script>
+{% endblock %}

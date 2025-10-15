@@ -1,0 +1,687 @@
+{% extends "base.html" %}
+
+{% block title %}Legal Games & Activities - LegalEase AI Advanced{% endblock %}
+
+{% block extra_css %}
+<style>
+    .game-card {
+        transition: all 0.3s ease;
+        height: 100%;
+        cursor: pointer;
+    }
+    
+    .game-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+    
+    .game-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+    
+    .difficulty-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        font-size: 0.8rem;
+        padding: 0.3rem 0.8rem;
+        border-radius: 15px;
+    }
+    
+    .game-stats {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .quiz-container {
+        display: none;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .question-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .option-btn {
+        width: 100%;
+        text-align: left;
+        margin-bottom: 0.5rem;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 15px;
+        color: white;
+        transition: all 0.3s ease;
+    }
+    
+    .option-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+    }
+    
+    .option-btn.correct {
+        background: rgba(16, 185, 129, 0.3);
+        border-color: #10b981;
+    }
+    
+    .option-btn.incorrect {
+        background: rgba(239, 68, 68, 0.3);
+        border-color: #ef4444;
+    }
+    
+    .progress-bar-custom {
+        height: 8px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.2);
+        overflow: hidden;
+    }
+    
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #10b981, #059669);
+        border-radius: 10px;
+        transition: width 0.3s ease;
+    }
+    
+    .timer {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #f59e0b;
+    }
+    
+    .score-display {
+        text-align: center;
+        padding: 2rem;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        margin-top: 2rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Header -->
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <div class="glass p-5 rounded-4">
+                <h1 class="display-4 text-white mb-4 floating">
+                    <i class="fas fa-gamepad text-warning me-3"></i>
+                    Legal Games & Activities
+                </h1>
+                <p class="lead text-light mb-0">
+                    Learn law through fun and interactive games! Test your knowledge, 
+                    improve your legal understanding, and compete with others.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Games Grid -->
+    <div id="gamesGrid" class="row g-4 mb-5">
+        <!-- Game 1: Judge Simulator -->
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card glass game-card" onclick="openExternalGame('judge-simulator')">
+                <div class="card-body text-center p-4 position-relative">
+                    <span class="badge bg-warning difficulty-badge">MEDIUM</span>
+                    
+                    <div class="game-icon text-primary">
+                        <i class="fas fa-gavel"></i>
+                    </div>
+                    
+                    <h5 class="text-white mb-3">Judge Simulator</h5>
+                    <p class="text-light mb-3">
+                        Experience being a judge! Make legal decisions, analyze cases, and deliver justice. 
+                        Test your judicial reasoning skills.
+                    </p>
+                    
+                    <div class="game-stats text-light">
+                        <span><i class="fas fa-users me-1"></i>Single Player</span>
+                        <span><i class="fas fa-clock me-1"></i>30-45 min</span>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <span class="badge bg-primary me-1">Simulation</span>
+                        <span class="badge bg-success me-1">Decision Making</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game 2: Law Learning Games -->
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card glass game-card" onclick="openExternalGame('law-learning')">
+                <div class="card-body text-center p-4 position-relative">
+                    <span class="badge bg-success difficulty-badge">EASY</span>
+                    
+                    <div class="game-icon text-success">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    
+                    <h5 class="text-white mb-3">Law Learning Games</h5>
+                    <p class="text-light mb-3">
+                        Interactive learning games covering constitutional law, criminal law, and civil procedures. 
+                        Perfect for law students.
+                    </p>
+                    
+                    <div class="game-stats text-light">
+                        <span><i class="fas fa-book me-1"></i>Educational</span>
+                        <span><i class="fas fa-clock me-1"></i>15-30 min</span>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <span class="badge bg-info me-1">Learning</span>
+                        <span class="badge bg-warning me-1">Interactive</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game 3: Popular Law Games -->
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card glass game-card" onclick="openExternalGame('popular-law-games')">
+                <div class="card-body text-center p-4 position-relative">
+                    <span class="badge bg-info difficulty-badge">VARIED</span>
+                    
+                    <div class="game-icon text-warning">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    
+                    <h5 class="text-white mb-3">Popular Law Games</h5>
+                    <p class="text-light mb-3">
+                        Collection of popular legal games including trivia, case studies, and legal puzzles. 
+                        Challenge yourself with various formats.
+                    </p>
+                    
+                    <div class="game-stats text-light">
+                        <span><i class="fas fa-gamepad me-1"></i>Multiple Games</span>
+                        <span><i class="fas fa-clock me-1"></i>10-60 min</span>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <span class="badge bg-danger me-1">Trivia</span>
+                        <span class="badge bg-primary me-1">Puzzles</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game 4: Law Simulation Game -->
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card glass game-card" onclick="openExternalGame('law-simulation')">
+                <div class="card-body text-center p-4 position-relative">
+                    <span class="badge bg-danger difficulty-badge">HARD</span>
+                    
+                    <div class="game-icon text-danger">
+                        <i class="fas fa-balance-scale"></i>
+                    </div>
+                    
+                    <h5 class="text-white mb-3">Law Simulation Game</h5>
+                    <p class="text-light mb-3">
+                        Comprehensive law simulation covering court procedures, legal research, and case management. 
+                        Advanced legal practice simulation.
+                    </p>
+                    
+                    <div class="game-stats text-light">
+                        <span><i class="fas fa-briefcase me-1"></i>Professional</span>
+                        <span><i class="fas fa-clock me-1"></i>60+ min</span>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <span class="badge bg-secondary me-1">Simulation</span>
+                        <span class="badge bg-info me-1">Advanced</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game 5: Constitutional Law Quiz -->
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card glass game-card" onclick="startGame(1, 'quiz', 'constitutional')">
+                <div class="card-body text-center p-4 position-relative">
+                    <span class="badge bg-success difficulty-badge">EASY</span>
+                    
+                    <div class="game-icon text-info">
+                        <i class="fas fa-scroll"></i>
+                    </div>
+                    
+                    <h5 class="text-white mb-3">Constitutional Law Quiz</h5>
+                    <p class="text-light mb-3">
+                        Test your knowledge of Indian Constitution, fundamental rights, and constitutional principles. 
+                        Perfect for competitive exams.
+                    </p>
+                    
+                    <div class="game-stats text-light">
+                        <span><i class="fas fa-question-circle me-1"></i>10 Questions</span>
+                        <span><i class="fas fa-clock me-1"></i>15 min</span>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <span class="badge bg-primary me-1">Quiz</span>
+                        <span class="badge bg-success me-1">Constitution</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game 6: Criminal Law Challenge -->
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card glass game-card" onclick="startGame(2, 'quiz', 'criminal')">
+                <div class="card-body text-center p-4 position-relative">
+                    <span class="badge bg-warning difficulty-badge">MEDIUM</span>
+                    
+                    <div class="game-icon text-danger">
+                        <i class="fas fa-handcuffs"></i>
+                    </div>
+                    
+                    <h5 class="text-white mb-3">Criminal Law Challenge</h5>
+                    <p class="text-light mb-3">
+                        Challenge yourself with IPC sections, criminal procedures, and landmark criminal cases. 
+                        Test your criminal law expertise.
+                    </p>
+                    
+                    <div class="game-stats text-light">
+                        <span><i class="fas fa-question-circle me-1"></i>10 Questions</span>
+                        <span><i class="fas fa-clock me-1"></i>15 min</span>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <span class="badge bg-danger me-1">Criminal Law</span>
+                        <span class="badge bg-warning me-1">IPC</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz Container -->
+    <div id="quizContainer" class="quiz-container">
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <div class="progress-bar-custom">
+                    <div id="progressFill" class="progress-fill" style="width: 0%"></div>
+                </div>
+                <div class="mt-2 text-light">
+                    Question <span id="currentQuestion">1</span> of <span id="totalQuestions">10</span>
+                </div>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <div class="timer" id="timer">30s</div>
+            </div>
+        </div>
+
+        <div id="questionCard" class="question-card">
+            <!-- Question content will be loaded here -->
+        </div>
+
+        <div class="text-center">
+            <button id="nextBtn" class="btn btn-accent btn-lg" onclick="nextQuestion()" style="display: none;">
+                Next Question <i class="fas fa-arrow-right ms-2"></i>
+            </button>
+            <button id="finishBtn" class="btn btn-success btn-lg" onclick="finishQuiz()" style="display: none;">
+                Finish Quiz <i class="fas fa-flag-checkered ms-2"></i>
+            </button>
+        </div>
+
+        <div id="scoreDisplay" class="score-display" style="display: none;">
+            <!-- Score will be displayed here -->
+        </div>
+    </div>
+
+    <!-- Back to Games Button -->
+    <div class="text-center mt-4">
+        <button id="backToGames" class="btn btn-outline-light btn-lg" onclick="showGames()" style="display: none;">
+            <i class="fas fa-arrow-left me-2"></i>Back to Games
+        </button>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let currentGame = null;
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let timer = null;
+    let timeLeft = 30;
+    let questions = [];
+
+    // Sample quiz questions
+    const quizQuestions = {
+        constitutional: [
+            {
+                question: "Which article of the Indian Constitution deals with Right to Equality?",
+                options: ["Article 14", "Article 19", "Article 21", "Article 32"],
+                correct: 0,
+                explanation: "Article 14 guarantees equality before law and equal protection of laws."
+            },
+            {
+                question: "How many fundamental rights are there in the Indian Constitution?",
+                options: ["5", "6", "7", "8"],
+                correct: 1,
+                explanation: "There are 6 fundamental rights in the Indian Constitution."
+            },
+            {
+                question: "Which part of the Constitution deals with Fundamental Rights?",
+                options: ["Part II", "Part III", "Part IV", "Part V"],
+                correct: 1,
+                explanation: "Part III of the Constitution deals with Fundamental Rights (Articles 12-35)."
+            },
+            {
+                question: "Right to Constitutional Remedies is guaranteed under which article?",
+                options: ["Article 30", "Article 31", "Article 32", "Article 33"],
+                correct: 2,
+                explanation: "Article 32 is known as the 'Heart and Soul' of the Constitution."
+            },
+            {
+                question: "Which amendment abolished the Right to Property as a fundamental right?",
+                options: ["42nd Amendment", "43rd Amendment", "44th Amendment", "45th Amendment"],
+                correct: 2,
+                explanation: "The 44th Amendment Act of 1978 removed the right to property from fundamental rights."
+            }
+        ],
+        criminal: [
+            {
+                question: "IPC Section 420 deals with which offense?",
+                options: ["Theft", "Cheating", "Murder", "Assault"],
+                correct: 1,
+                explanation: "Section 420 deals with cheating and dishonestly inducing delivery of property."
+            },
+            {
+                question: "What is the punishment for murder under IPC Section 302?",
+                options: ["7 years imprisonment", "10 years imprisonment", "Life imprisonment or death", "Fine only"],
+                correct: 2,
+                explanation: "Section 302 prescribes punishment of death or imprisonment for life."
+            },
+            {
+                question: "IPC Section 375 defines which crime?",
+                options: ["Theft", "Rape", "Kidnapping", "Dowry"],
+                correct: 1,
+                explanation: "Section 375 defines rape and its various forms."
+            },
+            {
+                question: "Which section deals with criminal breach of trust?",
+                options: ["Section 405", "Section 406", "Section 407", "Section 408"],
+                correct: 1,
+                explanation: "Section 406 deals with punishment for criminal breach of trust."
+            },
+            {
+                question: "Dowry death is covered under which IPC section?",
+                options: ["Section 302", "Section 304A", "Section 304B", "Section 306"],
+                correct: 2,
+                explanation: "Section 304B specifically deals with dowry death cases."
+            }
+        ]
+    };
+
+    // External game URLs
+    const externalGames = {
+        'judge-simulator': 'https://www.projectsekai.com/judge-simulator',
+        'law-learning': 'https://www.openlawlab.com/law-games',
+        'popular-law-games': 'https://www.freegames.com/law-games',
+        'law-simulation': 'https://www.lawsimulationgame.com'
+    };
+
+    // Open external games
+    function openExternalGame(gameType) {
+        const gameUrl = externalGames[gameType];
+        
+        if (gameUrl) {
+            // Show confirmation modal
+            const confirmed = confirm(`You are about to open an external legal game. This will open in a new tab. Continue?`);
+            
+            if (confirmed) {
+                window.open(gameUrl, '_blank');
+            }
+        } else {
+            // Show game info modal
+            showGameInfo(gameType);
+        }
+    }
+
+    function showGameInfo(gameType) {
+        const gameInfo = {
+            'judge-simulator': {
+                title: 'Judge Simulator',
+                description: 'Experience the role of a judge in this interactive simulation game. Make legal decisions, analyze evidence, and deliver justice in various legal scenarios.',
+                features: ['Case Analysis', 'Evidence Review', 'Legal Decision Making', 'Judicial Reasoning'],
+                url: 'https://www.projectsekai.com/judge-simulator'
+            },
+            'law-learning': {
+                title: 'Law Learning Games',
+                description: 'Interactive educational games designed to help law students learn complex legal concepts through engaging gameplay.',
+                features: ['Constitutional Law', 'Criminal Procedures', 'Civil Rights', 'Legal Terminology'],
+                url: 'https://www.openlawlab.com/law-games'
+            },
+            'popular-law-games': {
+                title: 'Popular Law Games',
+                description: 'Collection of popular legal games including trivia, puzzles, and case study challenges.',
+                features: ['Legal Trivia', 'Case Puzzles', 'Law Quizzes', 'Legal Scenarios'],
+                url: 'https://www.freegames.com/law-games'
+            },
+            'law-simulation': {
+                title: 'Law Simulation Game',
+                description: 'Comprehensive legal practice simulation covering court procedures, client management, and case preparation.',
+                features: ['Court Simulation', 'Case Management', 'Legal Research', 'Client Interaction'],
+                url: 'https://www.lawsimulationgame.com'
+            }
+        };
+
+        const info = gameInfo[gameType];
+        
+        alert(`🎮 ${info.title}\n\n${info.description}\n\nFeatures:\n• ${info.features.join('\n• ')}\n\nNote: This is an external game. Click OK to open in a new tab.`);
+        
+        window.open(info.url, '_blank');
+    }
+
+    function startGame(gameId, gameType, category) {
+        if (gameType === 'quiz') {
+            startQuiz(category);
+        } else {
+            alert(`${gameType} games are coming soon! Stay tuned for more interactive legal learning experiences.`);
+        }
+    }
+
+    function startQuiz(category) {
+        currentGame = category;
+        questions = quizQuestions[category] || quizQuestions.constitutional;
+        currentQuestionIndex = 0;
+        score = 0;
+        
+        document.getElementById('gamesGrid').style.display = 'none';
+        document.getElementById('quizContainer').style.display = 'block';
+        document.getElementById('backToGames').style.display = 'inline-block';
+        
+        document.getElementById('totalQuestions').textContent = questions.length;
+        
+        showQuestion();
+    }
+
+    function showQuestion() {
+        if (currentQuestionIndex >= questions.length) {
+            finishQuiz();
+            return;
+        }
+
+        const question = questions[currentQuestionIndex];
+        const questionCard = document.getElementById('questionCard');
+        
+        document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
+        
+        // Update progress
+        const progress = ((currentQuestionIndex) / questions.length) * 100;
+        document.getElementById('progressFill').style.width = progress + '%';
+        
+        questionCard.innerHTML = `
+            <h4 class="text-white mb-4">${question.question}</h4>
+            <div class="options">
+                ${question.options.map((option, index) => `
+                    <button class="btn option-btn" onclick="selectAnswer(${index})">
+                        ${String.fromCharCode(65 + index)}. ${option}
+                    </button>
+                `).join('')}
+            </div>
+            <div id="explanation" class="mt-3 p-3 rounded" style="display: none;">
+                <strong class="text-success">Explanation:</strong>
+                <p class="text-light mb-0 mt-2">${question.explanation}</p>
+            </div>
+        `;
+        
+        // Start timer
+        timeLeft = 30;
+        startTimer();
+        
+        // Hide next button
+        document.getElementById('nextBtn').style.display = 'none';
+        document.getElementById('finishBtn').style.display = 'none';
+    }
+
+    function selectAnswer(selectedIndex) {
+        const question = questions[currentQuestionIndex];
+        const options = document.querySelectorAll('.option-btn');
+        
+        // Disable all options
+        options.forEach((option, index) => {
+            option.disabled = true;
+            if (index === question.correct) {
+                option.classList.add('correct');
+            } else if (index === selectedIndex && index !== question.correct) {
+                option.classList.add('incorrect');
+            }
+        });
+        
+        // Update score
+        if (selectedIndex === question.correct) {
+            score++;
+        }
+        
+        // Show explanation
+        document.getElementById('explanation').style.display = 'block';
+        
+        // Stop timer
+        clearInterval(timer);
+        
+        // Show next button
+        if (currentQuestionIndex < questions.length - 1) {
+            document.getElementById('nextBtn').style.display = 'inline-block';
+        } else {
+            document.getElementById('finishBtn').style.display = 'inline-block';
+        }
+    }
+
+    function nextQuestion() {
+        currentQuestionIndex++;
+        showQuestion();
+    }
+
+    function finishQuiz() {
+        clearInterval(timer);
+        
+        const percentage = Math.round((score / questions.length) * 100);
+        let grade = 'F';
+        let message = 'Keep practicing!';
+        let color = 'danger';
+        
+        if (percentage >= 90) {
+            grade = 'A+';
+            message = 'Excellent! You have great legal knowledge!';
+            color = 'success';
+        } else if (percentage >= 80) {
+            grade = 'A';
+            message = 'Great job! You know your law well!';
+            color = 'success';
+        } else if (percentage >= 70) {
+            grade = 'B';
+            message = 'Good work! Keep learning!';
+            color = 'primary';
+        } else if (percentage >= 60) {
+            grade = 'C';
+            message = 'Not bad! There\'s room for improvement!';
+            color = 'warning';
+        }
+        
+        document.getElementById('questionCard').style.display = 'none';
+        document.getElementById('nextBtn').style.display = 'none';
+        document.getElementById('finishBtn').style.display = 'none';
+        
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        scoreDisplay.innerHTML = `
+            <div class="text-center">
+                <div class="display-1 text-${color} mb-3">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <h2 class="text-white mb-3">Quiz Complete!</h2>
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <div class="h3 text-${color}">${score}</div>
+                                <div class="text-light">Correct</div>
+                            </div>
+                            <div class="col-4">
+                                <div class="h3 text-${color}">${percentage}%</div>
+                                <div class="text-light">Score</div>
+                            </div>
+                            <div class="col-4">
+                                <div class="h3 text-${color}">${grade}</div>
+                                <div class="text-light">Grade</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-light mt-3 mb-4">${message}</p>
+                <div class="d-flex justify-content-center gap-3">
+                    <button class="btn btn-accent" onclick="startQuiz('${currentGame}')">
+                        <i class="fas fa-redo me-2"></i>Try Again
+                    </button>
+                    <button class="btn btn-outline-light" onclick="showGames()">
+                        <i class="fas fa-gamepad me-2"></i>More Games
+                    </button>
+                </div>
+            </div>
+        `;
+        scoreDisplay.style.display = 'block';
+    }
+
+    function startTimer() {
+        const timerElement = document.getElementById('timer');
+        
+        timer = setInterval(() => {
+            timeLeft--;
+            timerElement.textContent = timeLeft + 's';
+            
+            if (timeLeft <= 10) {
+                timerElement.style.color = '#ef4444';
+            }
+            
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                // Auto-select wrong answer or move to next question
+                const options = document.querySelectorAll('.option-btn');
+                if (!options[0].disabled) {
+                    selectAnswer(-1); // Wrong answer
+                }
+            }
+        }, 1000);
+    }
+
+    function showGames() {
+        document.getElementById('gamesGrid').style.display = 'flex';
+        document.getElementById('quizContainer').style.display = 'none';
+        document.getElementById('backToGames').style.display = 'none';
+        document.getElementById('scoreDisplay').style.display = 'none';
+        document.getElementById('questionCard').style.display = 'block';
+        
+        clearInterval(timer);
+    }
+</script>
+{% endblock %}

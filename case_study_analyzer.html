@@ -1,0 +1,569 @@
+{% extends "base.html" %}
+
+{% block title %}Case Study Analyzer - LegalEase AI Advanced{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="glass p-4 rounded-4">
+                <h1 class="text-white mb-2">
+                    <i class="fas fa-search text-primary me-2"></i>
+                    AI Case Study Analyzer
+                </h1>
+                <p class="text-light mb-0">
+                    Upload or paste any legal case study and get comprehensive AI-powered analysis including key facts, 
+                    legal issues, applicable laws, and learning points for LLB students.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Input Section -->
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="card glass h-100">
+                <div class="card-header">
+                    <h4 class="text-white mb-0">
+                        <i class="fas fa-file-upload text-success me-2"></i>
+                        Input Case Study
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <!-- Analysis Type Selection -->
+                    <div class="mb-3">
+                        <label class="form-label">Analysis Type</label>
+                        <select class="form-control" id="analysisType">
+                            <option value="comprehensive">Comprehensive Analysis</option>
+                            <option value="quick">Quick Summary</option>
+                            <option value="exam_focused">Exam-Focused Analysis</option>
+                            <option value="research">Research-Oriented</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Text Input -->
+                    <div class="mb-3">
+                        <label for="caseText" class="form-label">Case Study Text</label>
+                        <textarea 
+                            class="form-control" 
+                            id="caseText" 
+                            rows="12" 
+                            placeholder="Paste your case study text here... 
+
+Example:
+In the case of Kesavananda Bharati v. State of Kerala (1973), the Supreme Court was asked to determine whether Parliament had unlimited power to amend the Constitution...
+
+Include:
+- Case name and citation
+- Facts of the case
+- Legal issues raised
+- Court's decision and reasoning
+- Any dissenting opinions"
+                        ></textarea>
+                        <small class="text-light">Minimum 100 characters required for analysis</small>
+                    </div>
+                    
+                    <!-- File Upload -->
+                    <div class="mb-3">
+                        <label class="form-label">Or Upload Case Study File</label>
+                        <input type="file" class="form-control" id="caseFile" accept=".txt,.pdf,.doc,.docx">
+                        <small class="text-light">Supported formats: TXT, PDF, DOC, DOCX</small>
+                    </div>
+                    
+                    <!-- Sample Cases -->
+                    <div class="mb-3">
+                        <label class="form-label">Quick Start with Sample Cases</label>
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-outline-light btn-sm" onclick="loadSampleCase('kesavananda')">
+                                Kesavananda Bharati v. State of Kerala (Basic Structure)
+                            </button>
+                            <button class="btn btn-outline-light btn-sm" onclick="loadSampleCase('maneka')">
+                                Maneka Gandhi v. Union of India (Article 21)
+                            </button>
+                            <button class="btn btn-outline-light btn-sm" onclick="loadSampleCase('donoghue')">
+                                Donoghue v. Stevenson (Negligence)
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Analyze Button -->
+                    <div class="d-grid">
+                        <button class="btn btn-accent btn-lg" id="analyzeBtn" onclick="analyzeCase()">
+                            <i class="fas fa-brain me-2"></i>
+                            Analyze Case Study
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Results Section -->
+        <div class="col-lg-6">
+            <div class="card glass h-100">
+                <div class="card-header">
+                    <h4 class="text-white mb-0">
+                        <i class="fas fa-chart-line text-warning me-2"></i>
+                        Analysis Results
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div id="analysisResults">
+                        <div class="text-center py-5">
+                            <i class="fas fa-microscope fa-4x text-muted mb-3"></i>
+                            <h5 class="text-light">Ready for Analysis</h5>
+                            <p class="text-muted">
+                                Enter or upload a case study to get detailed AI-powered analysis
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Loading State -->
+                    <div id="loadingState" style="display: none;">
+                        <div class="text-center py-5">
+                            <div class="spinner-border text-primary mb-3" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <h5 class="text-white">Analyzing Case Study...</h5>
+                            <p class="text-light">AI is processing your case study and generating comprehensive analysis</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Analysis Features -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card glass">
+                <div class="card-header">
+                    <h4 class="text-white mb-0">
+                        <i class="fas fa-star text-warning me-2"></i>
+                        Analysis Features
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row g-4">
+                        <div class="col-md-3">
+                            <div class="feature-item text-center p-3">
+                                <i class="fas fa-list-alt fa-2x text-primary mb-2"></i>
+                                <h6 class="text-white">Key Facts Extraction</h6>
+                                <p class="text-light small">Identifies and summarizes the most important facts of the case</p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <div class="feature-item text-center p-3">
+                                <i class="fas fa-question-circle fa-2x text-success mb-2"></i>
+                                <h6 class="text-white">Legal Issues</h6>
+                                <p class="text-light small">Pinpoints the main legal questions and controversies</p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <div class="feature-item text-center p-3">
+                                <i class="fas fa-balance-scale fa-2x text-warning mb-2"></i>
+                                <h6 class="text-white">Applicable Laws</h6>
+                                <p class="text-light small">Lists relevant statutes, sections, and legal principles</p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <div class="feature-item text-center p-3">
+                                <i class="fas fa-graduation-cap fa-2x text-info mb-2"></i>
+                                <h6 class="text-white">Learning Points</h6>
+                                <p class="text-light small">Highlights key takeaways for law students</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Study Tips -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card glass">
+                <div class="card-header">
+                    <h5 class="text-white mb-0">
+                        <i class="fas fa-lightbulb text-warning me-2"></i>
+                        Case Study Analysis Tips
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <h6 class="text-primary mb-2">Before Analysis:</h6>
+                            <ul class="text-light">
+                                <li>Read the case thoroughly at least twice</li>
+                                <li>Note down unfamiliar legal terms</li>
+                                <li>Identify the parties involved</li>
+                                <li>Understand the procedural history</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <h6 class="text-success mb-2">After Analysis:</h6>
+                            <ul class="text-light">
+                                <li>Compare AI analysis with your understanding</li>
+                                <li>Research cited cases and statutes</li>
+                                <li>Create your own case brief</li>
+                                <li>Discuss with classmates or professors</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .feature-item {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+    
+    .feature-item:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateY(-5px);
+    }
+    
+    #caseText {
+        font-family: 'Courier New', monospace;
+        font-size: 0.9rem;
+    }
+    
+    .analysis-section {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border-left: 4px solid var(--accent-color);
+    }
+    
+    .confidence-badge {
+        background: rgba(16, 185, 129, 0.2);
+        color: #10b981;
+        padding: 0.25rem 0.5rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+    }
+    
+    /* Fix form control styling */
+    .form-control, .form-select {
+        background: rgba(30, 41, 59, 0.9) !important;
+        border: 2px solid rgba(255, 255, 255, 0.3) !important;
+        color: white !important;
+        border-radius: 8px;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        background: rgba(30, 41, 59, 0.95) !important;
+        border-color: #f59e0b !important;
+        box-shadow: 0 0 0 0.2rem rgba(245, 158, 11, 0.25) !important;
+        color: white !important;
+    }
+    
+    .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.7) !important;
+    }
+    
+    .form-control option, .form-select option {
+        background: #1e293b !important;
+        color: white !important;
+        padding: 8px;
+    }
+    
+    .form-label {
+        color: rgba(255, 255, 255, 0.9) !important;
+        font-weight: 500;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Sample case studies
+    const sampleCases = {
+        kesavananda: `Kesavananda Bharati v. State of Kerala (1973) AIR 1461, 1973 SCR (2) 1461
+
+Facts:
+Kesavananda Bharati, the head of Edneer Mutt in Kerala, challenged the Kerala Land Reforms (Amendment) Act, 1969, and the 24th and 25th Constitutional Amendments. The case arose when the Kerala government acquired the mutt's land under land reform laws.
+
+Legal Issues:
+1. Whether Parliament has unlimited power to amend the Constitution under Article 368?
+2. Whether fundamental rights can be completely abrogated by constitutional amendments?
+3. What are the limits, if any, on the amending power of Parliament?
+
+Court's Decision:
+The Supreme Court, by a narrow majority of 7:6, held that:
+1. Parliament has wide powers to amend the Constitution but these powers are not unlimited
+2. The basic structure of the Constitution cannot be altered by amendments
+3. Fundamental rights are part of the basic structure but can be reasonably restricted
+
+Basic Structure Elements identified:
+- Supremacy of the Constitution
+- Republican and democratic form of government
+- Secular character of the Constitution
+- Federal character of the Constitution
+- Separation of powers
+
+Significance:
+This landmark judgment established the Basic Structure Doctrine, which has become a cornerstone of Indian constitutional law and has been used to strike down several constitutional amendments.`,
+
+        maneka: `Maneka Gandhi v. Union of India (1978) AIR 597, 1978 SCR (2) 621
+
+Facts:
+Maneka Gandhi, a journalist and former daughter-in-law of Indira Gandhi, was denied passport renewal by the Regional Passport Officer without being given any reasons. Her passport was impounded under Section 10(3)(c) of the Passports Act, 1967.
+
+Legal Issues:
+1. Whether the right to travel abroad is a fundamental right under Article 21?
+2. Whether Article 21 requires just procedure and not merely procedure established by law?
+3. What is the relationship between Articles 14, 19, and 21?
+
+Court's Decision:
+The Supreme Court held that:
+1. The right to travel abroad is part of personal liberty under Article 21
+2. Article 21 requires not just any procedure but a fair, just, and reasonable procedure
+3. Articles 14, 19, and 21 are not mutually exclusive but form a golden triangle
+
+Key Principles Established:
+- Expanded interpretation of "life and personal liberty"
+- Due process of law (though not explicitly stated)
+- Interconnectedness of fundamental rights
+- Natural justice in administrative actions
+
+Impact:
+This judgment revolutionized the interpretation of Article 21 and led to the recognition of numerous rights as part of the right to life and personal liberty, including right to livelihood, right to health, right to education, etc.`,
+
+        donoghue: `Donoghue v. Stevenson [1932] AC 562 (House of Lords)
+
+Facts:
+Mrs. Donoghue went to a café with a friend who bought her a bottle of ginger beer. After consuming part of the contents, she discovered a decomposed snail in the bottle. She became ill and sued the manufacturer, Stevenson, for negligence.
+
+Legal Issues:
+1. Does a manufacturer owe a duty of care to the ultimate consumer?
+2. What is the test for establishing duty of care in negligence?
+3. Can there be liability without a contractual relationship?
+
+Court's Decision:
+The House of Lords held that:
+1. A manufacturer owes a duty of care to the ultimate consumer
+2. The "neighbour principle" was established as the test for duty of care
+3. Liability can exist in tort even without contractual privity
+
+Lord Atkin's Neighbour Principle:
+"You must take reasonable care to avoid acts or omissions which you can reasonably foresee would be likely to injure your neighbour. Who, then, in law is my neighbour? The answer seems to be - persons who are so closely and directly affected by my act that I ought reasonably to have them in contemplation..."
+
+Significance:
+This case established the modern law of negligence and is considered one of the most important cases in tort law. It created the foundation for product liability and expanded the scope of duty of care beyond contractual relationships.`
+    };
+    
+    function loadSampleCase(caseType) {
+        document.getElementById('caseText').value = sampleCases[caseType];
+    }
+    
+    function analyzeCase() {
+        const caseText = document.getElementById('caseText').value.trim();
+        const analysisType = document.getElementById('analysisType').value;
+        
+        if (!caseText) {
+            alert('Please enter case study text or upload a file');
+            return;
+        }
+        
+        if (caseText.length < 100) {
+            alert('Case study text is too short. Please provide more details (minimum 100 characters)');
+            return;
+        }
+        
+        // Show loading state
+        document.getElementById('analysisResults').style.display = 'none';
+        document.getElementById('loadingState').style.display = 'block';
+        
+        // Disable analyze button
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        analyzeBtn.disabled = true;
+        analyzeBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Analyzing...';
+        
+        // Send request to API
+        fetch('/student/api/analyze-case-study', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                case_text: caseText,
+                analysis_type: analysisType
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Hide loading state
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('analysisResults').style.display = 'block';
+            
+            if (data.success) {
+                displayAnalysisResults(data.analysis, data.processing_time);
+            } else {
+                displayError(data.error || 'An error occurred during analysis');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('analysisResults').style.display = 'block';
+            displayError('Network error. Please try again.');
+        })
+        .finally(() => {
+            // Re-enable analyze button
+            analyzeBtn.disabled = false;
+            analyzeBtn.innerHTML = '<i class="fas fa-brain me-2"></i>Analyze Case Study';
+        });
+    }
+    
+    function displayAnalysisResults(analysis, processingTime) {
+        const resultsDiv = document.getElementById('analysisResults');
+        
+        resultsDiv.innerHTML = `
+            <div class="analysis-header mb-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="text-white mb-0">Analysis Complete</h5>
+                    <div class="d-flex gap-2">
+                        <span class="confidence-badge">
+                            <i class="fas fa-clock me-1"></i>${processingTime}s
+                        </span>
+                        <button class="btn btn-outline-light btn-sm" onclick="exportAnalysis()">
+                            <i class="fas fa-download me-1"></i>Export
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="analysis-content">
+                ${formatAnalysisContent(analysis)}
+            </div>
+        `;
+    }
+    
+    function formatAnalysisContent(analysis) {
+        let content = '';
+        
+        if (analysis.summary) {
+            content += `
+                <div class="analysis-section">
+                    <h6 class="text-primary mb-2"><i class="fas fa-file-alt me-2"></i>Case Summary</h6>
+                    <p class="text-light">${analysis.summary}</p>
+                </div>
+            `;
+        }
+        
+        if (analysis.key_facts) {
+            content += `
+                <div class="analysis-section">
+                    <h6 class="text-success mb-2"><i class="fas fa-list me-2"></i>Key Facts</h6>
+                    <p class="text-light">${analysis.key_facts}</p>
+                </div>
+            `;
+        }
+        
+        if (analysis.legal_issues) {
+            content += `
+                <div class="analysis-section">
+                    <h6 class="text-warning mb-2"><i class="fas fa-question-circle me-2"></i>Legal Issues</h6>
+                    <p class="text-light">${analysis.legal_issues}</p>
+                </div>
+            `;
+        }
+        
+        if (analysis.applicable_laws) {
+            content += `
+                <div class="analysis-section">
+                    <h6 class="text-info mb-2"><i class="fas fa-balance-scale me-2"></i>Applicable Laws</h6>
+                    <p class="text-light">${analysis.applicable_laws}</p>
+                </div>
+            `;
+        }
+        
+        if (analysis.learning_points) {
+            content += `
+                <div class="analysis-section">
+                    <h6 class="text-danger mb-2"><i class="fas fa-graduation-cap me-2"></i>Learning Points</h6>
+                    <p class="text-light">${analysis.learning_points}</p>
+                </div>
+            `;
+        }
+        
+        // If no specific sections, show full analysis
+        if (!content && analysis.analysis) {
+            content = `
+                <div class="analysis-section">
+                    <h6 class="text-white mb-2"><i class="fas fa-brain me-2"></i>Complete Analysis</h6>
+                    <div class="text-light" style="white-space: pre-line;">${analysis.analysis}</div>
+                </div>
+            `;
+        }
+        
+        return content;
+    }
+    
+    function displayError(errorMessage) {
+        const resultsDiv = document.getElementById('analysisResults');
+        
+        resultsDiv.innerHTML = `
+            <div class="text-center py-4">
+                <i class="fas fa-exclamation-triangle fa-3x text-danger mb-3"></i>
+                <h5 class="text-white">Analysis Error</h5>
+                <p class="text-light">${errorMessage}</p>
+                <button class="btn btn-outline-light btn-sm" onclick="location.reload()">
+                    <i class="fas fa-refresh me-1"></i>Try Again
+                </button>
+            </div>
+        `;
+    }
+    
+    function exportAnalysis() {
+        const analysisContent = document.getElementById('analysisResults').innerText;
+        const caseText = document.getElementById('caseText').value;
+        
+        const exportContent = `CASE STUDY ANALYSIS REPORT
+Generated by LegalEase AI Advanced
+Date: ${new Date().toLocaleDateString()}
+
+ORIGINAL CASE STUDY:
+${caseText}
+
+AI ANALYSIS:
+${analysisContent}
+
+---
+Generated by LegalEase AI Advanced - Your Legal Education Companion`;
+        
+        const blob = new Blob([exportContent], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `case-analysis-${new Date().toISOString().split('T')[0]}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+    
+    // File upload handler
+    document.getElementById('caseFile').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('caseText').value = e.target.result;
+            };
+            reader.readAsText(file);
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,707 @@
+{% extends "base.html" %}
+
+{% block title %}Legal Research Assistant - LegalEase AI Advanced{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="glass p-4 rounded-4">
+                <h1 class="text-white mb-2">
+                    <i class="fas fa-microscope text-success me-2"></i>
+                    AI Legal Research Assistant
+                </h1>
+                <p class="text-light mb-0">
+                    Conduct comprehensive legal research with AI assistance. Find relevant laws, cases, 
+                    precedents, and academic resources for your legal studies and projects.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Research Interface -->
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="card glass h-100">
+                <div class="card-header">
+                    <h4 class="text-white mb-0">
+                        <i class="fas fa-search text-primary me-2"></i>
+                        Research Query
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <!-- Research Type -->
+                    <div class="mb-3">
+                        <label for="researchType" class="form-label">Research Type</label>
+                        <select class="form-control" id="researchType">
+                            <option value="general">General Legal Research</option>
+                            <option value="case_law">Case Law Research</option>
+                            <option value="statute">Statutory Research</option>
+                            <option value="comparative">Comparative Law</option>
+                            <option value="academic">Academic Research</option>
+                            <option value="procedural">Procedural Law</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Research Query -->
+                    <div class="mb-3">
+                        <label for="researchQuery" class="form-label">Research Question</label>
+                        <textarea 
+                            class="form-control" 
+                            id="researchQuery" 
+                            rows="6" 
+                            placeholder="Enter your research question or topic...
+
+Examples:
+- What are the constitutional provisions regarding freedom of speech in India?
+- Landmark cases on negligence in tort law
+- Comparative analysis of divorce laws in different personal laws
+- Procedure for filing a writ petition in High Court
+- Evolution of the basic structure doctrine in Indian constitutional law"
+                        ></textarea>
+                    </div>
+                    
+                    <!-- Subject Area -->
+                    <div class="mb-3">
+                        <label for="subjectArea" class="form-label">Subject Area</label>
+                        <select class="form-control" id="subjectArea">
+                            <option value="">All Areas</option>
+                            <option value="Constitutional Law">Constitutional Law</option>
+                            <option value="Criminal Law">Criminal Law</option>
+                            <option value="Civil Law">Civil Law</option>
+                            <option value="Contract Law">Contract Law</option>
+                            <option value="Tort Law">Tort Law</option>
+                            <option value="Property Law">Property Law</option>
+                            <option value="Family Law">Family Law</option>
+                            <option value="Administrative Law">Administrative Law</option>
+                            <option value="Company Law">Company Law</option>
+                            <option value="Labour Law">Labour Law</option>
+                            <option value="Environmental Law">Environmental Law</option>
+                            <option value="International Law">International Law</option>
+                            <option value="Jurisprudence">Jurisprudence</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Jurisdiction -->
+                    <div class="mb-3">
+                        <label for="jurisdiction" class="form-label">Jurisdiction</label>
+                        <select class="form-control" id="jurisdiction">
+                            <option value="India">India (All Courts)</option>
+                            <option value="Supreme Court">Supreme Court of India</option>
+                            <option value="High Courts">High Courts</option>
+                            <option value="District Courts">District Courts</option>
+                            <option value="Tribunals">Tribunals</option>
+                            <option value="International">International Courts</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Time Period -->
+                    <div class="mb-3">
+                        <label for="timePeriod" class="form-label">Time Period</label>
+                        <select class="form-control" id="timePeriod">
+                            <option value="all">All Time</option>
+                            <option value="recent">Last 5 Years</option>
+                            <option value="decade">Last 10 Years</option>
+                            <option value="landmark">Landmark Cases Only</option>
+                            <option value="historical">Historical Perspective</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Quick Research Topics -->
+                    <div class="mb-3">
+                        <label class="form-label">Quick Research Topics</label>
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-outline-light btn-sm" onclick="setQuickResearch('article21')">
+                                Article 21 - Right to Life
+                            </button>
+                            <button class="btn btn-outline-light btn-sm" onclick="setQuickResearch('basicstructure')">
+                                Basic Structure Doctrine
+                            </button>
+                            <button class="btn btn-outline-light btn-sm" onclick="setQuickResearch('negligence')">
+                                Negligence in Tort Law
+                            </button>
+                            <button class="btn btn-outline-light btn-sm" onclick="setQuickResearch('contractbreach')">
+                                Breach of Contract Remedies
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Start Research Button -->
+                    <div class="d-grid">
+                        <button class="btn btn-success btn-lg" id="startResearchBtn" onclick="startResearch()">
+                            <i class="fas fa-search me-2"></i>
+                            Start Research
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Research Results -->
+        <div class="col-lg-8">
+            <div class="card glass h-100">
+                <div class="card-header">
+                    <h4 class="text-white mb-0">
+                        <i class="fas fa-file-alt text-warning me-2"></i>
+                        Research Results
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div id="researchResults">
+                        <div class="text-center py-5">
+                            <i class="fas fa-search-plus fa-4x text-muted mb-3"></i>
+                            <h5 class="text-light">Ready for Research</h5>
+                            <p class="text-muted">
+                                Enter your research question and let AI help you find relevant legal information
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Loading State -->
+                    <div id="researchLoading" style="display: none;">
+                        <div class="text-center py-5">
+                            <div class="spinner-border text-success mb-3" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <h5 class="text-white">Conducting Legal Research...</h5>
+                            <p class="text-light">AI is searching through legal databases and academic resources</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Research Tools -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card glass">
+                <div class="card-header">
+                    <h4 class="text-white mb-0">
+                        <i class="fas fa-tools text-info me-2"></i>
+                        Research Tools & Resources
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row g-4">
+                        <div class="col-md-3">
+                            <div class="tool-card text-center p-3">
+                                <i class="fas fa-balance-scale fa-2x text-primary mb-2"></i>
+                                <h6 class="text-white">Case Law Database</h6>
+                                <p class="text-light small">Search landmark judgments and precedents</p>
+                                <button class="btn btn-outline-primary btn-sm" onclick="openCaseLawSearch()">
+                                    Search Cases
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <div class="tool-card text-center p-3">
+                                <i class="fas fa-book-open fa-2x text-success mb-2"></i>
+                                <h6 class="text-white">Statute Finder</h6>
+                                <p class="text-light small">Find relevant acts, sections, and rules</p>
+                                <button class="btn btn-outline-success btn-sm" onclick="openStatuteFinder()">
+                                    Find Statutes
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <div class="tool-card text-center p-3">
+                                <i class="fas fa-graduation-cap fa-2x text-warning mb-2"></i>
+                                <h6 class="text-white">Academic Papers</h6>
+                                <p class="text-light small">Access scholarly articles and journals</p>
+                                <button class="btn btn-outline-warning btn-sm" onclick="openAcademicSearch()">
+                                    Browse Papers
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <div class="tool-card text-center p-3">
+                                <i class="fas fa-quote-right fa-2x text-info mb-2"></i>
+                                <h6 class="text-white">Citation Generator</h6>
+                                <p class="text-light small">Generate proper legal citations</p>
+                                <button class="btn btn-outline-info btn-sm" onclick="openCitationGenerator()">
+                                    Generate Citations
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Research History -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card glass">
+                <div class="card-header">
+                    <h5 class="text-white mb-0">
+                        <i class="fas fa-history text-secondary me-2"></i>
+                        Recent Research History
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div id="researchHistory">
+                        <div class="text-center py-3">
+                            <i class="fas fa-clock fa-2x text-muted mb-2"></i>
+                            <p class="text-light">No recent research history. Start researching to see your queries here.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .tool-card {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 15px;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .tool-card:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+    
+    .research-section {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border-left: 4px solid var(--accent-color);
+    }
+    
+    .case-item {
+        background: rgba(59, 130, 246, 0.1);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 0.5rem 0;
+    }
+    
+    .statute-item {
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 0.5rem 0;
+    }
+    
+    .source-link {
+        background: rgba(245, 158, 11, 0.1);
+        border: 1px solid rgba(245, 158, 11, 0.3);
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        margin: 0.25rem;
+        display: inline-block;
+        color: #f59e0b;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    
+    .source-link:hover {
+        background: rgba(245, 158, 11, 0.2);
+        color: #f59e0b;
+        transform: translateY(-2px);
+    }
+    
+    .history-item {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 0.5rem 0;
+        border-left: 3px solid var(--primary-color);
+        transition: all 0.3s ease;
+    }
+    
+    .history-item:hover {
+        background: rgba(255, 255, 255, 0.1);
+        cursor: pointer;
+    }
+    
+    /* Fix form control styling */
+    .form-control, .form-select {
+        background: rgba(30, 41, 59, 0.9) !important;
+        border: 2px solid rgba(255, 255, 255, 0.3) !important;
+        color: white !important;
+        border-radius: 8px;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        background: rgba(30, 41, 59, 0.95) !important;
+        border-color: #f59e0b !important;
+        box-shadow: 0 0 0 0.2rem rgba(245, 158, 11, 0.25) !important;
+        color: white !important;
+    }
+    
+    .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.7) !important;
+    }
+    
+    .form-control option, .form-select option {
+        background: #1e293b !important;
+        color: white !important;
+        padding: 8px;
+    }
+    
+    .form-label {
+        color: rgba(255, 255, 255, 0.9) !important;
+        font-weight: 500;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const quickResearchQueries = {
+        'article21': {
+            query: 'Comprehensive analysis of Article 21 of Indian Constitution - Right to Life and Personal Liberty. Include landmark cases, evolution of interpretation, and current scope.',
+            type: 'case_law',
+            subject: 'Constitutional Law'
+        },
+        'basicstructure': {
+            query: 'Basic Structure Doctrine in Indian Constitutional Law - origin, development, key cases, and current application. Include Kesavananda Bharati case analysis.',
+            type: 'case_law',
+            subject: 'Constitutional Law'
+        },
+        'negligence': {
+            query: 'Law of Negligence in Indian Tort Law - essential elements, landmark cases, defenses, and recent developments. Include Donoghue v Stevenson influence.',
+            type: 'case_law',
+            subject: 'Tort Law'
+        },
+        'contractbreach': {
+            query: 'Remedies for Breach of Contract under Indian Contract Act - damages, specific performance, injunction, and quantum meruit. Include relevant case laws.',
+            type: 'statute',
+            subject: 'Contract Law'
+        }
+    };
+    
+    function setQuickResearch(type) {
+        const research = quickResearchQueries[type];
+        if (research) {
+            document.getElementById('researchQuery').value = research.query;
+            document.getElementById('researchType').value = research.type;
+            document.getElementById('subjectArea').value = research.subject;
+        }
+    }
+    
+    function startResearch() {
+        const query = document.getElementById('researchQuery').value.trim();
+        const researchType = document.getElementById('researchType').value;
+        const subjectArea = document.getElementById('subjectArea').value;
+        const jurisdiction = document.getElementById('jurisdiction').value;
+        const timePeriod = document.getElementById('timePeriod').value;
+        
+        if (!query) {
+            alert('Please enter a research question');
+            return;
+        }
+        
+        if (query.length < 20) {
+            alert('Please provide a more detailed research question (minimum 20 characters)');
+            return;
+        }
+        
+        // Show loading state
+        document.getElementById('researchResults').style.display = 'none';
+        document.getElementById('researchLoading').style.display = 'block';
+        
+        // Disable button
+        const researchBtn = document.getElementById('startResearchBtn');
+        researchBtn.disabled = true;
+        researchBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Researching...';
+        
+        // Send request to API
+        fetch('/student/api/legal-research', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                query: query,
+                type: researchType,
+                subject: subjectArea,
+                jurisdiction: jurisdiction,
+                time_period: timePeriod
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Hide loading state
+            document.getElementById('researchLoading').style.display = 'none';
+            document.getElementById('researchResults').style.display = 'block';
+            
+            if (data.success) {
+                displayResearchResults(data.research);
+                addToResearchHistory(query, researchType);
+            } else {
+                displayResearchError(data.error || 'An error occurred during research');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('researchLoading').style.display = 'none';
+            document.getElementById('researchResults').style.display = 'block';
+            displayResearchError('Network error. Please try again.');
+        })
+        .finally(() => {
+            // Re-enable button
+            researchBtn.disabled = false;
+            researchBtn.innerHTML = '<i class="fas fa-search me-2"></i>Start Research';
+        });
+    }
+    
+    function displayResearchResults(research) {
+        const resultsDiv = document.getElementById('researchResults');
+        const query = document.getElementById('researchQuery').value;
+        
+        resultsDiv.innerHTML = `
+            <div class="research-header mb-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="text-white mb-0">Research Results</h5>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-light btn-sm" onclick="exportResearch()">
+                            <i class="fas fa-download me-1"></i>Export
+                        </button>
+                        <button class="btn btn-outline-light btn-sm" onclick="shareResearch()">
+                            <i class="fas fa-share me-1"></i>Share
+                        </button>
+                    </div>
+                </div>
+                <small class="text-light">Research Query: "${query}"</small>
+            </div>
+            
+            <div class="research-content">
+                ${formatResearchContent(research)}
+            </div>
+        `;
+        
+        // Store research for export
+        window.currentResearch = {
+            query: query,
+            results: research,
+            timestamp: new Date().toISOString()
+        };
+    }
+    
+    function formatResearchContent(research) {
+        let content = '';
+        
+        if (research.relevant_laws) {
+            content += `
+                <div class="research-section">
+                    <h6 class="text-primary mb-2"><i class="fas fa-balance-scale me-2"></i>Relevant Laws & Statutes</h6>
+                    <div class="statute-item">
+                        <div class="text-light" style="white-space: pre-line;">${research.relevant_laws}</div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        if (research.case_law) {
+            content += `
+                <div class="research-section">
+                    <h6 class="text-success mb-2"><i class="fas fa-gavel me-2"></i>Case Law & Precedents</h6>
+                    <div class="case-item">
+                        <div class="text-light" style="white-space: pre-line;">${research.case_law}</div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        if (research.principles) {
+            content += `
+                <div class="research-section">
+                    <h6 class="text-warning mb-2"><i class="fas fa-lightbulb me-2"></i>Legal Principles</h6>
+                    <div class="text-light" style="white-space: pre-line;">${research.principles}</div>
+                </div>
+            `;
+        }
+        
+        if (research.sources) {
+            content += `
+                <div class="research-section">
+                    <h6 class="text-info mb-2"><i class="fas fa-link me-2"></i>Research Sources</h6>
+                    <div class="text-light" style="white-space: pre-line;">${research.sources}</div>
+                </div>
+            `;
+        }
+        
+        // If no specific sections, show full research
+        if (!content && research.research) {
+            content = `
+                <div class="research-section">
+                    <h6 class="text-white mb-2"><i class="fas fa-file-alt me-2"></i>Research Findings</h6>
+                    <div class="text-light" style="white-space: pre-line;">${research.research}</div>
+                </div>
+            `;
+        }
+        
+        // Add suggested further reading
+        content += `
+            <div class="research-section">
+                <h6 class="text-secondary mb-2"><i class="fas fa-book me-2"></i>Suggested Further Reading</h6>
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="#" class="source-link" onclick="suggestedSearch('related_cases')">
+                        <i class="fas fa-gavel me-1"></i>Related Cases
+                    </a>
+                    <a href="#" class="source-link" onclick="suggestedSearch('academic_articles')">
+                        <i class="fas fa-graduation-cap me-1"></i>Academic Articles
+                    </a>
+                    <a href="#" class="source-link" onclick="suggestedSearch('comparative_law')">
+                        <i class="fas fa-globe me-1"></i>Comparative Law
+                    </a>
+                    <a href="#" class="source-link" onclick="suggestedSearch('recent_developments')">
+                        <i class="fas fa-newspaper me-1"></i>Recent Developments
+                    </a>
+                </div>
+            </div>
+        `;
+        
+        return content;
+    }
+    
+    function displayResearchError(errorMessage) {
+        const resultsDiv = document.getElementById('researchResults');
+        
+        resultsDiv.innerHTML = `
+            <div class="text-center py-4">
+                <i class="fas fa-exclamation-triangle fa-3x text-danger mb-3"></i>
+                <h5 class="text-white">Research Error</h5>
+                <p class="text-light">${errorMessage}</p>
+                <button class="btn btn-outline-light btn-sm" onclick="startResearch()">
+                    <i class="fas fa-refresh me-1"></i>Try Again
+                </button>
+            </div>
+        `;
+    }
+    
+    function addToResearchHistory(query, type) {
+        const historyDiv = document.getElementById('researchHistory');
+        const timestamp = new Date().toLocaleString();
+        
+        // Create history item
+        const historyItem = document.createElement('div');
+        historyItem.className = 'history-item';
+        historyItem.innerHTML = `
+            <div class="d-flex justify-content-between align-items-start">
+                <div class="flex-grow-1">
+                    <h6 class="text-white mb-1">${query.substring(0, 80)}${query.length > 80 ? '...' : ''}</h6>
+                    <small class="text-light">
+                        <i class="fas fa-tag me-1"></i>${type.replace('_', ' ').toUpperCase()}
+                        <i class="fas fa-clock ms-3 me-1"></i>${timestamp}
+                    </small>
+                </div>
+                <button class="btn btn-outline-light btn-sm" onclick="repeatResearch('${query.replace(/'/g, "\\'")}', '${type}')">
+                    <i class="fas fa-redo"></i>
+                </button>
+            </div>
+        `;
+        
+        // Add to history (replace empty state if exists)
+        if (historyDiv.innerHTML.includes('No recent research history')) {
+            historyDiv.innerHTML = '';
+        }
+        
+        historyDiv.insertBefore(historyItem, historyDiv.firstChild);
+        
+        // Keep only last 5 items
+        while (historyDiv.children.length > 5) {
+            historyDiv.removeChild(historyDiv.lastChild);
+        }
+    }
+    
+    function repeatResearch(query, type) {
+        document.getElementById('researchQuery').value = query;
+        document.getElementById('researchType').value = type;
+        startResearch();
+    }
+    
+    function suggestedSearch(type) {
+        const baseQuery = document.getElementById('researchQuery').value;
+        const suggestions = {
+            'related_cases': `Find more cases related to: ${baseQuery}`,
+            'academic_articles': `Academic articles and scholarly papers on: ${baseQuery}`,
+            'comparative_law': `Comparative analysis with other jurisdictions: ${baseQuery}`,
+            'recent_developments': `Recent legal developments and updates on: ${baseQuery}`
+        };
+        
+        document.getElementById('researchQuery').value = suggestions[type];
+        startResearch();
+    }
+    
+    function exportResearch() {
+        if (!window.currentResearch) return;
+        
+        const research = window.currentResearch;
+        const exportContent = `LEGAL RESEARCH REPORT
+Query: ${research.query}
+Date: ${new Date(research.timestamp).toLocaleDateString()}
+Generated by: LegalEase AI Advanced
+
+RESEARCH FINDINGS:
+${JSON.stringify(research.results, null, 2)}
+
+---
+This research was conducted using LegalEase AI Advanced Legal Research Assistant.
+Please verify all information with primary sources before use in legal proceedings.`;
+        
+        const blob = new Blob([exportContent], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `legal-research-${new Date().toISOString().split('T')[0]}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+    
+    function shareResearch() {
+        if (navigator.share && window.currentResearch) {
+            navigator.share({
+                title: 'Legal Research Results',
+                text: `Research on: ${window.currentResearch.query}`,
+                url: window.location.href
+            });
+        } else {
+            // Fallback: copy to clipboard
+            const shareText = `Legal Research Results\nQuery: ${window.currentResearch.query}\nGenerated by LegalEase AI Advanced`;
+            navigator.clipboard.writeText(shareText).then(() => {
+                alert('Research details copied to clipboard!');
+            });
+        }
+    }
+    
+    // Tool functions
+    function openCaseLawSearch() {
+        document.getElementById('researchType').value = 'case_law';
+        document.getElementById('researchQuery').value = 'Search for landmark cases in ';
+        document.getElementById('researchQuery').focus();
+    }
+    
+    function openStatuteFinder() {
+        document.getElementById('researchType').value = 'statute';
+        document.getElementById('researchQuery').value = 'Find relevant statutes and sections for ';
+        document.getElementById('researchQuery').focus();
+    }
+    
+    function openAcademicSearch() {
+        document.getElementById('researchType').value = 'academic';
+        document.getElementById('researchQuery').value = 'Academic research and scholarly articles on ';
+        document.getElementById('researchQuery').focus();
+    }
+    
+    function openCitationGenerator() {
+        alert('Citation Generator feature coming soon! For now, you can use the research results to manually create citations.');
+    }
+</script>
+{% endblock %}

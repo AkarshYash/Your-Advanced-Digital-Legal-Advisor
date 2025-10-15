@@ -1,0 +1,296 @@
+{% extends "base.html" %}
+
+{% block title %}Find Lawyers - LegalEase AI Advanced{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="glass p-4 rounded-4">
+                <h1 class="text-white mb-2">
+                    <i class="fas fa-user-tie text-success me-2"></i>
+                    Find Expert Lawyers
+                </h1>
+                <p class="text-light mb-0">
+                    Connect with verified legal professionals. Search by specialization, location, and experience.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Search Filters -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card glass">
+                <div class="card-body">
+                    <form method="GET" class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label text-light">Specialization</label>
+                            <select class="form-control" name="specialization">
+                                <option value="">All Specializations</option>
+                                <option value="Criminal Law" {% if current_specialization == 'Criminal Law' %}selected{% endif %}>Criminal Law</option>
+                                <option value="Civil Law" {% if current_specialization == 'Civil Law' %}selected{% endif %}>Civil Law</option>
+                                <option value="Family Law" {% if current_specialization == 'Family Law' %}selected{% endif %}>Family Law</option>
+                                <option value="Corporate Law" {% if current_specialization == 'Corporate Law' %}selected{% endif %}>Corporate Law</option>
+                                <option value="Property Law" {% if current_specialization == 'Property Law' %}selected{% endif %}>Property Law</option>
+                                <option value="Constitutional Law" {% if current_specialization == 'Constitutional Law' %}selected{% endif %}>Constitutional Law</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label class="form-label text-light">Location</label>
+                            <input type="text" class="form-control" name="location" 
+                                   placeholder="City or Court name" value="{{ current_location or '' }}">
+                        </div>
+                        
+                        <div class="col-md-2">
+                            <label class="form-label text-light">Min Rating</label>
+                            <select class="form-control" name="min_rating">
+                                <option value="">Any Rating</option>
+                                <option value="4.5">4.5+ Stars</option>
+                                <option value="4.0">4.0+ Stars</option>
+                                <option value="3.5">3.5+ Stars</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-2">
+                            <label class="form-label text-light">&nbsp;</label>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-search me-2"></i>Search
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Lawyers Grid -->
+    <div class="row g-4">
+        {% if advocates %}
+            {% for advocate in advocates %}
+            <div class="col-lg-6">
+                <div class="card glass h-100">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3 text-center">
+                                <div class="lawyer-avatar mb-3">
+                                    <i class="fas fa-user-tie fa-3x text-primary"></i>
+                                </div>
+                                <div class="rating mb-2">
+                                    {% for i in range(5) %}
+                                        {% if i < (advocate.rating or 0)|int %}
+                                            <i class="fas fa-star text-warning"></i>
+                                        {% else %}
+                                            <i class="far fa-star text-muted"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                    <br>
+                                    <small class="text-light">{{ advocate.rating or 0 }}/5</small>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-9">
+                                <h5 class="text-white mb-1">{{ advocate.full_name }}</h5>
+                                <p class="text-primary mb-2">
+                                    <i class="fas fa-briefcase me-1"></i>
+                                    {{ advocate.years_experience or 0 }} years experience
+                                </p>
+                                
+                                {% if advocate.specializations %}
+                                <div class="specializations mb-2">
+                                    <small class="text-light">
+                                        <strong>Specializations:</strong> {{ advocate.specializations|safe }}
+                                    </small>
+                                </div>
+                                {% endif %}
+                                
+                                {% if advocate.court_locations %}
+                                <div class="locations mb-2">
+                                    <small class="text-light">
+                                        <strong>Courts:</strong> {{ advocate.court_locations|safe }}
+                                    </small>
+                                </div>
+                                {% endif %}
+                                
+                                <div class="lawyer-stats mb-3">
+                                    <div class="row g-2 text-center">
+                                        <div class="col-4">
+                                            <div class="stat-item">
+                                                <strong class="text-success">{{ advocate.total_cases or 0 }}</strong>
+                                                <br><small class="text-light">Cases</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="stat-item">
+                                                <strong class="text-info">{{ advocate.cases_won or 0 }}</strong>
+                                                <br><small class="text-light">Won</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="stat-item">
+                                                <strong class="text-warning">₹{{ advocate.consultation_fee or 0 }}</strong>
+                                                <br><small class="text-light">Fee</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-primary btn-sm flex-fill" onclick="viewProfile({{ advocate.id }})">
+                                        <i class="fas fa-eye me-1"></i>View Profile
+                                    </button>
+                                    <button class="btn btn-success btn-sm flex-fill" onclick="bookConsultation({{ advocate.id }})">
+                                        <i class="fas fa-calendar me-1"></i>Book Now
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="card glass">
+                    <div class="card-body text-center py-5">
+                        <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                        <h5 class="text-white">No Lawyers Found</h5>
+                        <p class="text-light">Try adjusting your search criteria or browse all lawyers.</p>
+                        <a href="{{ url_for('main.find_lawyers') }}" class="btn btn-primary">
+                            <i class="fas fa-refresh me-2"></i>View All Lawyers
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Featured Lawyers -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card glass">
+                <div class="card-header">
+                    <h4 class="text-white mb-0">
+                        <i class="fas fa-star text-warning me-2"></i>
+                        Why Choose Our Verified Lawyers?
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row g-4">
+                        <div class="col-md-3 text-center">
+                            <i class="fas fa-shield-check fa-3x text-success mb-3"></i>
+                            <h6 class="text-white">Verified Professionals</h6>
+                            <p class="text-light small">All lawyers are verified with Bar Council credentials</p>
+                        </div>
+                        
+                        <div class="col-md-3 text-center">
+                            <i class="fas fa-star fa-3x text-warning mb-3"></i>
+                            <h6 class="text-white">Rated & Reviewed</h6>
+                            <p class="text-light small">Client reviews and ratings for transparency</p>
+                        </div>
+                        
+                        <div class="col-md-3 text-center">
+                            <i class="fas fa-clock fa-3x text-info mb-3"></i>
+                            <h6 class="text-white">Quick Booking</h6>
+                            <p class="text-light small">Easy online appointment scheduling</p>
+                        </div>
+                        
+                        <div class="col-md-3 text-center">
+                            <i class="fas fa-handshake fa-3x text-primary mb-3"></i>
+                            <h6 class="text-white">Trusted Platform</h6>
+                            <p class="text-light small">Secure and reliable legal consultation platform</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Lawyer Profile Modal -->
+<div class="modal fade" id="lawyerModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content glass">
+            <div class="modal-header">
+                <h5 class="modal-title text-white" id="lawyerModalTitle">Lawyer Profile</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="lawyerModalBody">
+                <!-- Lawyer profile will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" onclick="bookFromModal()">
+                    <i class="fas fa-calendar me-2"></i>Book Consultation
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .lawyer-avatar {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        padding: 1rem;
+        display: inline-block;
+    }
+    
+    .stat-item {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        padding: 0.5rem;
+    }
+    
+    .rating .fas.fa-star {
+        font-size: 0.8rem;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let selectedLawyerId = null;
+    
+    function viewProfile(lawyerId) {
+        selectedLawyerId = lawyerId;
+        document.getElementById('lawyerModalTitle').textContent = 'Lawyer Profile #' + lawyerId;
+        document.getElementById('lawyerModalBody').innerHTML = `
+            <div class="text-center py-4">
+                <i class="fas fa-user-tie fa-3x text-success mb-3"></i>
+                <h5 class="text-white">Lawyer Profile</h5>
+                <p class="text-light">Detailed profile information for lawyer ID: ${lawyerId}</p>
+                <div class="profile-details bg-dark p-3 rounded mt-3">
+                    <p class="text-light">Full profile details will be displayed here including:</p>
+                    <ul class="text-light text-start">
+                        <li>Professional background</li>
+                        <li>Education and certifications</li>
+                        <li>Case history and success rate</li>
+                        <li>Client testimonials</li>
+                        <li>Availability and consultation fees</li>
+                    </ul>
+                </div>
+            </div>
+        `;
+        
+        const modal = new bootstrap.Modal(document.getElementById('lawyerModal'));
+        modal.show();
+    }
+    
+    function bookConsultation(lawyerId) {
+        {% if session.user_id %}
+            alert(`Booking consultation with lawyer ${lawyerId}. Appointment booking system will be available soon!`);
+        {% else %}
+            alert('Please login to book a consultation.');
+            window.location.href = '{{ url_for("auth.login") }}';
+        {% endif %}
+    }
+    
+    function bookFromModal() {
+        if (selectedLawyerId) {
+            bookConsultation(selectedLawyerId);
+        }
+    }
+</script>
+{% endblock %}

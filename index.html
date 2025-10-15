@@ -1,0 +1,460 @@
+{% extends "base.html" %}
+
+{% block title %}LegalEase AI Advanced - Your Digital Legal Advisor{% endblock %}
+
+{% block extra_css %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.body.classList.add('index-page');
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section min-vh-100 d-flex align-items-center">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <div class="hero-content">
+                    <h1 class="display-4 fw-bold text-white mb-4 floating">
+                        <i class="fas fa-balance-scale text-warning me-3"></i>
+                        Your Advanced Digital Legal Advisor
+                    </h1>
+                    <p class="lead text-light mb-4">
+                        Get instant legal guidance powered by advanced AI technology. 
+                        Available in 12+ Indian languages with comprehensive legal knowledge.
+                    </p>
+                    
+                    <div class="hero-features mb-4">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="feature-item glass p-3 rounded-3">
+                                    <i class="fas fa-robot text-warning me-2"></i>
+                                    <span class="text-white">AI-Powered Legal Assistant</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="feature-item glass p-3 rounded-3">
+                                    <i class="fas fa-language text-warning me-2"></i>
+                                    <span class="text-white">12+ Indian Languages</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="feature-item glass p-3 rounded-3">
+                                    <i class="fas fa-graduation-cap text-success me-2"></i>
+                                    <span class="text-white">Student Learning Tools</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="feature-item glass p-3 rounded-3">
+                                    <i class="fas fa-search text-info me-2"></i>
+                                    <span class="text-white">Case Study Analyzer</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="feature-item glass p-3 rounded-3">
+                                    <i class="fas fa-file-alt text-warning me-2"></i>
+                                    <span class="text-white">Document Analysis</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="feature-item glass p-3 rounded-3">
+                                    <i class="fas fa-user-tie text-warning me-2"></i>
+                                    <span class="text-white">Expert Lawyers Network</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="hero-actions">
+                        <a href="{{ url_for('chat.chat_interface') }}" class="btn btn-accent btn-lg me-3 pulse">
+                            <i class="fas fa-comments me-2"></i>
+                            Start AI Chat
+                        </a>
+                        <a href="{{ url_for('main.features') }}" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Learn More
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6">
+                <div class="hero-visual text-center">
+                    <div class="legal-animation">
+                        <div class="floating-icon" style="animation-delay: 0s;">
+                            <i class="fas fa-gavel fa-3x text-warning"></i>
+                        </div>
+                        <div class="floating-icon" style="animation-delay: 1s;">
+                            <i class="fas fa-book-open fa-2x text-info"></i>
+                        </div>
+                        <div class="floating-icon" style="animation-delay: 2s;">
+                            <i class="fas fa-shield-alt fa-2x text-success"></i>
+                        </div>
+                        <div class="central-icon">
+                            <i class="fas fa-balance-scale fa-5x text-white pulse"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold text-white mb-3">
+                <i class="fas fa-star text-warning me-3"></i>
+                Advanced Features
+            </h2>
+            <p class="lead text-light">
+                Comprehensive legal assistance powered by cutting-edge technology
+            </p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 feature-card">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon mb-3">
+                            <i class="fas fa-robot fa-3x text-primary"></i>
+                        </div>
+                        <h5 class="card-title text-white mb-3">AI Legal Assistant</h5>
+                        <p class="card-text text-light">
+                            Get instant legal advice powered by Google Gemini AI. 
+                            Trained on Indian legal framework and constitutional provisions.
+                        </p>
+                        <a href="{{ url_for('chat.chat_interface') }}" class="btn btn-primary">
+                            Try Now <i class="fas fa-arrow-right ms-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 feature-card">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon mb-3">
+                            <i class="fas fa-file-contract fa-3x text-success"></i>
+                        </div>
+                        <h5 class="card-title text-white mb-3">Document Analysis</h5>
+                        <p class="card-text text-light">
+                            Upload and analyze legal documents instantly. 
+                            Get key insights, legal implications, and recommendations.
+                        </p>
+                        <a href="{{ url_for('main.document_analysis') }}" class="btn btn-success">
+                            Analyze Document <i class="fas fa-upload ms-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 feature-card">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon mb-3">
+                            <i class="fas fa-file-alt fa-3x text-warning"></i>
+                        </div>
+                        <h5 class="card-title text-white mb-3">Legal Templates</h5>
+                        <p class="card-text text-light">
+                            Access 50+ legal document templates. 
+                            Generate customized legal documents instantly.
+                        </p>
+                        <a href="{{ url_for('main.legal_templates') }}" class="btn btn-warning">
+                            Browse Templates <i class="fas fa-file-download ms-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 feature-card">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon mb-3">
+                            <i class="fas fa-user-tie fa-3x text-info"></i>
+                        </div>
+                        <h5 class="card-title text-white mb-3">Expert Lawyers</h5>
+                        <p class="card-text text-light">
+                            Connect with verified legal professionals. 
+                            Book consultations and get expert advice.
+                        </p>
+                        <a href="{{ url_for('main.find_lawyers') }}" class="btn btn-info">
+                            Find Lawyers <i class="fas fa-search ms-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 feature-card">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon mb-3">
+                            <i class="fas fa-book fa-3x text-danger"></i>
+                        </div>
+                        <h5 class="card-title text-white mb-3">Legal Resources</h5>
+                        <p class="card-text text-light">
+                            Access comprehensive legal knowledge base. 
+                            Constitution, IPC sections, and case studies.
+                        </p>
+                        <a href="{{ url_for('main.legal_resources') }}" class="btn btn-danger">
+                            Explore Resources <i class="fas fa-book-open ms-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 feature-card">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon mb-3">
+                            <i class="fas fa-language fa-3x text-purple"></i>
+                        </div>
+                        <h5 class="card-title text-white mb-3">Multi-Language</h5>
+                        <p class="card-text text-light">
+                            Available in 12+ Indian languages including Hindi, Tamil, 
+                            Telugu, Bengali, Marathi, and more.
+                        </p>
+                        <a href="{{ url_for('chat.chat_interface') }}" class="btn btn-secondary">
+                            Choose Language <i class="fas fa-globe ms-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 feature-card">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon mb-3">
+                            <i class="fas fa-graduation-cap fa-3x text-success"></i>
+                        </div>
+                        <h5 class="card-title text-white mb-3">Student Tools</h5>
+                        <p class="card-text text-light">
+                            Comprehensive learning tools for LLB students including case study analyzer, 
+                            subject tutor, quiz generator, and study planner.
+                        </p>
+                        <a href="{{ url_for('student.student_dashboard') }}" class="btn btn-success">
+                            Student Dashboard <i class="fas fa-arrow-right ms-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Statistics Section -->
+<section class="stats-section py-5">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="stat-item glass p-4 rounded-3">
+                    <div class="stat-icon mb-3">
+                        <i class="fas fa-users fa-3x text-primary"></i>
+                    </div>
+                    <h3 class="stat-number text-white fw-bold" data-count="10000">0</h3>
+                    <p class="stat-label text-light">Active Users</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="stat-item glass p-4 rounded-3">
+                    <div class="stat-icon mb-3">
+                        <i class="fas fa-comments fa-3x text-success"></i>
+                    </div>
+                    <h3 class="stat-number text-white fw-bold" data-count="50000">0</h3>
+                    <p class="stat-label text-light">Legal Consultations</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="stat-item glass p-4 rounded-3">
+                    <div class="stat-icon mb-3">
+                        <i class="fas fa-file-alt fa-3x text-warning"></i>
+                    </div>
+                    <h3 class="stat-number text-white fw-bold" data-count="25000">0</h3>
+                    <p class="stat-label text-light">Documents Analyzed</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="stat-item glass p-4 rounded-3">
+                    <div class="stat-icon mb-3">
+                        <i class="fas fa-star fa-3x text-info"></i>
+                    </div>
+                    <h3 class="stat-number text-white fw-bold" data-count="98">0</h3>
+                    <p class="stat-label text-light">Satisfaction Rate (%)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <div class="cta-content glass p-5 rounded-4">
+                    <h2 class="display-6 fw-bold text-white mb-4">
+                        Ready to Get Legal Help?
+                    </h2>
+                    <p class="lead text-light mb-4">
+                        Join thousands of Indians who trust LegalEase AI for their legal needs. 
+                        Start your legal journey today with our advanced AI assistant.
+                    </p>
+                    
+                    <div class="cta-actions">
+                        {% if not session.user_id %}
+                            <a href="{{ url_for('auth.register') }}" class="btn btn-accent btn-lg me-3">
+                                <i class="fas fa-user-plus me-2"></i>
+                                Get Started Free
+                            </a>
+                        {% endif %}
+                        <a href="{{ url_for('chat.chat_interface') }}" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-robot me-2"></i>
+                            Try AI Assistant
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .hero-section {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .feature-item {
+        transition: all 0.3s ease;
+    }
+    
+    .feature-item:hover {
+        transform: translateY(-5px);
+        background: rgba(255, 255, 255, 0.15);
+    }
+    
+    .feature-card {
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    }
+    
+    .legal-animation {
+        position: relative;
+        height: 400px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .floating-icon {
+        position: absolute;
+        animation: floating 3s ease-in-out infinite;
+    }
+    
+    .floating-icon:nth-child(1) {
+        top: 20%;
+        left: 20%;
+    }
+    
+    .floating-icon:nth-child(2) {
+        top: 30%;
+        right: 20%;
+    }
+    
+    .floating-icon:nth-child(3) {
+        bottom: 20%;
+        left: 30%;
+    }
+    
+    .central-icon {
+        z-index: 2;
+    }
+    
+    .stat-item {
+        transition: all 0.3s ease;
+    }
+    
+    .stat-item:hover {
+        transform: scale(1.05);
+    }
+    
+    .text-purple {
+        color: #8b5cf6 !important;
+    }
+    
+    @keyframes floating {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-20px); }
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Counter animation
+    function animateCounters() {
+        const counters = document.querySelectorAll('.stat-number');
+        
+        counters.forEach(counter => {
+            const target = parseInt(counter.getAttribute('data-count'));
+            const increment = target / 100;
+            let current = 0;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    counter.textContent = target.toLocaleString();
+                    clearInterval(timer);
+                } else {
+                    counter.textContent = Math.floor(current).toLocaleString();
+                }
+            }, 20);
+        });
+    }
+    
+    // Intersection Observer for counter animation
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                animateCounters();
+                observer.unobserve(entry.target);
+            }
+        });
+    });
+    
+    const statsSection = document.querySelector('.stats-section');
+    if (statsSection) {
+        observer.observe(statsSection);
+    }
+    
+    // Smooth reveal animations
+    const revealElements = document.querySelectorAll('.card, .stat-item');
+    
+    const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    });
+    
+    revealElements.forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(30px)';
+        el.style.transition = 'all 0.6s ease';
+        revealObserver.observe(el);
+    });
+</script>
+{% endblock %}

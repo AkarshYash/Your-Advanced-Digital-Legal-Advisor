@@ -1,0 +1,476 @@
+{% extends "base.html" %}
+
+{% block title %}Student Dashboard - LegalEase AI Advanced{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Welcome Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="glass p-4 rounded-4">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h1 class="text-white mb-2">
+                            <i class="fas fa-graduation-cap text-warning me-2"></i>
+                            Welcome, {{ session.get('full_name', 'Student') }}!
+                        </h1>
+                        <p class="text-light mb-0">
+                            Your comprehensive legal education companion. Track your progress, analyze cases, and master law subjects with AI assistance.
+                        </p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <div class="student-avatar">
+                            <i class="fas fa-user-graduate fa-4x text-primary"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Statistics Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-3 col-md-6">
+            <div class="card glass text-center h-100">
+                <div class="card-body p-4">
+                    <i class="fas fa-file-alt fa-3x text-primary mb-3"></i>
+                    <h3 class="text-white fw-bold">{{ stats.case_studies_analyzed }}</h3>
+                    <p class="text-light mb-0">Case Studies Analyzed</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6">
+            <div class="card glass text-center h-100">
+                <div class="card-body p-4">
+                    <i class="fas fa-book fa-3x text-success mb-3"></i>
+                    <h3 class="text-white fw-bold">{{ stats.subjects_studied }}</h3>
+                    <p class="text-light mb-0">Subjects Studied</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6">
+            <div class="card glass text-center h-100">
+                <div class="card-body p-4">
+                    <i class="fas fa-clock fa-3x text-warning mb-3"></i>
+                    <h3 class="text-white fw-bold">{{ stats.study_hours }}</h3>
+                    <p class="text-light mb-0">Study Hours</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6">
+            <div class="card glass text-center h-100">
+                <div class="card-body p-4">
+                    <i class="fas fa-trophy fa-3x text-info mb-3"></i>
+                    <h3 class="text-white fw-bold">A+</h3>
+                    <p class="text-light mb-0">Average Grade</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="row g-4 mb-4">
+        <div class="col-12">
+            <div class="card glass">
+                <div class="card-header">
+                    <h4 class="text-white mb-0">
+                        <i class="fas fa-rocket text-primary me-2"></i>
+                        Quick Actions
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-lg-2 col-md-4 col-6">
+                            <a href="{{ url_for('student.case_study_analyzer') }}" class="btn btn-outline-light w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
+                                <i class="fas fa-search fa-2x mb-2"></i>
+                                <span>Case Study Analyzer</span>
+                            </a>
+                        </div>
+                        
+                        <div class="col-lg-2 col-md-4 col-6">
+                            <a href="{{ url_for('student.subject_tutor') }}" class="btn btn-outline-light w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
+                                <i class="fas fa-chalkboard-teacher fa-2x mb-2"></i>
+                                <span>Subject Tutor</span>
+                            </a>
+                        </div>
+                        
+                        <div class="col-lg-2 col-md-4 col-6">
+                            <a href="{{ url_for('student.quiz_generator') }}" class="btn btn-outline-light w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
+                                <i class="fas fa-question-circle fa-2x mb-2"></i>
+                                <span>Quiz Generator</span>
+                            </a>
+                        </div>
+                        
+                        <div class="col-lg-2 col-md-4 col-6">
+                            <a href="{{ url_for('student.study_planner') }}" class="btn btn-outline-light w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
+                                <i class="fas fa-calendar-alt fa-2x mb-2"></i>
+                                <span>Study Planner</span>
+                            </a>
+                        </div>
+                        
+                        <div class="col-lg-2 col-md-4 col-6">
+                            <a href="{{ url_for('student.legal_research') }}" class="btn btn-outline-light w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
+                                <i class="fas fa-microscope fa-2x mb-2"></i>
+                                <span>Legal Research</span>
+                            </a>
+                        </div>
+                        
+                        <div class="col-lg-2 col-md-4 col-6">
+                            <a href="{{ url_for('main.legal_resources') }}" class="btn btn-outline-light w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
+                                <i class="fas fa-library fa-2x mb-2"></i>
+                                <span>Study Materials</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Activity & Study Progress -->
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="card glass h-100">
+                <div class="card-header">
+                    <h5 class="text-white mb-0">
+                        <i class="fas fa-history text-info me-2"></i>
+                        Recent Activity
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_activities %}
+                        <div class="activity-list">
+                            {% for activity in recent_activities %}
+                            <div class="activity-item mb-3 p-3 rounded" style="background: rgba(255, 255, 255, 0.05);">
+                                <div class="d-flex align-items-center">
+                                    <div class="activity-icon me-3">
+                                        {% if activity.activity_type == 'case_study' %}
+                                            <i class="fas fa-file-alt text-primary"></i>
+                                        {% elif activity.activity_type == 'subject_study' %}
+                                            <i class="fas fa-book text-success"></i>
+                                        {% elif activity.activity_type == 'quiz_attempt' %}
+                                            <i class="fas fa-question-circle text-warning"></i>
+                                        {% else %}
+                                            <i class="fas fa-circle text-info"></i>
+                                        {% endif %}
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <p class="text-white mb-1">{{ activity.activity_description }}</p>
+                                        <small class="text-light">{{ activity.created_at }}</small>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-clock fa-3x text-muted mb-3"></i>
+                            <p class="text-light">No recent activity. Start studying to see your progress here!</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-6">
+            <div class="card glass h-100">
+                <div class="card-header">
+                    <h5 class="text-white mb-0">
+                        <i class="fas fa-chart-line text-success me-2"></i>
+                        Study Progress
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="progress-item mb-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-white">Constitutional Law</span>
+                            <span class="text-light">85%</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-success" style="width: 85%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-item mb-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-white">Contract Law</span>
+                            <span class="text-light">72%</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-warning" style="width: 72%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-item mb-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-white">Criminal Law</span>
+                            <span class="text-light">68%</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-info" style="width: 68%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-item mb-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-white">Tort Law</span>
+                            <span class="text-light">45%</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-danger" style="width: 45%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-3">
+                        <a href="{{ url_for('student.study_planner') }}" class="btn btn-accent btn-sm">
+                            <i class="fas fa-plus me-1"></i>Create Study Plan
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Educational YouTube Videos -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card glass">
+                <div class="card-header">
+                    <h5 class="text-white mb-0">
+                        <i class="fab fa-youtube text-danger me-2"></i>
+                        Educational Law Videos
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-4">
+                        <!-- Video 1: Constitutional Law -->
+                        <div class="col-lg-6 col-md-12">
+                            <div class="video-card p-3 rounded" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);">
+                                <div class="row align-items-center">
+                                    <div class="col-md-4">
+                                        <div class="video-thumbnail position-relative">
+                                            <iframe width="100%" height="120" src="https://www.youtube.com/embed/anyZ0j2nhIc" 
+                                                    title="Constitutional Law Basics" frameborder="0" 
+                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                                    allowfullscreen style="border-radius: 8px;"></iframe>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <h6 class="text-white mb-2">Constitutional Law Fundamentals</h6>
+                                        <p class="text-light small mb-2">
+                                            Comprehensive overview of Indian Constitutional Law covering fundamental rights, 
+                                            directive principles, and constitutional amendments.
+                                        </p>
+                                        <div class="d-flex gap-2 mb-2">
+                                            <span class="badge bg-primary">Constitutional Law</span>
+                                            <span class="badge bg-success">Fundamentals</span>
+                                        </div>
+                                        <a href="https://youtu.be/anyZ0j2nhIc?si=DdsytyPHttQO5Ri_" target="_blank" 
+                                           class="btn btn-outline-light btn-sm">
+                                            <i class="fab fa-youtube me-1"></i>Watch Full Video
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Video 2: Criminal Law -->
+                        <div class="col-lg-6 col-md-12">
+                            <div class="video-card p-3 rounded" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);">
+                                <div class="row align-items-center">
+                                    <div class="col-md-4">
+                                        <div class="video-thumbnail position-relative">
+                                            <iframe width="100%" height="120" src="https://www.youtube.com/embed/aE6Pdy-Bs6g" 
+                                                    title="Criminal Law Essentials" frameborder="0" 
+                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                                    allowfullscreen style="border-radius: 8px;"></iframe>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <h6 class="text-white mb-2">Criminal Law & IPC Essentials</h6>
+                                        <p class="text-light small mb-2">
+                                            Deep dive into Indian Penal Code, criminal procedures, and landmark 
+                                            criminal law cases with practical examples.
+                                        </p>
+                                        <div class="d-flex gap-2 mb-2">
+                                            <span class="badge bg-danger">Criminal Law</span>
+                                            <span class="badge bg-warning">IPC</span>
+                                        </div>
+                                        <a href="https://youtu.be/aE6Pdy-Bs6g?si=Tl8njbzi0XB3baJj" target="_blank" 
+                                           class="btn btn-outline-light btn-sm">
+                                            <i class="fab fa-youtube me-1"></i>Watch Full Video
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Video 3: Contract Law -->
+                        <div class="col-lg-6 col-md-12">
+                            <div class="video-card p-3 rounded" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);">
+                                <div class="row align-items-center">
+                                    <div class="col-md-4">
+                                        <div class="video-thumbnail position-relative">
+                                            <iframe width="100%" height="120" src="https://www.youtube.com/embed/RebkkV23OvM" 
+                                                    title="Contract Law Principles" frameborder="0" 
+                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                                    allowfullscreen style="border-radius: 8px;"></iframe>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <h6 class="text-white mb-2">Contract Law Principles</h6>
+                                        <p class="text-light small mb-2">
+                                            Master the essentials of contract formation, consideration, capacity, 
+                                            and breach of contract with real-world examples.
+                                        </p>
+                                        <div class="d-flex gap-2 mb-2">
+                                            <span class="badge bg-info">Contract Law</span>
+                                            <span class="badge bg-success">Principles</span>
+                                        </div>
+                                        <a href="https://youtu.be/RebkkV23OvM?si=msTMpy-JvCD-okXa" target="_blank" 
+                                           class="btn btn-outline-light btn-sm">
+                                            <i class="fab fa-youtube me-1"></i>Watch Full Video
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Video 4: Tort Law -->
+                        <div class="col-lg-6 col-md-12">
+                            <div class="video-card p-3 rounded" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);">
+                                <div class="row align-items-center">
+                                    <div class="col-md-4">
+                                        <div class="video-thumbnail position-relative">
+                                            <iframe width="100%" height="120" src="https://www.youtube.com/embed/G4Tuk7j8NM8" 
+                                                    title="Tort Law Fundamentals" frameborder="0" 
+                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                                    allowfullscreen style="border-radius: 8px;"></iframe>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <h6 class="text-white mb-2">Tort Law & Negligence</h6>
+                                        <p class="text-light small mb-2">
+                                            Comprehensive guide to tort law covering negligence, defamation, 
+                                            nuisance, and remedies available in tort cases.
+                                        </p>
+                                        <div class="d-flex gap-2 mb-2">
+                                            <span class="badge bg-warning">Tort Law</span>
+                                            <span class="badge bg-danger">Negligence</span>
+                                        </div>
+                                        <a href="https://youtu.be/G4Tuk7j8NM8?si=Sq5TioeRpfm6M7HW" target="_blank" 
+                                           class="btn btn-outline-light btn-sm">
+                                            <i class="fab fa-youtube me-1"></i>Watch Full Video
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <p class="text-light mb-3">
+                            <i class="fas fa-info-circle me-2"></i>
+                            These curated educational videos will help you understand complex legal concepts better
+                        </p>
+                        <a href="https://www.youtube.com/results?search_query=law+education+india" target="_blank" 
+                           class="btn btn-danger">
+                            <i class="fab fa-youtube me-2"></i>Explore More Law Videos
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Study Tips -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card glass">
+                <div class="card-header">
+                    <h5 class="text-white mb-0">
+                        <i class="fas fa-lightbulb text-warning me-2"></i>
+                        Daily Study Tips
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="tip-card p-3 rounded" style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3);">
+                                <h6 class="text-primary mb-2">
+                                    <i class="fas fa-book-reader me-2"></i>Active Reading
+                                </h6>
+                                <p class="text-light small mb-0">
+                                    Take notes while reading cases. Summarize key points in your own words to improve retention.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="tip-card p-3 rounded" style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3);">
+                                <h6 class="text-success mb-2">
+                                    <i class="fas fa-users me-2"></i>Group Study
+                                </h6>
+                                <p class="text-light small mb-0">
+                                    Discuss complex legal concepts with classmates. Teaching others helps solidify your understanding.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="tip-card p-3 rounded" style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3);">
+                                <h6 class="text-warning mb-2">
+                                    <i class="fas fa-clock me-2"></i>Time Management
+                                </h6>
+                                <p class="text-light small mb-0">
+                                    Use the Pomodoro technique: 25 minutes focused study, 5 minutes break. Repeat for better concentration.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .student-avatar {
+        text-align: center;
+        opacity: 0.7;
+    }
+    
+    .activity-item {
+        transition: all 0.3s ease;
+    }
+    
+    .activity-item:hover {
+        background: rgba(255, 255, 255, 0.1) !important;
+        transform: translateX(5px);
+    }
+    
+    .progress {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+    }
+    
+    .progress-bar {
+        border-radius: 10px;
+    }
+    
+    .tip-card {
+        transition: all 0.3s ease;
+    }
+    
+    .tip-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .btn:hover {
+        transform: translateY(-2px);
+    }
+</style>
+{% endblock %}

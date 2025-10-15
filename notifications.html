@@ -1,0 +1,279 @@
+{% extends "base.html" %}
+
+{% block title %}Notifications - LegalEase AI Advanced{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="glass p-4 rounded-4">
+                <h1 class="text-white mb-2">
+                    <i class="fas fa-bell text-warning me-2"></i>
+                    Notifications
+                </h1>
+                <p class="text-light mb-0">
+                    Stay updated with your legal activities, appointments, and important updates.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Notifications List -->
+    <div class="row">
+        <div class="col-12">
+            {% if notifications %}
+                {% for notification in notifications %}
+                <div class="card glass mb-3">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-auto">
+                                <div class="notification-icon">
+                                    {% if notification.notification_type == 'success' %}
+                                        <i class="fas fa-check-circle fa-2x text-success"></i>
+                                    {% elif notification.notification_type == 'warning' %}
+                                        <i class="fas fa-exclamation-triangle fa-2x text-warning"></i>
+                                    {% elif notification.notification_type == 'error' %}
+                                        <i class="fas fa-times-circle fa-2x text-danger"></i>
+                                    {% else %}
+                                        <i class="fas fa-info-circle fa-2x text-info"></i>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="col">
+                                <h5 class="text-white mb-1">{{ notification.title }}</h5>
+                                <p class="text-light mb-2">{{ notification.message }}</p>
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>
+                                    {{ notification.created_at }}
+                                </small>
+                            </div>
+                            
+                            <div class="col-auto">
+                                <div class="notification-actions">
+                                    {% if notification.action_url %}
+                                    <a href="{{ notification.action_url }}" class="btn btn-outline-light btn-sm me-2">
+                                        <i class="fas fa-external-link-alt me-1"></i>View
+                                    </a>
+                                    {% endif %}
+                                    
+                                    {% if not notification.is_read %}
+                                    <button class="btn btn-outline-success btn-sm me-2" onclick="markAsRead({{ notification.id }})">
+                                        <i class="fas fa-check me-1"></i>Mark Read
+                                    </button>
+                                    {% endif %}
+                                    
+                                    <button class="btn btn-outline-danger btn-sm" onclick="deleteNotification({{ notification.id }})">
+                                        <i class="fas fa-trash me-1"></i>Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                
+                <!-- Pagination or Load More -->
+                {% if notifications|length >= 10 %}
+                <div class="text-center mt-4">
+                    <button class="btn btn-outline-light" onclick="loadMoreNotifications()">
+                        <i class="fas fa-chevron-down me-2"></i>Load More
+                    </button>
+                </div>
+                {% endif %}
+                
+            {% else %}
+                <div class="card glass">
+                    <div class="card-body text-center py-5">
+                        <i class="fas fa-bell-slash fa-3x text-muted mb-3"></i>
+                        <h5 class="text-white">No Notifications</h5>
+                        <p class="text-light">You're all caught up! New notifications will appear here.</p>
+                        <a href="{{ url_for('main.dashboard') }}" class="btn btn-primary">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Notification Settings -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card glass">
+                <div class="card-header">
+                    <h5 class="text-white mb-0">
+                        <i class="fas fa-cog text-secondary me-2"></i>
+                        Notification Settings
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <h6 class="text-white mb-3">Email Notifications</h6>
+                            
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="emailAppointments" checked>
+                                <label class="form-check-label text-light" for="emailAppointments">
+                                    Appointment confirmations and reminders
+                                </label>
+                            </div>
+                            
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="emailMessages" checked>
+                                <label class="form-check-label text-light" for="emailMessages">
+                                    New messages from lawyers/clients
+                                </label>
+                            </div>
+                            
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="emailUpdates">
+                                <label class="form-check-label text-light" for="emailUpdates">
+                                    Platform updates and news
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <h6 class="text-white mb-3">Push Notifications</h6>
+                            
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="pushAppointments" checked>
+                                <label class="form-check-label text-light" for="pushAppointments">
+                                    Appointment reminders
+                                </label>
+                            </div>
+                            
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="pushMessages" checked>
+                                <label class="form-check-label text-light" for="pushMessages">
+                                    Instant messages
+                                </label>
+                            </div>
+                            
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="pushMarketing">
+                                <label class="form-check-label text-light" for="pushMarketing">
+                                    Marketing and promotional content
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <button class="btn btn-success" onclick="saveNotificationSettings()">
+                            <i class="fas fa-save me-2"></i>Save Settings
+                        </button>
+                        <button class="btn btn-outline-light ms-2" onclick="clearAllNotifications()">
+                            <i class="fas fa-trash me-2"></i>Clear All Notifications
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .notification-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 60px;
+        height: 60px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+    }
+    
+    .notification-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    .card {
+        transition: all 0.3s ease;
+    }
+    
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+    
+    @media (max-width: 768px) {
+        .notification-actions {
+            margin-top: 1rem;
+            justify-content: center;
+        }
+        
+        .notification-actions .btn {
+            font-size: 0.8rem;
+            padding: 0.25rem 0.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function markAsRead(notificationId) {
+        // Simulate marking as read
+        alert(`Notification ${notificationId} marked as read! (Feature in development)`);
+        
+        // In a real implementation, you would make an API call here
+        // fetch(`/api/notifications/${notificationId}/read`, { method: 'POST' })
+        //     .then(() => location.reload());
+    }
+    
+    function deleteNotification(notificationId) {
+        if (confirm('Delete this notification?')) {
+            alert(`Notification ${notificationId} deleted! (Feature in development)`);
+            
+            // In a real implementation, you would make an API call here
+            // fetch(`/api/notifications/${notificationId}`, { method: 'DELETE' })
+            //     .then(() => location.reload());
+        }
+    }
+    
+    function loadMoreNotifications() {
+        alert('Load more notifications feature in development!');
+    }
+    
+    function saveNotificationSettings() {
+        // Collect all checkbox states
+        const settings = {
+            emailAppointments: document.getElementById('emailAppointments').checked,
+            emailMessages: document.getElementById('emailMessages').checked,
+            emailUpdates: document.getElementById('emailUpdates').checked,
+            pushAppointments: document.getElementById('pushAppointments').checked,
+            pushMessages: document.getElementById('pushMessages').checked,
+            pushMarketing: document.getElementById('pushMarketing').checked
+        };
+        
+        console.log('Notification settings:', settings);
+        alert('Notification settings saved! (Feature in development)');
+        
+        // In a real implementation, you would make an API call here
+        // fetch('/api/notification-settings', {
+        //     method: 'POST',
+        //     headers: { 'Content-Type': 'application/json' },
+        //     body: JSON.stringify(settings)
+        // });
+    }
+    
+    function clearAllNotifications() {
+        if (confirm('Are you sure you want to clear all notifications? This action cannot be undone.')) {
+            alert('All notifications cleared! (Feature in development)');
+            
+            // In a real implementation, you would make an API call here
+            // fetch('/api/notifications/clear-all', { method: 'POST' })
+            //     .then(() => location.reload());
+        }
+    }
+    
+    // Auto-refresh notifications every 30 seconds (in a real app)
+    // setInterval(() => {
+    //     // Check for new notifications
+    // }, 30000);
+</script>
+{% endblock %}

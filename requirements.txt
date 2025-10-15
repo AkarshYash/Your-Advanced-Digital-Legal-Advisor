@@ -1,0 +1,20 @@
+# Core Requirements (Essential)
+Flask>=2.3.0
+Werkzeug>=2.3.0
+
+# Optional Requirements (Install as needed)
+# AI Features
+# google-generativeai>=0.3.2
+
+# Real-time Features  
+# flask-socketio>=5.3.0
+# flask-cors>=4.0.0
+
+# Document Processing
+# pdfplumber>=0.9.0
+# python-docx>=1.1.0
+
+# Additional Features
+# python-dotenv>=1.0.0
+# Pillow>=10.0.0
+# requests>=2.31.0

@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block title %}Login - LegalEase AI Advanced{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center align-items-center min-vh-100">
+        <div class="col-lg-5 col-md-7">
+            <div class="card glass">
+                <div class="card-header text-center py-4">
+                    <h2 class="text-white mb-0">
+                        <i class="fas fa-sign-in-alt text-warning me-2"></i>
+                        Welcome Back
+                    </h2>
+                    <p class="text-light mt-2 mb-0">Sign in to your LegalEase AI account</p>
+                </div>
+                
+                <div class="card-body p-4">
+                    <form method="POST" id="loginForm">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">
+                                <i class="fas fa-user me-2"></i>Email or Username
+                            </label>
+                            <input type="text" class="form-control" id="username" name="username" 
+                                   placeholder="Enter your email or username" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="password" class="form-label">
+                                <i class="fas fa-lock me-2"></i>Password
+                            </label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="password" name="password" 
+                                       placeholder="Enter your password" required>
+                                <button class="btn btn-outline-light" type="button" id="togglePassword">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="rememberMe">
+                            <label class="form-check-label text-light" for="rememberMe">
+                                Remember me
+                            </label>
+                        </div>
+                        
+                        <div class="d-grid mb-3">
+                            <button type="submit" class="btn btn-accent btn-lg" id="loginBtn">
+                                <i class="fas fa-sign-in-alt me-2"></i>
+                                Sign In
+                            </button>
+                        </div>
+                        
+                        <div class="text-center">
+                            <a href="{{ url_for('auth.forgot_password') }}" class="text-warning text-decoration-none">
+                                <i class="fas fa-key me-1"></i>Forgot Password?
+                            </a>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="card-footer text-center py-3">
+                    <p class="text-light mb-0">
+                        Don't have an account? 
+                        <a href="{{ url_for('auth.register') }}" class="text-warning text-decoration-none fw-bold">
+                            Sign Up Here
+                        </a>
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Quick Login Options -->
+            <div class="text-center mt-4">
+                <div class="glass p-3 rounded-3">
+                    <h6 class="text-white mb-3">
+                        <i class="fas fa-rocket me-2"></i>Quick Access
+                    </h6>
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <a href="{{ url_for('chat.chat_interface') }}" class="btn btn-outline-light btn-sm w-100">
+                                <i class="fas fa-robot me-1"></i>Try AI Chat
+                            </a>
+                        </div>
+                        <div class="col-6">
+                            <a href="{{ url_for('main.legal_resources') }}" class="btn btn-outline-light btn-sm w-100">
+                                <i class="fas fa-book me-1"></i>Legal Resources
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .min-vh-100 {
+        min-height: 100vh;
+        padding-top: 80px;
+    }
+    
+    .input-group .btn-outline-light {
+        border-color: rgba(255, 255, 255, 0.3);
+        color: rgba(255, 255, 255, 0.8);
+    }
+    
+    .input-group .btn-outline-light:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.5);
+        color: white;
+    }
+    
+    .form-check-input:checked {
+        background-color: var(--accent-color);
+        border-color: var(--accent-color);
+    }
+    
+    .card {
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+    
+    .card-header {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .card-footer {
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+        background: rgba(255, 255, 255, 0.05);
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Toggle password visibility
+    document.getElementById('togglePassword').addEventListener('click', function() {
+        const passwordField = document.getElementById('password');
+        const icon = this.querySelector('i');
+        
+        if (passwordField.type === 'password') {
+            passwordField.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            passwordField.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    });
+    
+    // Form submission with loading state
+    document.getElementById('loginForm').addEventListener('submit', function() {
+        const btn = document.getElementById('loginBtn');
+        const originalText = btn.innerHTML;
+        
+        btn.innerHTML = '<span class="loading me-2"></span>Signing In...';
+        btn.disabled = true;
+        
+        // Re-enable button after 5 seconds (in case of error)
+        setTimeout(() => {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }, 5000);
+    });
+    
+    // Remember me functionality
+    const rememberCheckbox = document.getElementById('rememberMe');
+    const usernameField = document.getElementById('username');
+    
+    // Load remembered username
+    if (localStorage.getItem('rememberedUsername')) {
+        usernameField.value = localStorage.getItem('rememberedUsername');
+        rememberCheckbox.checked = true;
+    }
+    
+    // Save username if remember me is checked
+    document.getElementById('loginForm').addEventListener('submit', function() {
+        if (rememberCheckbox.checked) {
+            localStorage.setItem('rememberedUsername', usernameField.value);
+        } else {
+            localStorage.removeItem('rememberedUsername');
+        }
+    });
+</script>
+{% endblock %}

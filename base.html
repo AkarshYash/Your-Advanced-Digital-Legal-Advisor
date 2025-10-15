@@ -1,0 +1,1811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}LegalEase AI Advanced{% endblock %}</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    {% block extra_css %}{% endblock %}
+    
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --accent-color: #f59e0b;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --info-color: #3b82f6;
+            --dark-color: #1f2937;
+            --light-color: #f8fafc;
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-accent: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Theme Variables */
+        [data-theme="normal"] {
+            --bg-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --bg-secondary: rgba(255, 255, 255, 0.1);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.8);
+            --border-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        [data-theme="dark"] {
+            --bg-primary: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
+            --bg-secondary: rgba(255, 255, 255, 0.05);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        [data-theme="light"] {
+            --bg-primary: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+            --bg-secondary: rgba(0, 0, 0, 0.05);
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --border-color: rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Light theme specific overrides */
+        /* Light theme navbar overrides */
+        [data-theme="light"] .navbar {
+            background: rgba(255, 255, 255, 0.98) !important;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        [data-theme="light"] .navbar-nav .nav-link {
+            color: #1e293b !important;
+            font-weight: 500;
+        }
+        
+        [data-theme="light"] .navbar-nav .nav-link:hover {
+            color: #3b82f6 !important;
+            background: rgba(59, 130, 246, 0.1);
+        }
+        
+        [data-theme="light"] .navbar-brand {
+            color: #1e293b !important;
+            font-weight: 700;
+        }
+        
+        [data-theme="light"] .navbar-toggler {
+            border-color: rgba(30, 41, 59, 0.3);
+        }
+        
+        [data-theme="light"] .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2830, 41, 59, 0.8%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+        
+        /* Dark theme navbar overrides */
+        [data-theme="dark"] .navbar {
+            background: rgba(15, 15, 35, 0.98) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+        }
+        
+        [data-theme="dark"] .navbar-nav .nav-link {
+            color: #f1f5f9 !important;
+        }
+        
+        [data-theme="dark"] .navbar-nav .nav-link:hover {
+            color: #60a5fa !important;
+            background: rgba(96, 165, 250, 0.1);
+        }
+        
+        [data-theme="dark"] .navbar-brand {
+            color: #f1f5f9 !important;
+        }
+        
+        /* Normal theme navbar (default) */
+        [data-theme="normal"] .navbar,
+        .navbar {
+            background: rgba(30, 41, 59, 0.95) !important;
+        }
+        
+        [data-theme="normal"] .navbar-nav .nav-link,
+        .navbar-nav .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+        }
+        
+        [data-theme="normal"] .navbar-nav .nav-link:hover,
+        .navbar-nav .nav-link:hover {
+            color: white !important;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        [data-theme="normal"] .navbar-brand,
+        .navbar-brand {
+            color: white !important;
+        }
+        
+        [data-theme="light"] .glass {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            color: #1e293b;
+        }
+        
+        [data-theme="light"] .card {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            color: #1e293b;
+        }
+        
+        [data-theme="light"] .text-white {
+            color: #1e293b !important;
+        }
+        
+        [data-theme="light"] .text-light {
+            color: #475569 !important;
+        }
+        
+        [data-theme="light"] .dropdown-menu {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        [data-theme="light"] .dropdown-item {
+            color: #1e293b !important;
+        }
+        
+        [data-theme="light"] .dropdown-item:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            color: var(--text-primary);
+            overflow-x: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        /* Animated Background */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: var(--bg-primary);
+            transition: all 0.3s ease;
+        }
+        
+        .animated-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.05)"/><circle cx="10" cy="60" r="0.5" fill="rgba(255,255,255,0.05)"/><circle cx="90" cy="40" r="0.5" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            animation: float 20s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(1deg); }
+        }
+        
+        /* Glass morphism effect */
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+        }
+        
+        .glass-dark {
+            background: rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+        }
+        
+        /* Navigation */
+        .navbar {
+            background: rgba(30, 41, 59, 0.95) !important;
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.8rem 0;
+            transition: all 0.3s ease;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1030;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .navbar-brand {
+            font-size: 1.3rem;
+            margin-right: 1rem;
+        }
+        
+        .navbar-nav {
+            align-items: center;
+        }
+        
+        .navbar-collapse {
+            justify-content: space-between;
+        }
+        
+        /* Add padding to body to account for fixed navbar */
+        body {
+            padding-top: 0;
+        }
+        
+        .main-content {
+            margin-top: 85px;
+            min-height: calc(100vh - 85px);
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Special case for index page */
+        .index-page .main-content {
+            margin-top: 0;
+            min-height: 100vh;
+        }
+        
+        /* Ensure proper background visibility */
+        .container, .container-fluid {
+            position: relative;
+            z-index: 2;
+        }
+        
+        /* Fix for white screen issue */
+        html, body {
+            background: var(--bg-primary);
+            min-height: 100vh;
+        }
+        
+        /* Theme-specific body backgrounds */
+        [data-theme="light"] body {
+            background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+        }
+        
+        [data-theme="dark"] body {
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
+        }
+        
+        [data-theme="normal"] body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .navbar-brand {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: white !important;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .navbar-brand:hover {
+            color: #60a5fa !important;
+            transform: scale(1.05);
+        }
+        
+        .navbar-nav .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 500;
+            margin: 0 0.2rem;
+            padding: 0.5rem 0.8rem !important;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+        
+        .navbar-nav .nav-link:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: white !important;
+            transform: translateY(-2px);
+        }
+        
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: #60a5fa;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        
+        .navbar-nav .nav-link:hover::after {
+            width: 80%;
+        }
+        
+        .navbar-toggler {
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 0.5rem;
+        }
+        
+        .navbar-toggler:focus {
+            box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25);
+        }
+        
+        /* Buttons */
+        .btn-primary {
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: 15px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .btn-secondary {
+            background: var(--gradient-secondary);
+            border: none;
+            border-radius: 15px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .btn-accent {
+            background: var(--gradient-accent);
+            border: none;
+            border-radius: 15px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-md);
+            color: white;
+        }
+        
+        .btn-accent:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-xl);
+            color: white;
+        }
+        
+        /* Cards */
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .card-header {
+            background: rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px 20px 0 0 !important;
+        }
+        
+        /* Forms */
+        .form-control {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            color: white;
+            padding: 12px 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.2rem rgba(245, 158, 11, 0.25);
+            color: white;
+        }
+        
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .form-label {
+            color: white;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        /* Alerts */
+        .alert {
+            border: none;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .alert-success {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        
+        .alert-warning {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+        
+        .alert-info {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+        
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Floating Elements */
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        /* Pulse Animation */
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        /* Text Colors */
+        .text-white { color: white !important; }
+        .text-light { color: rgba(255, 255, 255, 0.8) !important; }
+        .text-muted-light { color: rgba(255, 255, 255, 0.6) !important; }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar-brand {
+                font-size: 1.2rem;
+            }
+            
+            .btn-primary, .btn-secondary, .btn-accent {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+        }
+        
+        /* Dropdown Menu Improvements */
+        .dropdown-menu-custom {
+            background: rgba(30, 41, 59, 0.98) !important;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            padding: 0.5rem 0;
+        }
+        
+        .dropdown-item-custom {
+            color: #f1f5f9 !important;
+            padding: 0.75rem 1.5rem;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .dropdown-item-custom:hover {
+            background: rgba(59, 130, 246, 0.2) !important;
+            color: #60a5fa !important;
+            transform: translateX(5px);
+        }
+        
+        /* Light theme dropdown overrides */
+        [data-theme="light"] .dropdown-menu-custom {
+            background: rgba(255, 255, 255, 0.98) !important;
+            border: 1px solid rgba(0, 0, 0, 0.15);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        [data-theme="light"] .dropdown-item-custom {
+            color: #1e293b !important;
+        }
+        
+        [data-theme="light"] .dropdown-item-custom:hover {
+            background: rgba(59, 130, 246, 0.1) !important;
+            color: #1e40af !important;
+        }
+        
+        /* Dark theme dropdown overrides */
+        [data-theme="dark"] .dropdown-menu-custom {
+            background: rgba(15, 15, 35, 0.98) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+        }
+        
+        [data-theme="dark"] .dropdown-item-custom {
+            color: #f1f5f9 !important;
+        }
+        
+        [data-theme="dark"] .dropdown-item-custom:hover {
+            background: rgba(59, 130, 246, 0.25) !important;
+            color: #60a5fa !important;
+        }
+        
+        /* Dropdown divider styling */
+        .dropdown-divider {
+            border-color: rgba(255, 255, 255, 0.2);
+            margin: 0.5rem 0;
+        }
+        
+        [data-theme="light"] .dropdown-divider {
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Developer Section Styling */
+        .developer-link {
+            background: rgba(96, 165, 250, 0.1);
+            border: 1px solid rgba(96, 165, 250, 0.3);
+            border-radius: 8px;
+            margin-left: 0.5rem;
+        }
+        
+        .developer-link:hover {
+            background: rgba(96, 165, 250, 0.2);
+            border-color: rgba(96, 165, 250, 0.5);
+        }
+        
+        .developer-avatar {
+            text-align: center;
+        }
+        
+        .dropdown-header {
+            padding: 1rem;
+            background: rgba(96, 165, 250, 0.1);
+            border-radius: 10px;
+            margin: 0.5rem;
+        }
+        
+        .dropdown-item-text {
+            padding: 0.5rem 1rem;
+        }
+        
+        /* Developer info modal styling */
+        .developer-modal .modal-content {
+            background: rgba(30, 41, 59, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(20px);
+        }
+        
+        .developer-info-card {
+            background: rgba(96, 165, 250, 0.1);
+            border: 1px solid rgba(96, 165, 250, 0.3);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .developer-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+        
+        .skill-badge {
+            background: rgba(96, 165, 250, 0.2);
+            color: #60a5fa;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        /* Footer */
+        .footer {
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.8);
+            padding: 2rem 0;
+            margin-top: 4rem;
+        }
+        
+        .footer a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer a:hover {
+            color: white;
+        }
+        
+        /* Newsletter and Feedback Styles */
+        .newsletter-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            border-radius: 10px 0 0 10px;
+        }
+        
+        .newsletter-input:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--accent-color);
+            box-shadow: none;
+            color: white;
+        }
+        
+        .newsletter-input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .feedback-section, .newsletter-section {
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            height: 100%;
+        }
+        
+        .rating-stars {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .rating-star {
+            font-size: 1.5rem;
+            color: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .rating-star:hover,
+        .rating-star.active {
+            color: #f59e0b;
+            transform: scale(1.1);
+        }
+        
+        .modal-content.glass {
+            backdrop-filter: blur(20px);
+        }
+        
+        /* Success message styles */
+        .success-message {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #10b981;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+            display: none;
+        }
+        
+        .error-message {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg"></div>
+    
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container-fluid">
+            <!-- Left side - Brand and main navigation -->
+            <div class="d-flex align-items-center">
+                <a class="navbar-brand me-4" href="{{ url_for('main.index') }}">
+                    <i class="fas fa-balance-scale me-2"></i>
+                    LegalEase AI
+                </a>
+                
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <!-- Main navigation items - shifted to left -->
+                <ul class="navbar-nav flex-grow-1">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.index') }}">
+                            <i class="fas fa-home me-1"></i>Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.features') }}">
+                            <i class="fas fa-star me-1"></i>Features
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('chat.chat_interface') }}">
+                            <i class="fas fa-robot me-1"></i>AI Chat
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.legal_resources') }}">
+                            <i class="fas fa-book me-1"></i>Resources
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.find_lawyers') }}">
+                            <i class="fas fa-user-tie me-1"></i>Find Lawyers
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.legal_games') }}">
+                            <i class="fas fa-gamepad me-1"></i>Legal Games
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.sample_qna') }}">
+                            <i class="fas fa-question-circle me-1"></i>Sample Q&A
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-graduation-cap me-1"></i>Student Tools
+                        </a>
+                        <ul class="dropdown-menu glass dropdown-menu-custom">
+                            <li><a class="dropdown-item dropdown-item-custom" href="{{ url_for('student.student_dashboard') }}">
+                                <i class="fas fa-tachometer-alt me-2"></i>Student Dashboard
+                            </a></li>
+                            <li><a class="dropdown-item dropdown-item-custom" href="{{ url_for('student.case_study_analyzer') }}">
+                                <i class="fas fa-search me-2"></i>Case Study Analyzer
+                            </a></li>
+                            <li><a class="dropdown-item dropdown-item-custom" href="{{ url_for('student.subject_tutor') }}">
+                                <i class="fas fa-chalkboard-teacher me-2"></i>Subject Tutor
+                            </a></li>
+                            <li><a class="dropdown-item dropdown-item-custom" href="{{ url_for('student.quiz_generator') }}">
+                                <i class="fas fa-question-circle me-2"></i>Quiz Generator
+                            </a></li>
+                            <li><a class="dropdown-item dropdown-item-custom" href="{{ url_for('student.study_planner') }}">
+                                <i class="fas fa-calendar-alt me-2"></i>Study Planner
+                            </a></li>
+                            <li><a class="dropdown-item dropdown-item-custom" href="{{ url_for('student.legal_research') }}">
+                                <i class="fas fa-microscope me-2"></i>Legal Research
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+                
+                <!-- Right side navigation -->
+                <ul class="navbar-nav ms-auto">
+                    <!-- Theme Switcher -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-palette me-1"></i>Theme
+                        </a>
+                        <ul class="dropdown-menu glass dropdown-menu-custom">
+                            <li><a class="dropdown-item dropdown-item-custom" href="#" onclick="setTheme('normal')">
+                                <i class="fas fa-circle text-primary me-2"></i>Normal Theme
+                            </a></li>
+                            <li><a class="dropdown-item dropdown-item-custom" href="#" onclick="setTheme('dark')">
+                                <i class="fas fa-moon text-secondary me-2"></i>Dark Theme
+                            </a></li>
+                            <li><a class="dropdown-item dropdown-item-custom" href="#" onclick="setTheme('light')">
+                                <i class="fas fa-sun text-warning me-2"></i>Light Theme
+                            </a></li>
+                        </ul>
+                    </li>
+                    
+                    <!-- Language Selector -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-language me-1"></i><span id="currentLang">English</span>
+                        </a>
+                        <ul class="dropdown-menu glass dropdown-menu-custom" style="max-height: 300px; overflow-y: auto;">
+                            <li><a class="dropdown-item dropdown-item-custom" href="#" onclick="setLanguage('en', 'English')">
+                                🇮🇳 English
+                            </a></li>
+                            <li><a class="dropdown-item dropdown-item-custom" href="#" onclick="setLanguage('hi', 'हिंदी')">
+                                🇮🇳 हिंदी (Hindi)
+                            </a></li>
+                            <li><a class="dropdown-item dropdown-item-custom" href="#" onclick="setLanguage('ta', 'தமிழ்')">
+                                🇮🇳 தமிழ் (Tamil)
+                            </a></li>
+                            <li><a class="dropdown-item dropdown-item-custom" href="#" onclick="setLanguage('te', 'తెలుగు')">
+                                🇮🇳 తెలుగు (Telugu)
+                            </a></li>
+                            <li><a class="dropdown-item dropdown-item-custom" href="#" onclick="setLanguage('bn', 'বাংলা')">
+                                🇮🇳 বাংলা (Bengali)
+                            </a></li>
+                            <li><a class="dropdown-item dropdown-item-custom" href="#" onclick="setLanguage('mr', 'मराठी')">
+                                🇮🇳 मराठी (Marathi)
+                            </a></li>
+                            <li><a class="dropdown-item dropdown-item-custom" href="#" onclick="setLanguage('gu', 'ગુજરાતી')">
+                                🇮🇳 ગુજરાતી (Gujarati)
+                            </a></li>
+                            <li><a class="dropdown-item dropdown-item-custom" href="#" onclick="setLanguage('pa', 'ਪੰਜਾਬੀ')">
+                                🇮🇳 ਪੰਜਾਬੀ (Punjabi)
+                            </a></li>
+                            <li><a class="dropdown-item dropdown-item-custom" href="#" onclick="setLanguage('kn', 'ಕನ್ನಡ')">
+                                🇮🇳 ಕನ್ನಡ (Kannada)
+                            </a></li>
+                            <li><a class="dropdown-item dropdown-item-custom" href="#" onclick="setLanguage('ml', 'മലയാളം')">
+                                🇮🇳 മലയാളം (Malayalam)
+                            </a></li>
+                            <li><a class="dropdown-item dropdown-item-custom" href="#" onclick="setLanguage('or', 'ଓଡ଼ିଆ')">
+                                🇮🇳 ଓଡ଼ିଆ (Odia)
+                            </a></li>
+                            <li><a class="dropdown-item dropdown-item-custom" href="#" onclick="setLanguage('as', 'অসমীয়া')">
+                                🇮🇳 অসমীয়া (Assamese)
+                            </a></li>
+                            <li><a class="dropdown-item dropdown-item-custom" href="#" onclick="setLanguage('ur', 'اردو')">
+                                🇮🇳 اردو (Urdu)
+                            </a></li>
+                            <li><a class="dropdown-item dropdown-item-custom" href="#" onclick="setLanguage('sa', 'संस्कृत')">
+                                🇮🇳 संस्कृत (Sanskrit)
+                            </a></li>
+                        </ul>
+                    </li>
+                    
+                    {% if session.user_id %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-user-circle me-1"></i>
+                                {{ session.get('username', 'User') }}
+                            </a>
+                            <ul class="dropdown-menu glass dropdown-menu-custom">
+                                <li><a class="dropdown-item dropdown-item-custom" href="{{ url_for('main.dashboard') }}">
+                                    <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                                </a></li>
+                                <li><a class="dropdown-item dropdown-item-custom" href="{{ url_for('main.profile') }}">
+                                    <i class="fas fa-user me-2"></i>Profile
+                                </a></li>
+                                <li><a class="dropdown-item dropdown-item-custom" href="{{ url_for('main.appointments') }}">
+                                    <i class="fas fa-calendar me-2"></i>Appointments
+                                </a></li>
+                                <li><a class="dropdown-item dropdown-item-custom" href="{{ url_for('main.notifications') }}">
+                                    <i class="fas fa-bell me-2"></i>Notifications
+                                </a></li>
+                                {% if session.user_type == 'client' %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item dropdown-item-custom" href="{{ url_for('student.student_dashboard') }}">
+                                    <i class="fas fa-graduation-cap me-2"></i>Student Tools
+                                </a></li>
+                                {% endif %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item dropdown-item-custom" href="{{ url_for('auth.logout') }}">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                </a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('auth.login') }}">
+                                <i class="fas fa-sign-in-alt me-1"></i>Login
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('auth.register') }}">
+                                <i class="fas fa-user-plus me-1"></i>Register
+                            </a>
+                        </li>
+                    {% endif %}
+                    
+                    <!-- Developer Section -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle developer-link" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-code me-1"></i>Developer
+                        </a>
+                        <ul class="dropdown-menu glass dropdown-menu-custom dropdown-menu-end" style="min-width: 280px;">
+                            <li class="dropdown-header text-center">
+                                <div class="developer-avatar mb-2">
+                                    <i class="fas fa-user-circle fa-3x text-primary"></i>
+                                </div>
+                                <strong class="text-white">Akarsh Chaturvedi</strong>
+                                <small class="text-light d-block">Full Stack Developer & AI Enthusiast</small>
+                                <small class="text-muted d-block">
+                                    <i class="fas fa-map-marker-alt me-1"></i>Jaipur, Rajasthan, India
+                                </small>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            
+                            <!-- Contact Options -->
+                            <li><a class="dropdown-item dropdown-item-custom" href="mailto:chatuvrdiakarsh51@gmail.com" target="_blank">
+                                <i class="fas fa-envelope me-2 text-danger"></i>Email Developer
+                            </a></li>
+                            <li><a class="dropdown-item dropdown-item-custom" href="tel:+917742148084">
+                                <i class="fas fa-phone me-2 text-success"></i>Call: +91 7742148084
+                            </a></li>
+                            <li><a class="dropdown-item dropdown-item-custom" href="https://wa.me/917742148084" target="_blank">
+                                <i class="fab fa-whatsapp me-2 text-success"></i>WhatsApp
+                            </a></li>
+                            
+                            <li><hr class="dropdown-divider"></li>
+                            
+                            <!-- Professional Links -->
+                            <li><a class="dropdown-item dropdown-item-custom" href="https://linkedin.com/in/akarsh-chaturvedi" target="_blank">
+                                <i class="fab fa-linkedin me-2 text-primary"></i>LinkedIn Profile
+                            </a></li>
+                            <li><a class="dropdown-item dropdown-item-custom" href="https://github.com/akarshchaturvedi" target="_blank">
+                                <i class="fab fa-github me-2 text-light"></i>GitHub Profile
+                            </a></li>
+                            <li><a class="dropdown-item dropdown-item-custom" href="https://akarshchaturvedi.dev" target="_blank">
+                                <i class="fas fa-globe me-2 text-info"></i>Portfolio Website
+                            </a></li>
+                            
+                            <li><hr class="dropdown-divider"></li>
+                            
+                            <!-- Social Media -->
+                            <li><a class="dropdown-item dropdown-item-custom" href="https://twitter.com/akarsh_dev" target="_blank">
+                                <i class="fab fa-twitter me-2 text-info"></i>Twitter/X
+                            </a></li>
+                            <li><a class="dropdown-item dropdown-item-custom" href="https://instagram.com/akarsh.codes" target="_blank">
+                                <i class="fab fa-instagram me-2 text-danger"></i>Instagram
+                            </a></li>
+                            <li><a class="dropdown-item dropdown-item-custom" href="https://youtube.com/@akarshcodes" target="_blank">
+                                <i class="fab fa-youtube me-2 text-danger"></i>YouTube Channel
+                            </a></li>
+                            <li><a class="dropdown-item dropdown-item-custom" href="https://behance.net/akarshchaturvedi" target="_blank">
+                                <i class="fab fa-behance me-2 text-primary"></i>Behance Portfolio
+                            </a></li>
+                            
+                            <li><hr class="dropdown-divider"></li>
+                            
+                            <!-- Actions -->
+                            <li><a class="dropdown-item dropdown-item-custom" href="#" onclick="openDeveloperInfo()">
+                                <i class="fas fa-info-circle me-2 text-warning"></i>About Developer
+                            </a></li>
+                            <li><a class="dropdown-item dropdown-item-custom" href="#" onclick="openFeedbackModal()">
+                                <i class="fas fa-comments me-2 text-success"></i>Send Feedback
+                            </a></li>
+                            <li><a class="dropdown-item dropdown-item-custom" href="#" onclick="openCollaborationModal()">
+                                <i class="fas fa-handshake me-2 text-primary"></i>Collaborate
+                            </a></li>
+                            
+                            <li><hr class="dropdown-divider"></li>
+                            
+                            <!-- Project Stats -->
+                            <li class="dropdown-item-text text-center">
+                                <div class="row text-center">
+                                    <div class="col-4">
+                                        <small class="text-warning d-block">5+</small>
+                                        <small class="text-muted">Years</small>
+                                    </div>
+                                    <div class="col-4">
+                                        <small class="text-success d-block">50+</small>
+                                        <small class="text-muted">Projects</small>
+                                    </div>
+                                    <div class="col-4">
+                                        <small class="text-info d-block">100%</small>
+                                        <small class="text-muted">Success</small>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="container mt-5 pt-4">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                        <i class="fas fa-{{ 'exclamation-triangle' if category == 'error' else 'info-circle' if category == 'info' else 'check-circle' }} me-2"></i>
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    
+    <!-- Main Content -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- Footer -->
+    <footer class="footer mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5 class="text-white mb-3">
+                        <i class="fas fa-balance-scale me-2"></i>
+                        LegalEase AI Advanced
+                    </h5>
+                    <p class="text-muted-light">
+                        Making legal assistance accessible to every Indian citizen through advanced AI technology.
+                    </p>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="text-white mb-3">Quick Links</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="{{ url_for('main.about') }}">About Us</a></li>
+                        <li><a href="{{ url_for('main.features') }}">Features</a></li>
+                        <li><a href="{{ url_for('main.legal_resources') }}">Legal Resources</a></li>
+                        <li><a href="{{ url_for('main.legal_templates') }}">Templates</a></li>
+                        <li><a href="{{ url_for('main.legal_games') }}">Legal Games</a></li>
+                        <li><a href="{{ url_for('main.sample_qna') }}">Sample Q&A</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="text-white mb-3">Contact</h6>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-envelope me-2"></i>chatuvrdiakarsh51@gmail.com</li>
+                        <li><i class="fas fa-phone me-2"></i>+91 7742148084</li>
+                        <li><i class="fas fa-map-marker-alt me-2"></i>Jaipur, Rajasthan</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Feedback & Newsletter Section -->
+            <hr class="my-4" style="border-color: rgba(255, 255, 255, 0.2);">
+            <div class="row">
+                <div class="col-lg-6 mb-4">
+                    <div class="feedback-section">
+                        <h6 class="text-white mb-3">
+                            <i class="fas fa-comments me-2"></i>
+                            Share Your Feedback
+                        </h6>
+                        <p class="text-muted-light mb-3">
+                            Help us improve LegalEase AI! Share your feedback, suggestions, or recommendations to make legal assistance better for everyone.
+                        </p>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-accent btn-sm" onclick="openFeedbackModal()">
+                                <i class="fas fa-paper-plane me-2"></i>Send Feedback
+                            </button>
+                            <a href="mailto:chatuvrdiakarsh51@gmail.com?subject=LegalEase AI Feedback&body=Dear Akarsh,%0D%0A%0D%0AI would like to share my feedback about LegalEase AI Advanced:%0D%0A%0D%0A" 
+                               class="btn btn-outline-light btn-sm">
+                                <i class="fas fa-envelope me-2"></i>Email Direct
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 mb-4">
+                    <div class="newsletter-section">
+                        <h6 class="text-white mb-3">
+                            <i class="fas fa-bell me-2"></i>
+                            Stay Updated
+                        </h6>
+                        <p class="text-muted-light mb-3">
+                            Subscribe to get updates about new features, legal insights, and important announcements.
+                        </p>
+                        <div class="input-group">
+                            <input type="email" class="form-control newsletter-input" id="newsletterEmail" 
+                                   placeholder="Enter your email address">
+                            <button class="btn btn-primary" onclick="subscribeNewsletter()">
+                                <i class="fas fa-bell me-1"></i>Subscribe
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <hr class="my-4" style="border-color: rgba(255, 255, 255, 0.2);">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="mb-0">&copy; 2024 LegalEase AI. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0">Developed with ❤️ by Akarsh Chaturvedi</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Developer Info Modal -->
+    <div class="modal fade developer-modal" id="developerModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content glass">
+                <div class="modal-header border-bottom border-light border-opacity-25">
+                    <h5 class="modal-title text-white">
+                        <i class="fas fa-code me-2"></i>
+                        About the Developer
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="developer-info-card">
+                        <div class="developer-avatar mb-3">
+                            <i class="fas fa-user-circle fa-4x text-primary"></i>
+                        </div>
+                        <h3 class="text-white mb-2">Akarsh Chaturvedi</h3>
+                        <p class="text-primary mb-3">Full Stack Developer & AI Enthusiast</p>
+                        
+                        <div class="row text-start">
+                            <div class="col-md-6">
+                                <h6 class="text-white mb-2">
+                                    <i class="fas fa-info-circle me-2"></i>About
+                                </h6>
+                                <p class="text-light small">
+                                    Passionate developer from Jaipur, Rajasthan, specializing in creating 
+                                    innovative legal technology solutions. Dedicated to making legal assistance 
+                                    accessible to every Indian citizen through advanced AI technology.
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-white mb-2">
+                                    <i class="fas fa-envelope me-2"></i>Contact Information
+                                </h6>
+                                <p class="text-light small mb-1">
+                                    <strong>Email:</strong> chatuvrdiakarsh51@gmail.com
+                                </p>
+                                <p class="text-light small mb-1">
+                                    <strong>Phone:</strong> +91 7742148084
+                                </p>
+                                <p class="text-light small mb-0">
+                                    <strong>Location:</strong> Jaipur, Rajasthan, India
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <h6 class="text-white mb-3">
+                                <i class="fas fa-tools me-2"></i>Technical Skills
+                            </h6>
+                            <div class="developer-skills">
+                                <span class="skill-badge">Python</span>
+                                <span class="skill-badge">Flask</span>
+                                <span class="skill-badge">JavaScript</span>
+                                <span class="skill-badge">HTML/CSS</span>
+                                <span class="skill-badge">Bootstrap</span>
+                                <span class="skill-badge">AI/ML</span>
+                                <span class="skill-badge">SQLite</span>
+                                <span class="skill-badge">REST APIs</span>
+                                <span class="skill-badge">Legal Tech</span>
+                                <span class="skill-badge">UI/UX Design</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <h6 class="text-white mb-3">
+                                <i class="fas fa-project-diagram me-2"></i>Project Highlights
+                            </h6>
+                            <div class="text-light small text-start">
+                                <ul class="mb-0">
+                                    <li>Comprehensive AI-powered legal assistance platform</li>
+                                    <li>Multi-language support for 14 Indian regional languages</li>
+                                    <li>Voice recognition and text-to-speech integration</li>
+                                    <li>Interactive legal games and educational tools</li>
+                                    <li>Professional lawyer network and appointment system</li>
+                                    <li>Advanced document analysis and template generation</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-top border-light border-opacity-25">
+                    <a href="mailto:chatuvrdiakarsh51@gmail.com" class="btn btn-primary">
+                        <i class="fas fa-envelope me-2"></i>Send Email
+                    </a>
+                    <a href="tel:+917742148084" class="btn btn-success">
+                        <i class="fas fa-phone me-2"></i>Call Now
+                    </a>
+                    <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Modal -->
+    <div class="modal fade" id="feedbackModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content glass" style="background: rgba(30, 41, 59, 0.95); border: 1px solid rgba(255, 255, 255, 0.2);">
+                <div class="modal-header border-bottom border-light border-opacity-25">
+                    <h5 class="modal-title text-white">
+                        <i class="fas fa-comments me-2"></i>
+                        Share Your Feedback
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="feedbackForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label text-white">Your Name</label>
+                                <input type="text" class="form-control" id="feedbackName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-white">Email Address</label>
+                                <input type="email" class="form-control" id="feedbackEmail" required>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label text-white">Feedback Type</label>
+                                <select class="form-control" id="feedbackType" required>
+                                    <option value="">Select feedback type</option>
+                                    <option value="suggestion">Suggestion for Improvement</option>
+                                    <option value="bug">Bug Report</option>
+                                    <option value="feature">Feature Request</option>
+                                    <option value="general">General Feedback</option>
+                                    <option value="appreciation">Appreciation</option>
+                                    <option value="complaint">Complaint</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label text-white">Your Message</label>
+                                <textarea class="form-control" id="feedbackMessage" rows="5" 
+                                          placeholder="Please share your detailed feedback, suggestions, or recommendations..." required></textarea>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label text-white">Rating (Optional)</label>
+                                <div class="rating-stars">
+                                    <i class="fas fa-star rating-star" data-rating="1"></i>
+                                    <i class="fas fa-star rating-star" data-rating="2"></i>
+                                    <i class="fas fa-star rating-star" data-rating="3"></i>
+                                    <i class="fas fa-star rating-star" data-rating="4"></i>
+                                    <i class="fas fa-star rating-star" data-rating="5"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-top border-light border-opacity-25">
+                    <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Cancel
+                    </button>
+                    <button type="button" class="btn btn-accent" onclick="submitFeedback()">
+                        <i class="fas fa-paper-plane me-2"></i>Send Feedback
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+    <script src="{{ url_for('static', filename='js/theme-manager.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/language-manager.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/voice-support.js') }}"></script>
+    
+    {% block extra_js %}{% endblock %}
+    
+    <script>
+        // Initialize tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+        
+        // Auto-hide alerts after 5 seconds
+        setTimeout(function() {
+            var alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function(alert) {
+                var bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            });
+        }, 5000);
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // Developer Modal Functions
+        function openDeveloperInfo() {
+            const modal = new bootstrap.Modal(document.getElementById('developerModal') || createDeveloperModal());
+            modal.show();
+        }
+        
+        function openFeedbackModal() {
+            const modal = new bootstrap.Modal(document.getElementById('feedbackModal') || createFeedbackModal());
+            modal.show();
+        }
+        
+        function openCollaborationModal() {
+            const modal = new bootstrap.Modal(document.getElementById('collaborationModal') || createCollaborationModal());
+            modal.show();
+        }
+        
+        function createDeveloperModal() {
+            const modalHTML = `
+                <div class="modal fade" id="developerModal" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content glass">
+                            <div class="modal-header">
+                                <h5 class="modal-title text-white">
+                                    <i class="fas fa-user-circle me-2 text-primary"></i>
+                                    About the Developer
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-4 text-center mb-4">
+                                        <i class="fas fa-user-circle fa-5x text-primary mb-3"></i>
+                                        <h4 class="text-white">Akarsh Chaturvedi</h4>
+                                        <p class="text-light">Full Stack Developer & AI Enthusiast</p>
+                                        <p class="text-muted">
+                                            <i class="fas fa-map-marker-alt me-1"></i>
+                                            Jaipur, Rajasthan, India
+                                        </p>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <h5 class="text-warning mb-3">
+                                            <i class="fas fa-code me-2"></i>Expertise
+                                        </h5>
+                                        <div class="row mb-3">
+                                            <div class="col-6">
+                                                <ul class="text-light">
+                                                    <li>🤖 AI & Machine Learning</li>
+                                                    <li>🐍 Python & Flask</li>
+                                                    <li>⚛️ React & JavaScript</li>
+                                                    <li>🗄️ Database Systems</li>
+                                                </ul>
+                                            </div>
+                                            <div class="col-6">
+                                                <ul class="text-light">
+                                                    <li>☁️ Cloud & DevOps</li>
+                                                    <li>📱 Mobile Development</li>
+                                                    <li>🎨 UI/UX Design</li>
+                                                    <li>⚖️ Legal Technology</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        
+                                        <h5 class="text-success mb-3">
+                                            <i class="fas fa-trophy me-2"></i>Achievements
+                                        </h5>
+                                        <div class="row text-center mb-3">
+                                            <div class="col-3">
+                                                <h4 class="text-warning">5+</h4>
+                                                <small class="text-light">Years Experience</small>
+                                            </div>
+                                            <div class="col-3">
+                                                <h4 class="text-success">50+</h4>
+                                                <small class="text-light">Projects Completed</small>
+                                            </div>
+                                            <div class="col-3">
+                                                <h4 class="text-info">100%</h4>
+                                                <small class="text-light">Client Satisfaction</small>
+                                            </div>
+                                            <div class="col-3">
+                                                <h4 class="text-danger">24/7</h4>
+                                                <small class="text-light">Support</small>
+                                            </div>
+                                        </div>
+                                        
+                                        <h5 class="text-info mb-3">
+                                            <i class="fas fa-project-diagram me-2"></i>LegalEase AI Stats
+                                        </h5>
+                                        <div class="row text-center">
+                                            <div class="col-4">
+                                                <h6 class="text-primary">15,000+</h6>
+                                                <small class="text-light">Lines of Code</small>
+                                            </div>
+                                            <div class="col-4">
+                                                <h6 class="text-success">15+</h6>
+                                                <small class="text-light">Legal Cases</small>
+                                            </div>
+                                            <div class="col-4">
+                                                <h6 class="text-warning">12+</h6>
+                                                <small class="text-light">Languages</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <div class="d-flex gap-2 flex-wrap">
+                                    <a href="https://linkedin.com/in/akarsh-chaturvedi" target="_blank" class="btn btn-primary btn-sm">
+                                        <i class="fab fa-linkedin me-1"></i>LinkedIn
+                                    </a>
+                                    <a href="https://github.com/akarshchaturvedi" target="_blank" class="btn btn-dark btn-sm">
+                                        <i class="fab fa-github me-1"></i>GitHub
+                                    </a>
+                                    <a href="https://akarshchaturvedi.dev" target="_blank" class="btn btn-info btn-sm">
+                                        <i class="fas fa-globe me-1"></i>Portfolio
+                                    </a>
+                                    <a href="mailto:chatuvrdiakarsh51@gmail.com" class="btn btn-success btn-sm">
+                                        <i class="fas fa-envelope me-1"></i>Email
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            return document.getElementById('developerModal');
+        }
+        
+        function createFeedbackModal() {
+            const modalHTML = `
+                <div class="modal fade" id="feedbackModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content glass">
+                            <div class="modal-header">
+                                <h5 class="modal-title text-white">
+                                    <i class="fas fa-comments me-2 text-success"></i>
+                                    Send Feedback
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="feedbackForm">
+                                    <div class="mb-3">
+                                        <label class="form-label text-light">Your Name</label>
+                                        <input type="text" class="form-control" id="feedbackName" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label text-light">Email</label>
+                                        <input type="email" class="form-control" id="feedbackEmail" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label text-light">Feedback Type</label>
+                                        <select class="form-control" id="feedbackType">
+                                            <option value="bug">Bug Report</option>
+                                            <option value="feature">Feature Request</option>
+                                            <option value="improvement">Improvement Suggestion</option>
+                                            <option value="compliment">Compliment</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label text-light">Your Feedback</label>
+                                        <textarea class="form-control" id="feedbackMessage" rows="4" required 
+                                                  placeholder="Please share your thoughts, suggestions, or report any issues..."></textarea>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-success" onclick="sendFeedback()">
+                                    <i class="fas fa-paper-plane me-1"></i>Send Feedback
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            return document.getElementById('feedbackModal');
+        }
+        
+        function createCollaborationModal() {
+            const modalHTML = `
+                <div class="modal fade" id="collaborationModal" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content glass">
+                            <div class="modal-header">
+                                <h5 class="modal-title text-white">
+                                    <i class="fas fa-handshake me-2 text-primary"></i>
+                                    Let's Collaborate!
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h5 class="text-warning mb-3">
+                                            <i class="fas fa-briefcase me-2"></i>Available For
+                                        </h5>
+                                        <ul class="text-light">
+                                            <li>🚀 Freelance Projects</li>
+                                            <li>👥 Team Collaboration</li>
+                                            <li>🎓 Mentorship</li>
+                                            <li>🗣️ Speaking Engagements</li>
+                                            <li>📝 Technical Writing</li>
+                                            <li>🔬 Research Projects</li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h5 class="text-success mb-3">
+                                            <i class="fas fa-star me-2"></i>Specializations
+                                        </h5>
+                                        <ul class="text-light">
+                                            <li>⚖️ Legal Technology</li>
+                                            <li>🤖 AI Applications</li>
+                                            <li>🎓 Educational Platforms</li>
+                                            <li>🏥 Healthcare Tech</li>
+                                            <li>💰 FinTech Solutions</li>
+                                            <li>🛒 E-commerce Platforms</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                
+                                <div class="text-center mt-4">
+                                    <h5 class="text-info mb-3">Ready to Start a Project?</h5>
+                                    <p class="text-light mb-4">
+                                        Let's discuss your ideas and create something amazing together!
+                                    </p>
+                                    
+                                    <div class="d-flex gap-2 justify-content-center flex-wrap">
+                                        <a href="mailto:chatuvrdiakarsh51@gmail.com?subject=Collaboration Opportunity" 
+                                           class="btn btn-success">
+                                            <i class="fas fa-envelope me-1"></i>Email Me
+                                        </a>
+                                        <a href="https://wa.me/917742148084?text=Hi! I'd like to discuss a collaboration opportunity" 
+                                           target="_blank" class="btn btn-success">
+                                            <i class="fab fa-whatsapp me-1"></i>WhatsApp
+                                        </a>
+                                        <a href="https://linkedin.com/in/akarsh-chaturvedi" 
+                                           target="_blank" class="btn btn-primary">
+                                            <i class="fab fa-linkedin me-1"></i>LinkedIn
+                                        </a>
+                                        <a href="https://calendly.com/akarshchaturvedi" 
+                                           target="_blank" class="btn btn-info">
+                                            <i class="fas fa-calendar me-1"></i>Schedule Call
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            return document.getElementById('collaborationModal');
+        }
+        
+        function sendFeedback() {
+            const name = document.getElementById('feedbackName').value;
+            const email = document.getElementById('feedbackEmail').value;
+            const type = document.getElementById('feedbackType').value;
+            const message = document.getElementById('feedbackMessage').value;
+            
+            if (!name || !email || !message) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+            
+            // Create email content
+            const subject = `LegalEase AI Feedback: ${type.charAt(0).toUpperCase() + type.slice(1)}`;
+            const body = `Name: ${name}%0D%0AEmail: ${email}%0D%0AType: ${type}%0D%0A%0D%0AMessage:%0D%0A${message}`;
+            
+            // Open email client
+            window.open(`mailto:chatuvrdiakarsh51@gmail.com?subject=${subject}&body=${body}`);
+            
+            // Close modal
+            bootstrap.Modal.getInstance(document.getElementById('feedbackModal')).hide();
+            
+            // Show success message
+            alert('Thank you for your feedback! Your email client should open with the feedback ready to send.');
+        }
+        });
+        
+        // Rating stars functionality
+        let selectedRating = 0;
+        
+        document.querySelectorAll('.rating-star').forEach(star => {
+            star.addEventListener('click', function() {
+                selectedRating = parseInt(this.getAttribute('data-rating'));
+                updateStars();
+            });
+            
+            star.addEventListener('mouseenter', function() {
+                const rating = parseInt(this.getAttribute('data-rating'));
+                highlightStars(rating);
+            });
+        });
+        
+        document.querySelector('.rating-stars').addEventListener('mouseleave', function() {
+            updateStars();
+        });
+        
+        function highlightStars(rating) {
+            document.querySelectorAll('.rating-star').forEach((star, index) => {
+                if (index < rating) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+        }
+        
+        function updateStars() {
+            highlightStars(selectedRating);
+        }
+    
+    // Developer and Feedback Functions
+    function openDeveloperInfo() {
+        const modal = new bootstrap.Modal(document.getElementById('developerModal'));
+        modal.show();
+    }
+    
+    function openFeedbackModal() {
+        const modal = new bootstrap.Modal(document.getElementById('feedbackModal'));
+        modal.show();
+    }
+    
+    function submitFeedback() {
+        const name = document.getElementById('feedbackName').value;
+        const email = document.getElementById('feedbackEmail').value;
+        const type = document.getElementById('feedbackType').value;
+        const message = document.getElementById('feedbackMessage').value;
+        
+        if (!name || !email || !type || !message) {
+            showMessage('Please fill in all required fields.', 'error');
+            return;
+        }
+        
+        // Create email content
+        const emailSubject = `LegalEase AI Feedback - ${type}`;
+        const emailBody = `Dear Akarsh,
+
+I would like to share my feedback about LegalEase AI Advanced:
+
+Name: ${name}
+Email: ${email}
+Feedback Type: ${type}
+Rating: ${selectedRating > 0 ? selectedRating + ' stars' : 'Not provided'}
+
+Message:
+${message}
+
+Thank you for creating this amazing legal assistance platform!
+
+Best regards,
+${name}`;
+        
+        // Open email client
+        const mailtoLink = `mailto:chatuvrdiakarsh51@gmail.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+        window.open(mailtoLink);
+        
+        // Close modal and show success message
+        const modal = bootstrap.Modal.getInstance(document.getElementById('feedbackModal'));
+        modal.hide();
+        
+        showNotification('Thank you for your feedback! Your email client has been opened with the feedback ready to send.', 'success');
+        
+        // Reset form
+        document.getElementById('feedbackForm').reset();
+        selectedRating = 0;
+        updateStars();
+    }
+    
+    function subscribeNewsletter() {
+        const email = document.getElementById('newsletterEmail').value;
+        
+        if (!email) {
+            showNotification('Please enter your email address.', 'error');
+            return;
+        }
+        
+        if (!isValidEmail(email)) {
+            showNotification('Please enter a valid email address.', 'error');
+            return;
+        }
+        
+        // Create subscription email
+        const emailSubject = 'LegalEase AI Newsletter Subscription';
+        const emailBody = `Dear Akarsh,
+
+I would like to subscribe to the LegalEase AI newsletter.
+
+Email: ${email}
+
+Please add me to your mailing list for updates about:
+- New features and improvements
+- Legal insights and tips
+- Important announcements
+- Educational content
+
+Thank you!`;
+        
+        // Open email client
+        const mailtoLink = `mailto:chatuvrdiakarsh51@gmail.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+        window.open(mailtoLink);
+        
+        showNotification('Thank you for subscribing! Your email client has been opened to complete the subscription.', 'success');
+        
+        // Clear input
+        document.getElementById('newsletterEmail').value = '';
+    }
+    
+    function isValidEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+    
+    function showMessage(message, type) {
+        // Create and show message in modal
+        const existingMessage = document.querySelector('.success-message, .error-message');
+        if (existingMessage) {
+            existingMessage.remove();
+        }
+        
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `${type}-message`;
+        messageDiv.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2"></i>${message}`;
+        messageDiv.style.display = 'block';
+        
+        document.querySelector('.modal-body').appendChild(messageDiv);
+        
+        setTimeout(() => {
+            messageDiv.remove();
+        }, 5000);
+    }
+    
+    function showNotification(message, type) {
+        // Create notification
+        const notification = document.createElement('div');
+        notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+        notification.style.cssText = 'top: 100px; right: 20px; z-index: 9999; min-width: 350px; max-width: 500px;';
+        notification.innerHTML = `
+            <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2"></i>
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Auto remove after 8 seconds
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+        }, 8000);
+    }
+    </script>
+</body>
+</html>
