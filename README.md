@@ -275,9 +275,9 @@ python run.py
 - **Name**: Akarsh Chaturvedi
 - **Role**: Full Stack Developer & AI Enthusiast
 - **Specialization**: Legal Tech, AI Integration, Web Development
-- **Email**: [Contact Email]
-- **LinkedIn**: [LinkedIn Profile]
-- **GitHub**: [GitHub Profile]
+- **Email**: Chaturvediakarsh51@gmail.com
+- **LinkedIn**: [https://www.linkedin.com/in/akarsh-chaturvedi-259271236?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_contact_details%3BZOn1gGGvSwa1Fu1XDTBX3w%3D%3D ]
+
 
 ### **Getting Help**
 - **Documentation**: Comprehensive guides and tutorials
